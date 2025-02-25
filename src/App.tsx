@@ -133,12 +133,10 @@ function App() {
       id: newId,
       position: new THREE.Vector3(
         0,
-        // selectedCategory === 'displays' ? 30 : 0,
-        0,
+        selectedCategory === 'displays' ? 30 : 0,
         0
       ),
-      rotation: new THREE.Quaternion(),
-      // 0, -0.7071068, 0, 0.7071068
+      rotation: new THREE.Quaternion(0, -0.7071068, 0, 0.7071068),
     });
     await useModelStore.persist.rehydrate();
     setSelectedModel(null);
@@ -285,7 +283,7 @@ function App() {
               </IconButton>
               <Typography variant="h6" noWrap component="div">
                 DESK{' '}
-                <Spacer time={2400} spacing={100}>
+                <Spacer time={4800} spacing={100}>
                   SPACER
                 </Spacer>
               </Typography>

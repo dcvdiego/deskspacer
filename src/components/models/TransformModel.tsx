@@ -3,6 +3,8 @@ import { Select } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useModelStore } from '../../utils/store';
+import { positionsAreEqual, quaternionsAreEqual } from '../../utils/utils';
+
 const TransformModel = ({ ...props }) => {
   const {
     transformMode,
@@ -19,6 +21,7 @@ const TransformModel = ({ ...props }) => {
   } = props;
   const { updateModel } = useModelStore();
   const [initialized, setInitialized] = useState<boolean>(false);
+  const [isRotating, setIsRotating] = useState<boolean>(false);
   const [savedPosition, setSavedPosition] = useState<THREE.Vector3>();
   const getObjectWithName = (object: any) => {
     if (object.parent === null) return null;
@@ -33,7 +36,6 @@ const TransformModel = ({ ...props }) => {
     const rotation = new THREE.Quaternion();
     ModelRef.current.getWorldPosition(position);
     ModelRef.current.getWorldQuaternion(rotation);
-    console.log(position, rotation);
     updateModel(isSelected, { position, rotation });
   };
   const model = useModelStore.getState().models.find((m) => m.id === name);
@@ -78,23 +80,43 @@ const TransformModel = ({ ...props }) => {
   //   };
 
   //   use matrix to do a select all and be able to move multiple?
+  const objPosition = new THREE.Vector3();
+  const objQuaternion = new THREE.Quaternion();
+
   return (
     <Select enabled={isHovered === name || isSelected === name} name={name}>
       <group ref={GroupRef}>
         <PivotControls
           scale={25}
           offset={[0, 20, 0]}
-          rotation={[0, -Math.PI / 2, 0]}
-          disableRotations={transformMode !== '' && transformMode !== 'rotate'}
-          disableScaling={transformMode !== '' && transformMode !== 'scale'}
-          disableSliders={transformMode !== '' && transformMode !== 'translate'}
-          disableAxes={transformMode !== '' && transformMode !== 'translate'}
+          rotation={[0, Math.PI / 2, 0]}
+          disableRotations={!['', 'rotate'].includes(transformMode)}
+          disableScaling={!['', 'scale'].includes(transformMode)}
+          disableSliders={!['', 'translate'].includes(transformMode)}
+          disableAxes={!['', 'translate'].includes(transformMode)}
           activeAxes={[true, enableY, true]}
+          onDragStart={() => setIsRotating(true)}
           onDrag={() => {
             if (orbit.current) orbit.current.enabled = false;
+
+            if (ModelRef.current && model) {
+              ModelRef.current.getWorldPosition(objPosition);
+              ModelRef.current.getWorldQuaternion(objQuaternion);
+              const hasPositionChanged = !positionsAreEqual(
+                model?.position,
+                objPosition
+              );
+              const hasRotationChanged = !quaternionsAreEqual(
+                model?.rotation,
+                objQuaternion
+              );
+              setIsRotating(!hasPositionChanged && hasRotationChanged);
+            }
+
             // checkForCollision();
           }}
           onDragEnd={() => {
+            setIsRotating(false);
             updateModelPosition();
             if (orbit.current) orbit.current.enabled = true;
           }}
@@ -105,8 +127,7 @@ const TransformModel = ({ ...props }) => {
             undefined,
           ]}
           annotations
-          // TODO: do a check if sliders then annotations, else remove it
-          annotationsClass="annotations"
+          annotationsClass={isRotating ? undefined : 'annotations'}
         >
           <group
             {...props}
