@@ -2,57 +2,37 @@
 import { Canvas } from '@react-three/fiber';
 
 import DefaultRoom from './components/models/rooms/DefaultRoom';
-import { Suspense, useEffect, useRef } from 'react';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
+
 import { Container } from './styles/global.styles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
+
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { LocationOn } from '@mui/icons-material';
-import ThreeDRotationIcon from '@mui/icons-material/ThreeDRotation';
+
+import { SwapHoriz } from '@mui/icons-material';
 import {
   Selection,
   EffectComposer,
   Outline,
 } from '@react-three/postprocessing';
-import {
-  Autocomplete,
-  Button,
-  Modal,
-  TextField,
-  ToggleButton,
-} from '@mui/material';
-import { Html, OrbitControls } from '@react-three/drei';
+import { Autocomplete, Button, Modal, TextField } from '@mui/material';
+import { Html, Loader, OrbitControls } from '@react-three/drei';
 import { OrbitControls as OrbitControlsType } from 'three-stdlib';
-import { AppBar, Drawer, DrawerHeader } from './components/UI/Header';
+import { DrawerHeader, Header } from './components/UI/Header';
 import { modelComponents } from './components/models/modelComponentsMapping';
 import TransformModel from './components/models/TransformModel';
 import PreviewModel from './components/models/PreviewModel';
 import { purple } from '@mui/material/colors';
-import styled, { keyframes } from 'styled-components';
 import * as THREE from 'three';
 import { useModelStore } from './utils/store';
 import { ModelInCanvas } from './types/ModelTypes';
+import { Spacer } from './components/UI/Spacer';
+import { StyledModal } from './components/UI/Modal';
 // import Logo from '../public/logo.svg?react';
 const darkTheme = createTheme({
   palette: {
@@ -73,40 +53,8 @@ const darkTheme = createTheme({
 });
 
 function App() {
-  const increaseLetterSpacing = (x: number) => keyframes`
- 0% {
-    letter-spacing: 0px;
-  }
-  100% {
-    letter-spacing: ${x}px; 
-  }
-
-`;
-  interface SpacerProps {
-    time: number;
-    spacing: number;
-  }
-  const Spacer = styled.b<SpacerProps>`
-    animation: ${(props) => increaseLetterSpacing(props.spacing)}
-      ${(props) => props.time}s ease forwards;
-  `;
-
-  const theme = useTheme();
-  const [open, setOpen] = useState(false);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
   const { addModel, deleteModel } = useModelStore();
   const [transformMode, setTransformMode] = useState('');
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setTransformMode(event.target.value);
-  };
 
   const [isHovered, setIsHovered] = useState<string | null>(null);
 
@@ -117,10 +65,10 @@ function App() {
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [manualRemove, setManualRemove] = useState<boolean>(false);
-  const [previewHover, setPreviewHover] = useState<boolean>(false);
   const [disableCamera, setDisableCamera] = useState<boolean>(false);
 
   const [enableY, setEnableY] = useState<boolean>(false);
+
   const handleAddModel = async (modelName: string) => {
     const newId = `${modelName}__${
       useModelStore
@@ -143,17 +91,35 @@ function App() {
     setSelectedCategory(null);
     setIsAddObjectModalOpen(false);
   };
-  const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+  const handleSwapModel = async (modelName: string) => {
+    if (!isSelected) return;
+
+    const model = useModelStore
+      .getState()
+      .models.find((m) => m.id === isSelected);
+
+    deleteModel(isSelected);
+    setIsSelected(null);
+
+    const newId = `${modelName}__${
+      useModelStore
+        .getState()
+        .models.filter((model: ModelInCanvas) => model.name === modelName)
+        .length
+    }`;
+    addModel({
+      name: modelName,
+      id: newId,
+      position: model!.position,
+      rotation: model!.rotation,
+    });
+
+    await useModelStore.persist.rehydrate();
+    setSelectedModel(null);
+    setSelectedCategory(null);
+    setIsAddObjectModalOpen(false);
   };
+
   const orbit = useRef<OrbitControlsType>(null);
   const ModelPreview = selectedModel
     ? modelComponents[selectedModel].model
@@ -173,7 +139,9 @@ function App() {
       (key) => modelComponents[key] === component
     );
     if (!title) {
-      throw new Error(`No title found for component: ${component}`);
+      throw new Error(
+        `No title found for component: ${Object.keys(component)}`
+      );
     }
     return {
       title: title,
@@ -200,7 +168,7 @@ function App() {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isSelected, manualRemove, deleteModel]);
-  const sortedOptions = options.sort((a, b) => {
+  const sortedOptions = options.toSorted((a, b) => {
     if (a.subcategory !== b.subcategory) {
       return a.subcategory.localeCompare(b.subcategory);
     } else {
@@ -260,204 +228,23 @@ function App() {
   //     content: 'm';
   //   }
   // `;
+  // things to add to a potential context: transformMode, setTransformMode, isSelected, enableY, it removes 8 lines of code but adding context adds way more
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex' }}>
-        <AppBar position="fixed" open={open}>
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                edge="start"
-                sx={[
-                  {
-                    marginRight: 5,
-                  },
-                  open && { display: 'none' },
-                ]}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap component="div">
-                DESK{' '}
-                <Spacer time={4800} spacing={100}>
-                  SPACER
-                </Spacer>
-              </Typography>
-            </Box>
-
-            <Box display="flex">
-              <FormControl sx={{ m: 1, minWidth: 150 }}>
-                <InputLabel id="demo-simple-select-autowidth-label">
-                  Transform
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-autowidth-label"
-                  id="demo-simple-select-autowidth"
-                  value={transformMode}
-                  onChange={handleChange}
-                  autoWidth
-                  label="transform-mode"
-                  startAdornment={
-                    transformMode !== '' && (
-                      <ThreeDRotationIcon sx={{ marginRight: '12px' }} />
-                    )
-                  }
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={'translate'}>Translate</MenuItem>
-                  <MenuItem value={'rotate'}>Rotate</MenuItem>
-                  <MenuItem value={'scale'}>Scale</MenuItem>
-                </Select>
-              </FormControl>
-
-              <Button
-                disabled
-                // onClick={() => handleShare()}
-              >
-                Share
-              </Button>
-              <ToggleButton
-                value="Camera Toggle"
-                selected={disableCamera}
-                onChange={() => setDisableCamera(!disableCamera)}
-              >
-                {!disableCamera ? 'Disable' : 'Enable'} Camera
-              </ToggleButton>
-              <ToggleButton
-                value="Y-axis Toggle"
-                selected={enableY}
-                onChange={() => setEnableY(!enableY)}
-              >
-                {!enableY ? 'Enable' : 'Disable'} Y-Axis
-              </ToggleButton>
-
-              <Button onClick={() => setContentModal('tutorial')}>Help</Button>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <DrawerHeader>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'rtl' ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
-            </IconButton>
-          </DrawerHeader>
-          <Divider />
-          <List>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={[
-                  { minHeight: 48, px: 2.5 },
-                  open
-                    ? { justifyContent: 'initial' }
-                    : { justifyContent: 'center' },
-                ]}
-                onClick={() => setIsAddObjectModalOpen(true)}
-              >
-                <ListItemIcon
-                  sx={[
-                    { minWidth: 0, justifyContent: 'center' },
-                    open ? { mr: 3 } : { mr: 'auto' },
-                  ]}
-                >
-                  <AddCircleIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Add object"
-                  sx={open ? { opacity: 1 } : { opacity: 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-            {isSelected && (
-              <ListItem disablePadding sx={{ display: 'block' }}>
-                <ListItemButton
-                  sx={[
-                    { minHeight: 48, px: 2.5 },
-                    open
-                      ? { justifyContent: 'initial' }
-                      : { justifyContent: 'center' },
-                  ]}
-                  onClick={() => setManualRemove(true)}
-                >
-                  <ListItemIcon
-                    sx={[
-                      { minWidth: 0, justifyContent: 'center' },
-                      open ? { mr: 3 } : { mr: 'auto' },
-                    ]}
-                  >
-                    <RemoveCircleIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Remove object"
-                    sx={open ? { opacity: 1 } : { opacity: 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            )}
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={[
-                  { minHeight: 48, px: 2.5 },
-                  open
-                    ? { justifyContent: 'initial' }
-                    : { justifyContent: 'center' },
-                ]}
-              >
-                <ListItemIcon
-                  sx={[
-                    { minWidth: 0, justifyContent: 'center' },
-                    open ? { mr: 3 } : { mr: 'auto' },
-                  ]}
-                >
-                  <LocationOn />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Change room"
-                  sx={open ? { opacity: 1 } : { opacity: 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          </List>
-
-          <Divider />
-
-          <List>
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={[
-                  { minHeight: 48, px: 2.5 },
-                  open
-                    ? { justifyContent: 'initial' }
-                    : { justifyContent: 'center' },
-                ]}
-                onClick={() => setContentModal('settings')}
-              >
-                <ListItemIcon
-                  sx={[
-                    { minWidth: 0, justifyContent: 'center' },
-                    open ? { mr: 3 } : { mr: 'auto' },
-                  ]}
-                >
-                  <SettingsIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Settings"
-                  sx={open ? { opacity: 1 } : { opacity: 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Drawer>
-
+        <Header
+          transformMode={transformMode}
+          setTransformMode={setTransformMode}
+          disableCamera={disableCamera}
+          setDisableCamera={setDisableCamera}
+          enableY={enableY}
+          setEnableY={setEnableY}
+          setContentModal={setContentModal}
+          isSelected={isSelected}
+          setManualRemove={setManualRemove}
+          setIsAddObjectModalOpen={setIsAddObjectModalOpen}
+        />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
           <Modal
@@ -467,7 +254,7 @@ function App() {
             aria-labelledby="keep-mounted-modal-title"
             aria-describedby="keep-mounted-modal-description"
           >
-            <Box sx={modalStyle}>
+            <StyledModal>
               {categories.map((category) =>
                 selectedCategory === category ? (
                   <Autocomplete
@@ -512,23 +299,45 @@ function App() {
                 camera={{
                   position: [70, 35, 20],
                 }}
-                onClick={() => selectedModel && handleAddModel(selectedModel)}
-                onPointerEnter={() => setPreviewHover(true)}
-                onPointerLeave={() => setPreviewHover(false)}
+                style={{ width: '500px', height: '500px' }}
               >
                 <ambientLight />
                 <Html
                   as="div"
                   style={{
-                    pointerEvents: 'none',
                     display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    left: '-14rem',
+                    gap: '20rem',
                   }}
                 >
-                  {previewHover && ModelPreview && (
-                    <AddCircleIcon sx={{}} fontSize="large" />
-                  )}
+                  <ThemeProvider theme={darkTheme}>
+                    {
+                      // previewHover &&
+                      ModelPreview && (
+                        <>
+                          <IconButton>
+                            <AddCircleIcon
+                              onClick={() =>
+                                selectedModel && handleAddModel(selectedModel)
+                              }
+                              fontSize="large"
+                            />
+                          </IconButton>
+                          {isSelected && (
+                            <IconButton>
+                              <SwapHoriz
+                                onClick={() =>
+                                  selectedModel &&
+                                  handleSwapModel(selectedModel)
+                                }
+                                fontSize="large"
+                              />
+                            </IconButton>
+                          )}
+                        </>
+                      )
+                    }
+                  </ThemeProvider>
                 </Html>
                 {ModelPreview && (
                   <PreviewModel cacheKey={selectedModel}>
@@ -536,7 +345,7 @@ function App() {
                   </PreviewModel>
                 )}
               </Canvas>
-            </Box>
+            </StyledModal>
           </Modal>
           <Modal
             keepMounted
@@ -545,7 +354,7 @@ function App() {
             aria-labelledby="keep-mounted-modal-title"
             aria-describedby="keep-mounted-modal-description"
           >
-            <Box sx={modalStyle}>
+            <StyledModal>
               {contentModal === 'tutorial' ? (
                 <>
                   <div>
@@ -570,9 +379,10 @@ function App() {
               ) : (
                 <>
                   <div>Settings</div>
+                  <div>These are the settings</div>
                 </>
               )}
-            </Box>
+            </StyledModal>
           </Modal>
           <Container style={{ paddingTop: 0 }}>
             <Suspense>
@@ -610,11 +420,11 @@ function App() {
                         <TransformModel
                           name={modelName.id}
                           transformMode={transformMode}
+                          setTransformMode={setTransformMode}
                           isHovered={isHovered}
                           setIsHovered={setIsHovered}
                           isSelected={isSelected}
                           setIsSelected={setIsSelected}
-                          setTransformMode={setTransformMode}
                           key={modelName.id}
                           orbit={orbit}
                           // boundsA={boundsA}
@@ -627,6 +437,7 @@ function App() {
                 </Selection>
                 {!disableCamera && <OrbitControls ref={orbit} />}
               </Canvas>
+              <Loader />
             </Suspense>
           </Container>
         </Box>

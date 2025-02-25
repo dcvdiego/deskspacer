@@ -1,5 +1,6 @@
 import { PivotControls } from '@react-three/drei';
 import { Select } from '@react-three/postprocessing';
+// import { Select as DreiSelect } from '@react-three/drei';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useModelStore } from '../../utils/store';
@@ -84,6 +85,8 @@ const TransformModel = ({ ...props }) => {
   const objQuaternion = new THREE.Quaternion();
 
   return (
+    // https://github.com/pmndrs/drei/discussions/1495
+    // <DreiSelect multiple box onChange={(selected) => console.log(selected)}>
     <Select enabled={isHovered === name || isSelected === name} name={name}>
       <group ref={GroupRef}>
         <PivotControls
@@ -148,6 +151,7 @@ const TransformModel = ({ ...props }) => {
         </PivotControls>
       </group>
     </Select>
+    // </DreiSelect>
   );
 };
 
