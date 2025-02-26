@@ -3,6 +3,13 @@ import { ModelComponentType } from '../../types/ModelTypes';
 import StandingDesk1 from './desks/StandingDesk1';
 import StandingDesk2 from './desks/StandingDesk2';
 import Monitor32949in from './displays/Monitor32949in';
+import Monitor32949inStand from './displays/Monitor32949inStand';
+import Monitor329434in from './displays/Monitor329434in';
+import Monitor329434inStand from './displays/Monitor329434inStand';
+import Monitor21930inCurved from './displays/Monitor21930inCurved';
+import Monitor21934inCurved from './displays/Monitor21934inCurved';
+import Monitor21938inCurved from './displays/Monitor21938inCurved';
+import Monitor219238inCurved from './displays/Monitor219238inCurved';
 import Monitor1692235inCurved from './displays/Monitor1692235inCurved';
 import Monitor169227inCurved from './displays/Monitor169227inCurved';
 import Monitor1692315inCurved from './displays/Monitor1692315inCurved';
@@ -34,6 +41,55 @@ export const modelComponents: {
     category: 'displays',
     subcategory: '32:9',
     curved: 1000,
+    stand: false,
+  },
+  '32:9 49" Monitor': {
+    model: Monitor32949inStand,
+    category: 'displays',
+    subcategory: '32:9',
+    curved: 1000,
+    stand: true,
+  },
+  '32:9 43.4" Monitor (no stand)': {
+    model: Monitor329434in,
+    category: 'displays',
+    subcategory: '32:9',
+    curved: 1000, // unsure
+    stand: false,
+  },
+  '32:9 43.4" Monitor': {
+    model: Monitor329434inStand,
+    category: 'displays',
+    subcategory: '32:9',
+    curved: 1000, // unsure
+    stand: true,
+  },
+  '21:9 30" Curved Monitor': {
+    model: Monitor21930inCurved,
+    category: 'displays',
+    subcategory: '21:9',
+    curved: 1000, // unsure
+    stand: false,
+  },
+  '21:9 34" Curved Monitor': {
+    model: Monitor21934inCurved,
+    category: 'displays',
+    subcategory: '21:9',
+    curved: 1000, // unsure
+    stand: false,
+  },
+  '21:9 38" Curved Monitor': {
+    model: Monitor21938inCurved,
+    category: 'displays',
+    subcategory: '21:9',
+    curved: 1000, // unsure
+    stand: false,
+  },
+  '21:9 38" Curved Monitor v2': {
+    model: Monitor219238inCurved,
+    category: 'displays',
+    subcategory: '21:9',
+    curved: 1000, // unsure
     stand: false,
   },
   '16:9 23.5" Curved Monitor v2': {
