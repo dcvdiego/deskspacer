@@ -1,6 +1,6 @@
 # DeskSpacer
 
-![Logo](https://github.com/dcvdiego/deskspacer/blob/main/public/logo.svg?raw=true)
+![Logo](https://github.com/dcvdiego/deskspacer/blob/main/frontend/public/logo.svg?raw=true)
 Inspired by deskspacing.com, deskspacer allows you to draft your dream setup before you actually get it!
 
 > [!WARNING]  
