@@ -18,8 +18,8 @@ importers:
         specifier: ^6.4.5
         version: 6.4.5(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@mui/styled-engine-sc':
-        specifier: ^6.4.3
-        version: 6.4.3(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^6.4.6
+        version: 6.4.6(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@react-three/drei':
         specifier: ^9.122.0
         version: 9.122.0(@react-three/fiber@8.17.14(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@types/react@19.0.10)(@types/three@0.173.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0)(use-sync-external-store@1.4.0(react@18.3.1))
@@ -450,8 +450,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@mui/styled-engine-sc@6.4.3':
-    resolution: {integrity: sha512-ndu3604ZvSe9PrOJmXvSZkVz+06ycFSuvMEuKomUO9qcDbMkDfe3qPMVQLtg7Ttz/N7p1+rpvPxVwv5+2InYcw==}
+  '@mui/styled-engine-sc@6.4.6':
+    resolution: {integrity: sha512-3TquinzjLFva4Q5WAJcKlqDxPlR+Xe8D2/IJ6PWzHQy/MtIwwZC0AGfhQe0Ano/T/tTVh/3LgbbeF5bY1OwYYg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       styled-components: ^6.0.0
@@ -2120,7 +2120,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.10
 
-  '@mui/styled-engine-sc@6.4.3(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@mui/styled-engine-sc@6.4.6(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
       '@babel/runtime': 7.26.9
       '@types/hoist-non-react-statics': 3.3.6
@@ -2133,7 +2133,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.26.9
       '@mui/private-theming': 6.4.3(@types/react@19.0.10)(react@18.3.1)
-      '@mui/styled-engine': '@mui/styled-engine-sc@6.4.3(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))'
+      '@mui/styled-engine': '@mui/styled-engine-sc@6.4.6(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))'
       '@mui/types': 7.2.21(@types/react@19.0.10)
       '@mui/utils': 6.4.3(@types/react@19.0.10)(react@18.3.1)
       clsx: 2.1.1
