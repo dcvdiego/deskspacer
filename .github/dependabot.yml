@@ -9,3 +9,19 @@ updates:
     directory: "/frontend" # Location of package manifests
     schedule:
       interval: "weekly"
+      day: "sunday"
+  - package-ecosystem: "nuget"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    ignore:
+      - dependency-name: "*"
+        update-types: 
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
