@@ -19,6 +19,8 @@ const TransformModel = ({ ...props }) => {
     children,
     // boundsA,
     enableY,
+    called,
+    reset,
   } = props;
   const { updateModel } = useModelStore();
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -98,7 +100,10 @@ const TransformModel = ({ ...props }) => {
           disableSliders={!['', 'translate'].includes(transformMode)}
           disableAxes={!['', 'translate'].includes(transformMode)}
           activeAxes={[true, enableY, true]}
-          onDragStart={() => setIsRotating(true)}
+          onDragStart={() => {
+            setIsRotating(true);
+            if (called) reset();
+          }}
           onDrag={() => {
             if (orbit.current) orbit.current.enabled = false;
 

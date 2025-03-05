@@ -9,4 +9,7 @@ export const StyledModal = styled(Box)`
   border: 2px solid #000;
   box-shadow: 24px;
   padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 `;

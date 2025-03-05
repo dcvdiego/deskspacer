@@ -36,6 +36,7 @@ import {
   LocationOn,
   Share,
   ThreeSixty,
+  Download,
 } from '@mui/icons-material';
 import { useState } from 'react';
 
@@ -164,17 +165,13 @@ const CameraToggle = ({
 }) => {
   return (
     <Tooltip title={!disabled ? 'Disable Camera' : 'Enable Camera'} arrow>
-      <span>
-        <ToggleButton
-          value="Camera Toggle"
-          selected={disabled}
-          onChange={onToggle}
-        >
-          <ThreeSixty
-            sx={!disabled ? { fill: 'lightgreen' } : { fill: 'red' }}
-          />
-        </ToggleButton>
-      </span>
+      <ToggleButton
+        value="Camera Toggle"
+        selected={disabled}
+        onChange={onToggle}
+      >
+        <ThreeSixty sx={!disabled ? { fill: 'lightgreen' } : { fill: 'red' }} />
+      </ToggleButton>
     </Tooltip>
   );
 };
@@ -188,17 +185,13 @@ const YAxisToggle = ({
 }) => {
   return (
     <Tooltip title={!enabled ? 'Enable Y-Axis' : 'Disable Y-Axis'} arrow>
-      <span>
-        <ToggleButton
-          value="Y-axis Toggle"
-          selected={enabled}
-          onChange={onToggle}
-        >
-          <ImportExport
-            sx={enabled ? { fill: 'lightgreen' } : { fill: 'red' }}
-          />
-        </ToggleButton>
-      </span>
+      <ToggleButton
+        value="Y-axis Toggle"
+        selected={enabled}
+        onChange={onToggle}
+      >
+        <ImportExport sx={enabled ? { fill: 'lightgreen' } : { fill: 'red' }} />
+      </ToggleButton>
     </Tooltip>
   );
 };
@@ -252,6 +245,8 @@ interface HeaderProps {
   isSelected: string | null;
   setManualRemove: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAddObjectModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleShare: () => void;
+  called: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -265,6 +260,8 @@ export const Header: React.FC<HeaderProps> = ({
   isSelected,
   setManualRemove,
   setIsAddObjectModalOpen,
+  handleShare,
+  called,
 }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -309,15 +306,23 @@ export const Header: React.FC<HeaderProps> = ({
               onToggle={handleToggleCamera}
             />
             <YAxisToggle enabled={enableY} onToggle={handleToggleYAxis} />
-            <IconButton
-              disabled
-              // onClick={() => handleShare()}
-            >
-              <Share />
-            </IconButton>
-            <IconButton onClick={() => setContentModal('tutorial')}>
-              <Help />
-            </IconButton>
+            <Tooltip title={'Download as glb (coming soon)'} arrow>
+              <span>
+                <IconButton disabled>
+                  <Download />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title={'Share'} arrow>
+              <IconButton disabled={called} onClick={() => handleShare()}>
+                <Share />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={'Help'} arrow>
+              <IconButton onClick={() => setContentModal('tutorial')}>
+                <Help />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Toolbar>
       </AppBar>

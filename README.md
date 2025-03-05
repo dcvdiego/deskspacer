@@ -49,9 +49,9 @@ If you have any feedback, please feel free to start a Discussions thread
 
 ## Tech Stack
 
-**Client:** TypeScript, React, MUI, Three, React-Three Suite
+**Client:** TypeScript, React, MUI, Three, React-Three Suite, GraphQL (Apollo)
 
-**Server:** Coming soon
+**Server:** ASP.NET Core, GraphQL (Hot Chocolate), PosgreSQL
 
 ## 🚀 About Me
 

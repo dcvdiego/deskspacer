@@ -47,7 +47,7 @@ the action you have taken to solve it.
 The aim of this repository is:
 
 - To create a native-feeling cross-platform 3D application with a use-case, i.e. features need to have intent and they need to keep performance in mind
-- Keep it as simple as possible, reutilising code wherever possible and complying with existing ESLint and Prettier rules
+- Keep it as simple as possible, reutilizing code wherever possible and complying with existing ESLint and Prettier rules
 - It be a good example of the power of web engineering!
 
 ### Does it follow the contributor covenant
@@ -58,21 +58,28 @@ This repository has a [code of conduct](codeofconduct.md), I will remove things 
 
 This project uses [semantic commits](https://conventionalcommits.org) and [semver](https://semver.org).
 
-To get started, make sure you have [Node](https://nodejs.org) and [PNPM](https://pnpm.io)  installed. Install dependencies with:
+To get started, make sure you have [Node](https://nodejs.org), [PNPM](https://pnpm.io), and [.NET](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) installed. You also need a docker tool. I use [Podman](https://podman.io/) but Docker works too, keep in mind the docs will follow Podman.
+
+### Front-End Development
+
+Install dependencies for the frontend with:
 
 ```zsh
+cd frontend
 pnpm i
 ```
 
-### Development
-
-To run the development server:
+To run the development server (assuming you are in frontend folder):
 
 ```bash
 pnpm dev
 ```
 
 Keep in mind there are Prettier and ESLint rules in place. The only CI in place is a Husky for this and TypeScript compiler as testing would be very time consuming. Please adhere to these rules.
+
+### Back-End Development
+
+Coming Soon
 
 #### 3D Development Precautions
 
