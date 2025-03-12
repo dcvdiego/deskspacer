@@ -37,6 +37,7 @@ import {
   Share,
   ThreeSixty,
   Download,
+  Upload,
 } from '@mui/icons-material';
 import { useState } from 'react';
 
@@ -247,6 +248,8 @@ interface HeaderProps {
   setIsAddObjectModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleShare: () => void;
   called: boolean;
+  handleExport: () => void;
+  // handleImport: (file: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -262,6 +265,8 @@ export const Header: React.FC<HeaderProps> = ({
   setIsAddObjectModalOpen,
   handleShare,
   called,
+  handleExport,
+  // handleImport,
 }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -306,12 +311,17 @@ export const Header: React.FC<HeaderProps> = ({
               onToggle={handleToggleCamera}
             />
             <YAxisToggle enabled={enableY} onToggle={handleToggleYAxis} />
-            <Tooltip title={'Download as glb (coming soon)'} arrow>
+            <Tooltip title={'Import custom file'} arrow>
               <span>
                 <IconButton disabled>
-                  <Download />
+                  <Upload />
                 </IconButton>
               </span>
+            </Tooltip>
+            <Tooltip title={'Download as glb'} arrow>
+              <IconButton onClick={() => handleExport()}>
+                <Download />
+              </IconButton>
             </Tooltip>
             <Tooltip title={'Share'} arrow>
               <IconButton disabled={called} onClick={() => handleShare()}>

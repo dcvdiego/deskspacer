@@ -22,8 +22,7 @@ builder
        options.AddDefaultPolicy(builder =>
        {
            builder
-.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-               .WithOrigins("https://studio.apollographql.com")
+               .WithOrigins("http://localhost", "https://studio.apollographql.com")
                .AllowAnyHeader()
                .AllowAnyMethod();
        });
@@ -39,7 +38,5 @@ if (app.Environment.IsDevelopment())
 
     await scope.ServiceProvider.GetRequiredService<DataContext>().Database.MigrateAsync();
 }
-// }
-// app.UseHttpsRedirection();
 app.Run();
 

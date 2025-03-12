@@ -34,6 +34,7 @@ import TransformModel from './components/models/TransformModel';
 import PreviewModel from './components/models/PreviewModel';
 import { purple } from '@mui/material/colors';
 import * as THREE from 'three';
+import * as streamsaver from 'streamsaver';
 import { useModelStore } from './utils/store';
 import { ModelInCanvas } from './types/ModelTypes';
 import { Spacer } from './components/UI/Spacer';
@@ -41,6 +42,11 @@ import { StyledModal } from './components/UI/Modal';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import STATES_BY_ID_QUERY from './graphql/state/statesById';
 import ADD_STATE_QUERY from './graphql/state/addState';
+import {
+  GLTFExporter,
+  // GLTFLoader,
+  // DRACOLoader,
+} from 'three/examples/jsm/Addons.js';
 // import Logo from '../public/logo.svg?react';
 const darkTheme = createTheme({
   palette: {
@@ -76,7 +82,8 @@ function App() {
   const [disableCamera, setDisableCamera] = useState<boolean>(false);
   const [dpr, setDpr] = useState(1.5);
   const [enableY, setEnableY] = useState<boolean>(false);
-
+  const [exportLoading, setExportLoading] = useState<boolean>(false);
+  // const [importedFile, setImportedFile] = useState();
   const [
     getState,
     {
@@ -259,6 +266,72 @@ function App() {
     setContentModal('share');
   };
 
+  const exporter = new GLTFExporter();
+  // old import logic needs to be updated
+  // const gltfLoader = new GLTFLoader();
+  // const dracoloader = new DRACOLoader();
+  // dracoloader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+  // gltfLoader.setDRACOLoader(dracoloader);
+  // const handleImport = useCallback((file: Blob) => {
+  //   const reader = new FileReader();
+  //   reader.onabort = () => console.error('file reading was aborted');
+  //   reader.onerror = () => console.error('file reading has failed');
+  //   reader.onload = async () => {
+  //     const buffer = reader.result;
+  //     const result = await new Promise((resolve, reject) =>
+  //       gltfLoader.parse(buffer!, '', resolve, reject)
+  //     );
+  //     setImportedFile(result);
+  //   };
+  //   reader.readAsArrayBuffer(file);
+  // }, []);
+
+  const handleExport = () => {
+    setExportLoading(true);
+    if (sceneRef.current) {
+      exporter.parse(
+        sceneRef.current,
+        (glb) => {
+          // Create a blob of the data
+          const fileToSave = new Blob([glb as BlobPart], {
+            type: 'application/octet-stream',
+          });
+
+          // Save the file
+          const fileStream = streamsaver.createWriteStream('my-setup.glb', {
+            size: fileToSave.size,
+          });
+          const readableStream = fileToSave.stream();
+          if (window.WritableStream && readableStream.pipeTo) {
+            return readableStream
+              .pipeTo(fileStream)
+              .then(() => console.log('done writing'));
+          }
+
+          // Write (pipe) manually
+          const writer = fileStream.getWriter();
+          const reader = readableStream.getReader();
+          const pump = async () => {
+            const res = await reader.read();
+            if (res.done) {
+              await writer.close();
+            } else {
+              await writer.write(res.value);
+              await pump();
+            }
+          };
+
+          pump();
+          setExportLoading(false);
+        },
+        () => console.log('error'),
+        { binary: true }
+      );
+    }
+    setExportLoading(false);
+  };
+
+  const sceneRef = useRef(null);
   // const DefaultRoomRef = useRef<THREE.Mesh>(null);
 
   // const boundsA = new THREE.Box3();
@@ -288,6 +361,8 @@ function App() {
           setIsAddObjectModalOpen={setIsAddObjectModalOpen}
           handleShare={handleShare}
           called={addCalled}
+          handleExport={handleExport}
+          // handleImport={handleImport}
         />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
@@ -415,6 +490,9 @@ function App() {
                     inside the canvas.
                   </div>
                   <div>Have fun</div>
+                  <Button onClick={() => setContentModal(null)}>
+                    Continue
+                  </Button>
                 </>
               ) : contentModal === 'share' ? (
                 <>
@@ -477,44 +555,65 @@ function App() {
                   onDecline={() => setDpr(1)}
                 />
                 <ambientLight />
+                <group ref={sceneRef}>
+                  <DefaultRoom position={[0, -2.5, 0]} />
+                  <Selection>
+                    <EffectComposer multisampling={0} autoClear={false}>
+                      <Outline
+                        visibleEdgeColor={0xffffff}
+                        hiddenEdgeColor={0xffffff}
+                        blur
+                        width={1000}
+                        edgeStrength={100}
+                      />
+                    </EffectComposer>
+                    {useModelStore
+                      .getState()
+                      .models.map((modelName: ModelInCanvas) => {
+                        const ModelComponent =
+                          modelComponents[modelName.name].model;
+                        return (
+                          <TransformModel
+                            name={modelName.id}
+                            transformMode={transformMode}
+                            setTransformMode={setTransformMode}
+                            isHovered={isHovered}
+                            setIsHovered={setIsHovered}
+                            isSelected={isSelected}
+                            setIsSelected={setIsSelected}
+                            key={modelName.id}
+                            orbit={orbit}
+                            // boundsA={boundsA}
+                            enableY={enableY}
+                            called={addCalled}
+                            reset={addReset}
+                          >
+                            <ModelComponent />
+                          </TransformModel>
+                        );
+                      })}
+                    {/* {importedFile && (
+                      <TransformModel
+                        name={'imported'}
+                        transformMode={transformMode}
+                        setTransformMode={setTransformMode}
+                        isHovered={isHovered}
+                        setIsHovered={setIsHovered}
+                        isSelected={isSelected}
+                        setIsSelected={setIsSelected}
+                        key={'imported'}
+                        orbit={orbit}
+                        // boundsA={boundsA}
+                        enableY={enableY}
+                        called={addCalled}
+                        reset={addReset}
+                      >
+                        <primitive object={importedFile.scene} />
+                      </TransformModel>
+                    )} */}
+                  </Selection>
+                </group>
 
-                <DefaultRoom position={[0, -2.5, 0]} />
-                <Selection>
-                  <EffectComposer multisampling={0} autoClear={false}>
-                    <Outline
-                      visibleEdgeColor={0xffffff}
-                      hiddenEdgeColor={0xffffff}
-                      blur
-                      width={1000}
-                      edgeStrength={100}
-                    />
-                  </EffectComposer>
-                  {useModelStore
-                    .getState()
-                    .models.map((modelName: ModelInCanvas) => {
-                      const ModelComponent =
-                        modelComponents[modelName.name].model;
-                      return (
-                        <TransformModel
-                          name={modelName.id}
-                          transformMode={transformMode}
-                          setTransformMode={setTransformMode}
-                          isHovered={isHovered}
-                          setIsHovered={setIsHovered}
-                          isSelected={isSelected}
-                          setIsSelected={setIsSelected}
-                          key={modelName.id}
-                          orbit={orbit}
-                          // boundsA={boundsA}
-                          enableY={enableY}
-                          called={addCalled}
-                          reset={addReset}
-                        >
-                          <ModelComponent />
-                        </TransformModel>
-                      );
-                    })}
-                </Selection>
                 {!disableCamera && <OrbitControls ref={orbit} />}
               </Canvas>
               <Loader />
