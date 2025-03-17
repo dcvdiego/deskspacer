@@ -38,8 +38,12 @@ import {
   ThreeSixty,
   Download,
   Upload,
+  MissedVideoCall,
+  NoMeetingRoom,
 } from '@mui/icons-material';
 import { useState } from 'react';
+import { OrbitControls } from 'three-stdlib';
+import { useModelStore } from '../../utils/store';
 
 const drawerWidth = 240;
 
@@ -249,6 +253,7 @@ interface HeaderProps {
   handleShare: () => void;
   called: boolean;
   handleExport: () => void;
+  orbitRef: React.RefObject<OrbitControls | null>;
   // handleImport: (file: string) => void;
 }
 
@@ -266,6 +271,7 @@ export const Header: React.FC<HeaderProps> = ({
   handleShare,
   called,
   handleExport,
+  orbitRef,
   // handleImport,
 }) => {
   const theme = useTheme();
@@ -275,6 +281,7 @@ export const Header: React.FC<HeaderProps> = ({
   const handleToggleYAxis = () => setEnableY(!enableY);
   const handleTransformChange = (event: SelectChangeEvent) =>
     setTransformMode(event.target.value);
+  const { setModels } = useModelStore();
   return (
     <>
       <AppBar position="fixed" open={open}>
@@ -311,6 +318,20 @@ export const Header: React.FC<HeaderProps> = ({
               onToggle={handleToggleCamera}
             />
             <YAxisToggle enabled={enableY} onToggle={handleToggleYAxis} />
+            <Tooltip title={'Reset Camera'} arrow>
+              <IconButton
+                onClick={() => {
+                  orbitRef.current?.reset();
+                }}
+              >
+                <MissedVideoCall />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={'Reset Room'} arrow>
+              <IconButton onClick={() => setModels([])}>
+                <NoMeetingRoom />
+              </IconButton>
+            </Tooltip>
             <Tooltip title={'Import custom file'} arrow>
               <span>
                 <IconButton disabled>

@@ -82,7 +82,10 @@ function App() {
   const [disableCamera, setDisableCamera] = useState<boolean>(false);
   const [dpr, setDpr] = useState(1.5);
   const [enableY, setEnableY] = useState<boolean>(false);
-  const [exportLoading, setExportLoading] = useState<boolean>(false);
+  const [
+    // exportLoading,
+    setExportLoading,
+  ] = useState<boolean>(false);
   // const [importedFile, setImportedFile] = useState();
   const [
     getState,
@@ -115,7 +118,7 @@ function App() {
       id: newId,
       position: new THREE.Vector3(
         0,
-        selectedCategory === 'displays' ? 30 : 0,
+        selectedCategory === 'displays' ? 20 : 0,
         0
       ),
       rotation: new THREE.Quaternion(0, -0.7071068, 0, 0.7071068),
@@ -156,7 +159,7 @@ function App() {
     setIsAddObjectModalOpen(false);
   };
 
-  const orbit = useRef<OrbitControlsType>(null);
+  const orbitRef = useRef<OrbitControlsType>(null);
   const ModelPreview = selectedModel
     ? modelComponents[selectedModel].model
     : null;
@@ -343,7 +346,7 @@ function App() {
   // `;
 
   // users should also have an option to save the scene as a glb
-  // things to add to a potential context: transformMode, setTransformMode, isSelected, enableY, addCalled it removes 10 lines of code but adding context adds way more
+  // things to add to a potential context: transformMode, setTransformMode, isSelected, enableY, addCalled, orbit it removes 10 lines of code but adding context adds way more
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -362,6 +365,7 @@ function App() {
           handleShare={handleShare}
           called={addCalled}
           handleExport={handleExport}
+          orbitRef={orbitRef}
           // handleImport={handleImport}
         />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -379,10 +383,12 @@ function App() {
                   <Autocomplete
                     key={category}
                     options={sortedOptions}
-                    groupBy={(option) => option.subcategory}
+                    groupBy={(option: { title: string; subcategory: string }) =>
+                      option.subcategory
+                    }
                     getOptionLabel={(option) => option.title}
                     sx={{ width: 300 }}
-                    renderInput={(params) => (
+                    renderInput={(params: any) => (
                       <TextField
                         {...params}
                         label={`Select a${
@@ -396,7 +402,12 @@ function App() {
                         }${category.slice(0, -1)}`}
                       />
                     )}
-                    onChange={(_event, value) => {
+                    onChange={(
+                      _event: any,
+                      value: {
+                        title: React.SetStateAction<string | null>;
+                      } | null
+                    ) => {
                       if (value !== null) {
                         setSelectedModel(value.title);
                       } else {
@@ -556,7 +567,7 @@ function App() {
                 />
                 <ambientLight />
                 <group ref={sceneRef}>
-                  <DefaultRoom position={[0, -2.5, 0]} />
+                  <DefaultRoom position={[0, 0, 0]} />
                   <Selection>
                     <EffectComposer multisampling={0} autoClear={false}>
                       <Outline
@@ -582,7 +593,7 @@ function App() {
                             isSelected={isSelected}
                             setIsSelected={setIsSelected}
                             key={modelName.id}
-                            orbit={orbit}
+                            orbit={orbitRef}
                             // boundsA={boundsA}
                             enableY={enableY}
                             called={addCalled}
@@ -614,7 +625,13 @@ function App() {
                   </Selection>
                 </group>
 
-                {!disableCamera && <OrbitControls ref={orbit} />}
+                {!disableCamera && (
+                  <OrbitControls
+                    ref={orbitRef}
+                    // minPolarAngle={Math.PI / 8}
+                    maxPolarAngle={Math.PI / 2}
+                  />
+                )}
               </Canvas>
               <Loader />
             </Suspense>
