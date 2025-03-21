@@ -309,6 +309,7 @@ ${mappingContent}
   // Write to file
   fs.writeFileSync(MODEL_MAPPING_PATH, fileContent);
   console.log(
+    // TODO: newEntries is not accurate
     `\n📦 Updated model mapping with ${allEntries.length} entries (${newEntries.length} new)`
   );
 };
@@ -368,37 +369,9 @@ const getExistingMappingEntries = (): ModelEntry[] => {
   }
 };
 
-const NUKE_TRANSFORMED_GLB = () => {
-  const directory = path.join(process.cwd(), 'public/glb/displays');
-  let deletedCount = 0;
-
-  const deleteTransformedFiles = (dir: string) => {
-    fs.readdirSync(dir, { withFileTypes: true }).forEach((dirent) => {
-      const fullPath = path.join(dir, dirent.name);
-
-      if (dirent.isDirectory()) {
-        deleteTransformedFiles(fullPath); // Recurse into subdirectories
-      } else if (
-        dirent.isFile() &&
-        (/-transformed\.glb$/i.test(dirent.name) ||
-          /-transformed\.tsx$/i.test(dirent.name))
-      ) {
-        fs.unlinkSync(fullPath);
-        console.log(`🗑️  Deleted: ${path.relative(directory, fullPath)}`);
-        deletedCount++;
-      }
-    });
-  };
-
-  deleteTransformedFiles(directory);
-  console.log(
-    `\n♻️  Cleanup complete! Removed ${deletedCount} transformed GLB and TSX files`
-  );
-};
-
 // Modified main execution
 const run = () => {
-  // only run if necessary, might move this to utils
+  // only run if necessary,
   // NUKE_TRANSFORMED_GLB();
   const result = processFiles();
   updateModelMapping(result.modelEntries);

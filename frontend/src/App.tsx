@@ -83,7 +83,8 @@ function App() {
   const [dpr, setDpr] = useState(1.5);
   const [enableY, setEnableY] = useState<boolean>(false);
   const [
-    // exportLoading,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    exportLoading,
     setExportLoading,
   ] = useState<boolean>(false);
   // const [importedFile, setImportedFile] = useState();
@@ -270,7 +271,7 @@ function App() {
   };
 
   const exporter = new GLTFExporter();
-  // old import logic needs to be updated
+  // TODO: old import logic needs to be updated
   // const gltfLoader = new GLTFLoader();
   // const dracoloader = new DRACOLoader();
   // dracoloader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
@@ -345,7 +346,6 @@ function App() {
   //   }
   // `;
 
-  // users should also have an option to save the scene as a glb
   // things to add to a potential context: transformMode, setTransformMode, isSelected, enableY, addCalled, orbit it removes 10 lines of code but adding context adds way more
   return (
     <ThemeProvider theme={darkTheme}>

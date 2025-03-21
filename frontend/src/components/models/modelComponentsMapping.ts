@@ -1,5 +1,5 @@
 import { ModelComponentType } from '../../types/ModelTypes';
-  
+
 import Monitor169223dot5Curved from './displays/16_9_curved_monitors_no_stand/Monitor169223dot5Curved';
 import Monitor169223dot5CurvedStand from './displays/16_9_curved_monitors/Monitor169223dot5CurvedStand';
 import Monitor169227Curved from './displays/16_9_curved_monitors_no_stand/Monitor169227Curved';
@@ -57,6 +57,8 @@ import Monitortv155Stand from './displays/tv/Monitortv155Stand';
 import Monitortv165Stand from './displays/tv/Monitortv165Stand';
 import Monitortv175Stand from './displays/tv/Monitortv175Stand';
 import Monitortv185Stand from './displays/tv/Monitortv185Stand';
+import StandingDesk1 from './desks/Standing_Desks/StandingDesk1';
+import StandingDesk2 from './desks/Standing_Desks/StandingDesk2';
 
 export const modelComponents: {
   [key: string]: {
@@ -68,19 +70,33 @@ export const modelComponents: {
     glbPath: string;
   };
 } = {
+  'Standing Desk 1': {
+    model: StandingDesk1,
+    category: 'desks',
+    subcategory: 'Standing Desks',
+    glbPath: '',
+  },
+
+  'Standing Desk 2': {
+    model: StandingDesk2,
+    category: 'desks',
+    subcategory: 'Standing Desks',
+    glbPath: '',
+  },
   '16:9 22" Monitor v3': {
     model: Monitor169322,
     category: 'displays',
     subcategory: '16:9',
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_22in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_22in_no_stand-transformed.glb',
   },
   '16:9 22" Monitor v3 with Stand': {
     model: Monitor169322Stand,
     category: 'displays',
     subcategory: '16:9',
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_22in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_22in-transformed.glb',
   },
   '16:9 23.5" Curved Monitor v2': {
     model: Monitor169223dot5Curved,
@@ -88,7 +104,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_23.5in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_23.5in_no_stand-transformed.glb',
   },
   '16:9 23.5" Curved Monitor v2 with Stand': {
     model: Monitor169223dot5CurvedStand,
@@ -96,35 +113,38 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_23.5in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_23.5in-transformed.glb',
   },
   '16:9 23" Monitor v3': {
     model: Monitor169323,
     category: 'displays',
     subcategory: '16:9',
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_23in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_23in_no_stand-transformed.glb',
   },
   '16:9 23" Monitor v3 with Stand': {
     model: Monitor169323Stand,
     category: 'displays',
     subcategory: '16:9',
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_23in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_23in-transformed.glb',
   },
   '16:9 24" Monitor v3': {
     model: Monitor169324,
     category: 'displays',
     subcategory: '16:9',
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_24in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_24in_no_stand-transformed.glb',
   },
   '16:9 24" Monitor v3 with Stand': {
     model: Monitor169324Stand,
     category: 'displays',
     subcategory: '16:9',
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_24in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_24in-transformed.glb',
   },
   '16:9 25" Curved Monitor': {
     model: Monitor16925Curved,
@@ -132,7 +152,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_25in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_25in_no_stand-transformed.glb',
   },
   '16:9 25" Curved Monitor with Stand': {
     model: Monitor16925CurvedStand,
@@ -140,21 +161,23 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_25in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_25in-transformed.glb',
   },
   '16:9 25" Monitor v3': {
     model: Monitor169325,
     category: 'displays',
     subcategory: '16:9',
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_25in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_25in_no_stand-transformed.glb',
   },
   '16:9 25" Monitor v3 with Stand': {
     model: Monitor169325Stand,
     category: 'displays',
     subcategory: '16:9',
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_25in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_25in-transformed.glb',
   },
   '16:9 27" Curved Monitor': {
     model: Monitor16927Curved,
@@ -162,7 +185,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_27in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_27in_no_stand-transformed.glb',
   },
   '16:9 27" Curved Monitor v2': {
     model: Monitor169227Curved,
@@ -170,7 +194,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_27in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_27in_no_stand-transformed.glb',
   },
   '16:9 27" Curved Monitor v2 with Stand': {
     model: Monitor169227CurvedStand,
@@ -178,7 +203,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_27in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_27in-transformed.glb',
   },
   '16:9 27" Curved Monitor with Stand': {
     model: Monitor16927CurvedStand,
@@ -186,35 +212,38 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_27in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_27in-transformed.glb',
   },
   '16:9 27" Monitor v3': {
     model: Monitor169327,
     category: 'displays',
     subcategory: '16:9',
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_27in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_27in_no_stand-transformed.glb',
   },
   '16:9 27" Monitor v3 with Stand': {
     model: Monitor169327Stand,
     category: 'displays',
     subcategory: '16:9',
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_27in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_27in-transformed.glb',
   },
   '16:9 28" Monitor v3': {
     model: Monitor169328,
     category: 'displays',
     subcategory: '16:9',
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_28in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_28in_no_stand-transformed.glb',
   },
   '16:9 28" Monitor v3 with Stand': {
     model: Monitor169328Stand,
     category: 'displays',
     subcategory: '16:9',
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_28in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_28in-transformed.glb',
   },
   '16:9 31.5" Curved Monitor': {
     model: Monitor16931dot5Curved,
@@ -222,7 +251,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_31.5in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_31.5in_no_stand-transformed.glb',
   },
   '16:9 31.5" Curved Monitor v2': {
     model: Monitor169231dot5Curved,
@@ -230,7 +260,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_31.5in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_31.5in_no_stand-transformed.glb',
   },
   '16:9 31.5" Curved Monitor v2 with Stand': {
     model: Monitor169231dot5CurvedStand,
@@ -238,7 +269,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_31.5in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_31.5in-transformed.glb',
   },
   '16:9 31.5" Curved Monitor with Stand': {
     model: Monitor16931dot5CurvedStand,
@@ -246,21 +278,24 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_31.5in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_31.5in-transformed.glb',
   },
   '16:9 31.5" Monitor v3': {
     model: Monitor169331dot5,
     category: 'displays',
     subcategory: '16:9',
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_31.5in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_31.5in_no_stand-transformed.glb',
   },
   '16:9 31.5" Monitor v3 with Stand': {
     model: Monitor169331dot5Stand,
     category: 'displays',
     subcategory: '16:9',
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_31.5in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors/16_9_monitor_3_31.5in-transformed.glb',
   },
   '16:9 34" Curved Monitor': {
     model: Monitor16934Curved,
@@ -268,7 +303,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_34in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_34in_no_stand-transformed.glb',
   },
   '16:9 34" Curved Monitor with Stand': {
     model: Monitor16934CurvedStand,
@@ -276,42 +312,45 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_34in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_34in-transformed.glb',
   },
   '16:9 43" Monitor v4 with Stand': {
     model: Monitor169443Stand,
     category: 'displays',
     subcategory: '16:9',
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_4_43in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_4_43in-transformed.glb',
   },
   '21:9 25" Monitor v2': {
     model: Monitor219225,
     category: 'displays',
     subcategory: '21:9',
     stand: false,
-    glbPath: '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_25in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_25in_no_stand-transformed.glb',
   },
   '21:9 25" Monitor v2 with Stand': {
     model: Monitor219225Stand,
     category: 'displays',
     subcategory: '21:9',
     stand: true,
-    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_25in-transformed.glb'
+    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_25in-transformed.glb',
   },
   '21:9 29" Monitor v2': {
     model: Monitor219229,
     category: 'displays',
     subcategory: '21:9',
     stand: false,
-    glbPath: '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_29in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_29in_no_stand-transformed.glb',
   },
   '21:9 29" Monitor v2 with Stand': {
     model: Monitor219229Stand,
     category: 'displays',
     subcategory: '21:9',
     stand: true,
-    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_29in-transformed.glb'
+    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_29in-transformed.glb',
   },
   '21:9 30" Curved Monitor': {
     model: Monitor21930Curved,
@@ -319,7 +358,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_30in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_30in_no_stand-transformed.glb',
   },
   '21:9 30" Curved Monitor v2': {
     model: Monitor219230Curved,
@@ -327,7 +367,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_30in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_30in_no_stand-transformed.glb',
   },
   '21:9 30" Curved Monitor v2 with Stand': {
     model: Monitor219230CurvedStand,
@@ -335,7 +376,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_30in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_30in-transformed.glb',
   },
   '21:9 30" Curved Monitor with Stand': {
     model: Monitor21930CurvedStand,
@@ -343,7 +385,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_30in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_30in-transformed.glb',
   },
   '21:9 34" Curved Monitor': {
     model: Monitor21934Curved,
@@ -351,7 +394,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_34in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_34in_no_stand-transformed.glb',
   },
   '21:9 34" Curved Monitor v2': {
     model: Monitor219234Curved,
@@ -359,7 +403,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_34in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_34in_no_stand-transformed.glb',
   },
   '21:9 34" Curved Monitor v2 with Stand': {
     model: Monitor219234CurvedStand,
@@ -367,7 +412,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_34in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_34in-transformed.glb',
   },
   '21:9 34" Curved Monitor with Stand': {
     model: Monitor21934CurvedStand,
@@ -375,21 +421,23 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_34in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_34in-transformed.glb',
   },
   '21:9 34" Monitor v2': {
     model: Monitor219234,
     category: 'displays',
     subcategory: '21:9',
     stand: false,
-    glbPath: '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_34in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_34in_no_stand-transformed.glb',
   },
   '21:9 34" Monitor v2 with Stand': {
     model: Monitor219234Stand,
     category: 'displays',
     subcategory: '21:9',
     stand: true,
-    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_34in-transformed.glb'
+    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_34in-transformed.glb',
   },
   '21:9 38" Curved Monitor': {
     model: Monitor21938Curved,
@@ -397,7 +445,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_38in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_38in_no_stand-transformed.glb',
   },
   '21:9 38" Curved Monitor v2': {
     model: Monitor219238Curved,
@@ -405,7 +454,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_38in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_38in_no_stand-transformed.glb',
   },
   '21:9 38" Curved Monitor v2 with Stand': {
     model: Monitor219238CurvedStand,
@@ -413,7 +463,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_38in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_38in-transformed.glb',
   },
   '21:9 38" Curved Monitor with Stand': {
     model: Monitor21938CurvedStand,
@@ -421,7 +472,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_38in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_38in-transformed.glb',
   },
   '32:9 43.4" Curved Monitor': {
     model: Monitor32943dot4Curved,
@@ -429,7 +481,8 @@ export const modelComponents: {
     subcategory: '32:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/32_9_monitors_no_stand/32_9_monitor_curved_43.4in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/32_9_monitors_no_stand/32_9_monitor_curved_43.4in_no_stand-transformed.glb',
   },
   '32:9 43.4" Curved Monitor with Stand': {
     model: Monitor32943dot4CurvedStand,
@@ -437,7 +490,8 @@ export const modelComponents: {
     subcategory: '32:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/32_9_monitors/32_9_monitor_curved_43.4in-transformed.glb'
+    glbPath:
+      '/glb/displays/32_9_monitors/32_9_monitor_curved_43.4in-transformed.glb',
   },
   '32:9 49" Curved Monitor': {
     model: Monitor32949Curved,
@@ -445,7 +499,8 @@ export const modelComponents: {
     subcategory: '32:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/32_9_monitors_no_stand/32_9_monitor_curved_49in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/32_9_monitors_no_stand/32_9_monitor_curved_49in_no_stand-transformed.glb',
   },
   '32:9 49" Curved Monitor with Stand': {
     model: Monitor32949CurvedStand,
@@ -453,48 +508,49 @@ export const modelComponents: {
     subcategory: '32:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/32_9_monitors/32_9_monitor_curved_49in-transformed.glb'
+    glbPath:
+      '/glb/displays/32_9_monitors/32_9_monitor_curved_49in-transformed.glb',
   },
   'tv:1 43" Monitor with Stand': {
     model: Monitortv143Stand,
     category: 'displays',
     subcategory: 'tv:1',
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_43in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_43in-transformed.glb',
   },
   'tv:1 49" Monitor with Stand': {
     model: Monitortv149Stand,
     category: 'displays',
     subcategory: 'tv:1',
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_49in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_49in-transformed.glb',
   },
   'tv:1 55" Monitor with Stand': {
     model: Monitortv155Stand,
     category: 'displays',
     subcategory: 'tv:1',
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_55in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_55in-transformed.glb',
   },
   'tv:1 65" Monitor with Stand': {
     model: Monitortv165Stand,
     category: 'displays',
     subcategory: 'tv:1',
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_65in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_65in-transformed.glb',
   },
   'tv:1 75" Monitor with Stand': {
     model: Monitortv175Stand,
     category: 'displays',
     subcategory: 'tv:1',
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_75in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_75in-transformed.glb',
   },
   'tv:1 85" Monitor with Stand': {
     model: Monitortv185Stand,
     category: 'displays',
     subcategory: 'tv:1',
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_85in-transformed.glb'
-  }
+    glbPath: '/glb/displays/tv/tv_1_85in-transformed.glb',
+  },
 };
