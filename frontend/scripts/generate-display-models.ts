@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-// TODO: make this generic and reuse it for every other model type
+// keeping this for now until generic scripts are fully tested
 interface ProcessingResult {
   successes: string[];
   skips: string[];

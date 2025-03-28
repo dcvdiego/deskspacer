@@ -74,14 +74,14 @@ export const modelComponents: {
     model: StandingDesk1,
     category: 'desks',
     subcategory: 'Standing Desks',
-    glbPath: '',
+    glbPath: '/glb/desks/standing-desks/',
   },
 
   'Standing Desk 2': {
     model: StandingDesk2,
     category: 'desks',
     subcategory: 'Standing Desks',
-    glbPath: '',
+    glbPath: '/glb/desks/standing-desks/',
   },
   '16:9 22" Monitor v3': {
     model: Monitor169322,
