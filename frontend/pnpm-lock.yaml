@@ -16,13 +16,13 @@ importers:
         version: 3.13.4(@types/react@19.0.10)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mui/icons-material':
         specifier: ^6.4.7
-        version: 6.4.7(@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@types/react@19.0.10)(react@18.3.1)
+        version: 6.4.7(@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@types/react@19.0.10)(react@18.3.1)
       '@mui/material':
         specifier: ^6.4.7
-        version: 6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        version: 6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@mui/styled-engine-sc':
         specifier: ^6.4.6
-        version: 6.4.6(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        version: 6.4.6(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@react-three/drei':
         specifier: ^9.122.0
         version: 9.122.0(@react-three/fiber@8.17.14(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(@types/react@19.0.10)(@types/three@0.173.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0)(use-sync-external-store@1.4.0(react@18.3.1))
@@ -48,8 +48,8 @@ importers:
         specifier: ^2.0.6
         version: 2.0.6
       styled-components:
-        specifier: ^6.1.15
-        version: 6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^6.1.16
+        version: 6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       three:
         specifier: ^0.173.0
         version: 0.173.0
@@ -661,6 +661,12 @@ packages:
 
   '@mui/styled-engine-sc@6.4.6':
     resolution: {integrity: sha512-3TquinzjLFva4Q5WAJcKlqDxPlR+Xe8D2/IJ6PWzHQy/MtIwwZC0AGfhQe0Ano/T/tTVh/3LgbbeF5bY1OwYYg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      styled-components: ^6.0.0
+
+  '@mui/styled-engine-sc@7.0.1':
+    resolution: {integrity: sha512-oiVfoWkcKYR8OG9PM2YKnPkjpLpn4Fqz0mI33K1TQhWdOUaA6rH02Oi56ZdUf7CjJpE5Nzbx/Hu3o530TwhTmA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       styled-components: ^6.0.0
@@ -1653,11 +1659,6 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanoid@3.3.8:
-    resolution: {integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -1880,8 +1881,8 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
-  styled-components@6.1.15:
-    resolution: {integrity: sha512-PpOTEztW87Ua2xbmLa7yssjNyUF9vE7wdldRfn1I2E6RTkqknkBYpj771OxM/xrvRGinLy2oysa7GOd7NcZZIA==}
+  styled-components@6.1.16:
+    resolution: {integrity: sha512-KpWB6ORAWGmbWM10cDJfEV6sXc/uVkkkQV3SLwTNQ/E/PqWgNHIoMSLh1Lnk2FkB9+JHK7uuMq1i+9ArxDD7iQ==}
     engines: {node: '>= 16'}
     peerDependencies:
       react: '>= 16.8.0'
@@ -1949,6 +1950,9 @@ packages:
 
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
+
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
   tsx@4.19.3:
     resolution: {integrity: sha512-4H8vUNGNjQ4V2EOoGw005+c+dGuPSnhpPBPHBtsZdGZBk/iJb4kguGlPWaZTZ3q5nMtFOEsY0nRDlh9PJyd6SQ==}
@@ -2497,19 +2501,19 @@ snapshots:
 
   '@mui/core-downloads-tracker@6.4.7': {}
 
-  '@mui/icons-material@6.4.7(@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@types/react@19.0.10)(react@18.3.1)':
+  '@mui/icons-material@6.4.7(@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@types/react@19.0.10)(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.26.10
-      '@mui/material': 6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@mui/material': 6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       react: 18.3.1
     optionalDependencies:
       '@types/react': 19.0.10
 
-  '@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
       '@babel/runtime': 7.26.9
       '@mui/core-downloads-tracker': 6.4.7
-      '@mui/system': 6.4.7(@types/react@19.0.10)(react@18.3.1)(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@mui/system': 6.4.7(@types/react@19.0.10)(react@18.3.1)(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@mui/types': 7.2.21(@types/react@19.0.10)
       '@mui/utils': 6.4.6(@types/react@19.0.10)(react@18.3.1)
       '@popperjs/core': 2.11.8
@@ -2535,20 +2539,29 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.10
 
-  '@mui/styled-engine-sc@6.4.6(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@mui/styled-engine-sc@6.4.6(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
       '@babel/runtime': 7.26.9
       '@types/hoist-non-react-statics': 3.3.6
       csstype: 3.1.3
       hoist-non-react-statics: 3.3.2
       prop-types: 15.8.1
-      styled-components: 6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      styled-components: 6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
-  '@mui/system@6.4.7(@types/react@19.0.10)(react@18.3.1)(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@mui/styled-engine-sc@7.0.1(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+    dependencies:
+      '@babel/runtime': 7.26.10
+      '@types/hoist-non-react-statics': 3.3.6
+      csstype: 3.1.3
+      hoist-non-react-statics: 3.3.2
+      prop-types: 15.8.1
+      styled-components: 6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+
+  '@mui/system@6.4.7(@types/react@19.0.10)(react@18.3.1)(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
       '@babel/runtime': 7.26.10
       '@mui/private-theming': 6.4.6(@types/react@19.0.10)(react@18.3.1)
-      '@mui/styled-engine': '@mui/styled-engine-sc@6.4.6(styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1))'
+      '@mui/styled-engine': '@mui/styled-engine-sc@7.0.1(styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1))'
       '@mui/types': 7.2.21(@types/react@19.0.10)
       '@mui/utils': 6.4.6(@types/react@19.0.10)(react@18.3.1)
       clsx: 2.1.1
@@ -3042,7 +3055,7 @@ snapshots:
 
   '@wry/context@0.7.4':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@wry/equality@0.5.7':
     dependencies:
@@ -3180,7 +3193,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   draco3d@1.5.7: {}
 
@@ -3492,7 +3505,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   lru-cache@5.1.1:
     dependencies:
@@ -3538,14 +3551,12 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  nanoid@3.3.8: {}
-
   natural-compare@1.4.0: {}
 
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   node-releases@2.0.19: {}
 
@@ -3602,7 +3613,7 @@ snapshots:
 
   postcss@8.4.49:
     dependencies:
-      nanoid: 3.3.8
+      nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -3743,7 +3754,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   source-map-js@1.2.1: {}
 
@@ -3758,7 +3769,7 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  styled-components@6.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  styled-components@6.1.16(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@emotion/is-prop-valid': 1.2.2
       '@emotion/unitless': 0.8.1
@@ -3829,6 +3840,8 @@ snapshots:
       tslib: 2.6.2
 
   tslib@2.6.2: {}
+
+  tslib@2.8.1: {}
 
   tsx@4.19.3:
     dependencies:
