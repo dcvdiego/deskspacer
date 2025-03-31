@@ -124,12 +124,17 @@ const findGLBFiles = (dir: string): string[] => {
   fs.readdirSync(dir, { withFileTypes: true }).forEach((dirent) => {
     const fullPath = path.join(dir, dirent.name);
 
+    // Skip directories that start with IGNORE
     if (dirent.isDirectory()) {
+      if (dirent.name.startsWith('IGNORE')) {
+        console.log(`⏩ Skipping IGNORE directory: ${dirent.name}`);
+        return;
+      }
       results.push(...findGLBFiles(fullPath));
     } else if (
       dirent.isFile() &&
       path.extname(fullPath) === '.glb' &&
-      !dirent.name.includes('-transformed') // Ignore already transformed files
+      !dirent.name.includes('-transformed')
     ) {
       results.push(fullPath);
     }

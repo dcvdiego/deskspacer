@@ -1,5 +1,22 @@
 import { ModelComponentType } from '../../types/ModelTypes';
 
+import DeskAlex0_60Dx2Wx0_73HDefault from './desks/alex_desks/DeskAlex0_60Dx2Wx0_73HDefault';
+import DeskAlex0_79Dx1_70Wx0_73HDefault from './desks/alex_desks/DeskAlex0_79Dx1_70Wx0_73HDefault';
+import DeskAlex1_02Dx1_55Wx0_73HDefault from './desks/alex_desks/DeskAlex1_02Dx1_55Wx0_73HDefault';
+import DeskL_shapedDefaultleft from './desks/L_shaped_desks/DeskL_shapedDefaultleft';
+import DeskL_shapedDefaultright from './desks/L_shaped_desks/DeskL_shapedDefaultright';
+import DeskLinnmon0_61Dx1Wx0_77HDefault from './desks/linnmon_desks/DeskLinnmon0_61Dx1Wx0_77HDefault';
+import DeskLinnmon0_61Dx1_20Wx0_77HDefault from './desks/linnmon_desks/DeskLinnmon0_61Dx1_20Wx0_77HDefault';
+import DeskLinnmon0_61Dx1_50Wx0_77HDefault from './desks/linnmon_desks/DeskLinnmon0_61Dx1_50Wx0_77HDefault';
+import DeskMalmDark_ash from './desks/malm_desks/DeskMalmDark_ash';
+import DeskMalmDefault from './desks/malm_desks/DeskMalmDefault';
+import DeskOutputDefault from './desks/output_platform_desks/DeskOutputDefault';
+import DeskRegular75_95Dx152_15Wx79_76HDefault from './desks/regular_desks/DeskRegular75_95Dx152_15Wx79_76HDefault';
+import DeskRegular75_95Dx152_15Wx79_76HV2Default from './desks/regular_desks/DeskRegular75_95Dx152_15Wx79_76HV2Default';
+import DeskStanding60_45Dx131_32Wx76_96HDefault from './desks/standing_desks/DeskStanding60_45Dx131_32Wx76_96HDefault';
+import DeskStanding72_14Dx139_70Wx75_44HV2Default from './desks/standing_desks/DeskStanding72_14Dx139_70Wx75_44HV2Default';
+import DeskStandingV2Default from './desks/standing_desks/DeskStandingV2Default';
+import DeskStandingV2Light_wood from './desks/standing_desks/DeskStandingV2Light_wood';
 import Monitor169223dot5Curved from './displays/16_9_curved_monitors_no_stand/Monitor169223dot5Curved';
 import Monitor169223dot5CurvedStand from './displays/16_9_curved_monitors/Monitor169223dot5CurvedStand';
 import Monitor169227Curved from './displays/16_9_curved_monitors_no_stand/Monitor169227Curved';
@@ -57,36 +74,21 @@ import Monitortv155Stand from './displays/tv/Monitortv155Stand';
 import Monitortv165Stand from './displays/tv/Monitortv165Stand';
 import Monitortv175Stand from './displays/tv/Monitortv175Stand';
 import Monitortv185Stand from './displays/tv/Monitortv185Stand';
-import StandingDesk1 from './desks/Standing_Desks/StandingDesk1';
-import StandingDesk2 from './desks/Standing_Desks/StandingDesk2';
 
 export const modelComponents: {
   [key: string]: {
     model: ModelComponentType;
     category: string;
     subcategory: string;
-    curved?: number;
-    stand?: boolean;
+    [key: string]: any;
     glbPath: string;
   };
 } = {
-  'Standing Desk 1': {
-    model: StandingDesk1,
-    category: 'desks',
-    subcategory: 'Standing Desks',
-    glbPath: '/glb/desks/standing-desks/',
-  },
-
-  'Standing Desk 2': {
-    model: StandingDesk2,
-    category: 'desks',
-    subcategory: 'Standing Desks',
-    glbPath: '/glb/desks/standing-desks/',
-  },
   '16:9 22" Monitor v3': {
     model: Monitor169322,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_22in_no_stand-transformed.glb',
@@ -95,6 +97,7 @@ export const modelComponents: {
     model: Monitor169322Stand,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_22in-transformed.glb',
   },
@@ -120,6 +123,7 @@ export const modelComponents: {
     model: Monitor169323,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_23in_no_stand-transformed.glb',
@@ -128,6 +132,7 @@ export const modelComponents: {
     model: Monitor169323Stand,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_23in-transformed.glb',
   },
@@ -135,6 +140,7 @@ export const modelComponents: {
     model: Monitor169324,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_24in_no_stand-transformed.glb',
@@ -143,6 +149,7 @@ export const modelComponents: {
     model: Monitor169324Stand,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_24in-transformed.glb',
   },
@@ -168,6 +175,7 @@ export const modelComponents: {
     model: Monitor169325,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_25in_no_stand-transformed.glb',
@@ -176,6 +184,7 @@ export const modelComponents: {
     model: Monitor169325Stand,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_25in-transformed.glb',
   },
@@ -219,6 +228,7 @@ export const modelComponents: {
     model: Monitor169327,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_27in_no_stand-transformed.glb',
@@ -227,6 +237,7 @@ export const modelComponents: {
     model: Monitor169327Stand,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_27in-transformed.glb',
   },
@@ -234,6 +245,7 @@ export const modelComponents: {
     model: Monitor169328,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_28in_no_stand-transformed.glb',
@@ -242,6 +254,7 @@ export const modelComponents: {
     model: Monitor169328Stand,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_28in-transformed.glb',
   },
@@ -285,6 +298,7 @@ export const modelComponents: {
     model: Monitor169331dot5,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_31.5in_no_stand-transformed.glb',
@@ -293,6 +307,7 @@ export const modelComponents: {
     model: Monitor169331dot5Stand,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: true,
     glbPath:
       '/glb/displays/16_9_monitors/16_9_monitor_3_31.5in-transformed.glb',
@@ -319,6 +334,7 @@ export const modelComponents: {
     model: Monitor169443Stand,
     category: 'displays',
     subcategory: '16:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/16_9_monitors/16_9_monitor_4_43in-transformed.glb',
   },
@@ -326,6 +342,7 @@ export const modelComponents: {
     model: Monitor219225,
     category: 'displays',
     subcategory: '21:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_25in_no_stand-transformed.glb',
@@ -334,6 +351,7 @@ export const modelComponents: {
     model: Monitor219225Stand,
     category: 'displays',
     subcategory: '21:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_25in-transformed.glb',
   },
@@ -341,6 +359,7 @@ export const modelComponents: {
     model: Monitor219229,
     category: 'displays',
     subcategory: '21:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_29in_no_stand-transformed.glb',
@@ -349,6 +368,7 @@ export const modelComponents: {
     model: Monitor219229Stand,
     category: 'displays',
     subcategory: '21:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_29in-transformed.glb',
   },
@@ -428,6 +448,7 @@ export const modelComponents: {
     model: Monitor219234,
     category: 'displays',
     subcategory: '21:9',
+    curved: 0,
     stand: false,
     glbPath:
       '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_34in_no_stand-transformed.glb',
@@ -436,6 +457,7 @@ export const modelComponents: {
     model: Monitor219234Stand,
     category: 'displays',
     subcategory: '21:9',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_34in-transformed.glb',
   },
@@ -511,10 +533,184 @@ export const modelComponents: {
     glbPath:
       '/glb/displays/32_9_monitors/32_9_monitor_curved_49in-transformed.glb',
   },
+  'Alex Desk 0.6m D × 2m W × 0.73m H default': {
+    model: DeskAlex0_60Dx2Wx0_73HDefault,
+    category: 'desks',
+    subcategory: 'alex',
+    dimensions: { depth: 0.6, width: 2, height: 0.73 },
+    material: 'default',
+    version: 0,
+    orientation: 'standard',
+    glbPath: '/glb/desks/alex_desks/alex_desk_0.6Dx2Wx0.73H-transformed.glb',
+  },
+  'Alex Desk 0.79m D × 1.7m W × 0.73m H default': {
+    model: DeskAlex0_79Dx1_70Wx0_73HDefault,
+    category: 'desks',
+    subcategory: 'alex',
+    dimensions: { depth: 0.79, width: 1.7, height: 0.73 },
+    material: 'default',
+    version: 0,
+    orientation: 'standard',
+    glbPath: '/glb/desks/alex_desks/alex_desk_0.79Dx1.7Wx0.73H-transformed.glb',
+  },
+  'Alex Desk 1.02m D × 1.55m W × 0.73m H default': {
+    model: DeskAlex1_02Dx1_55Wx0_73HDefault,
+    category: 'desks',
+    subcategory: 'alex',
+    dimensions: { depth: 1.02, width: 1.55, height: 0.73 },
+    material: 'default',
+    version: 1,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/alex_desks/alex_desk_1.02Dx1.55Wx0.73H-transformed.glb',
+  },
+  'L_shaped Desk default left': {
+    model: DeskL_shapedDefaultleft,
+    category: 'desks',
+    subcategory: 'l_shaped',
+    material: 'default',
+    version: 1,
+    orientation: 'left',
+    glbPath: '/glb/desks/L_shaped_desks/L_shaped_desk_left-transformed.glb',
+  },
+  'L_shaped Desk default right': {
+    model: DeskL_shapedDefaultright,
+    category: 'desks',
+    subcategory: 'l_shaped',
+    material: 'default',
+    version: 1,
+    orientation: 'right',
+    glbPath: '/glb/desks/L_shaped_desks/L_shaped_desk_right-transformed.glb',
+  },
+  'Linnmon Desk 0.61m D × 1.2m W × 0.77m H default': {
+    model: DeskLinnmon0_61Dx1_20Wx0_77HDefault,
+    category: 'desks',
+    subcategory: 'linnmon',
+    dimensions: { depth: 0.61, width: 1.2, height: 0.77 },
+    material: 'default',
+    version: 0,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1.2Wx0.77H-transformed.glb',
+  },
+  'Linnmon Desk 0.61m D × 1.5m W × 0.77m H default': {
+    model: DeskLinnmon0_61Dx1_50Wx0_77HDefault,
+    category: 'desks',
+    subcategory: 'linnmon',
+    dimensions: { depth: 0.61, width: 1.5, height: 0.77 },
+    material: 'default',
+    version: 0,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1.5Wx0.77H-transformed.glb',
+  },
+  'Linnmon Desk 0.61m D × 1m W × 0.77m H default': {
+    model: DeskLinnmon0_61Dx1Wx0_77HDefault,
+    category: 'desks',
+    subcategory: 'linnmon',
+    dimensions: { depth: 0.61, width: 1, height: 0.77 },
+    material: 'default',
+    version: 0,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1Wx0.77H-transformed.glb',
+  },
+  'Malm Desk dark ash': {
+    model: DeskMalmDark_ash,
+    category: 'desks',
+    subcategory: 'malm',
+    material: 'dark ash',
+    version: 1,
+    orientation: 'standard',
+    glbPath: '/glb/desks/malm_desks/malm_desk_dark-ash-transformed.glb',
+  },
+  'Malm Desk default': {
+    model: DeskMalmDefault,
+    category: 'desks',
+    subcategory: 'malm',
+    material: 'default',
+    version: 1,
+    orientation: 'standard',
+    glbPath: '/glb/desks/malm_desks/malm_desk_white-transformed.glb',
+  },
+  'Output Desk default': {
+    model: DeskOutputDefault,
+    category: 'desks',
+    subcategory: 'output',
+    material: 'default',
+    version: 1,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/output_platform_desks/output_platform_desk-transformed.glb',
+  },
+  'Regular Desk 75.95m D × 152.15m W × 79.76m H default': {
+    model: DeskRegular75_95Dx152_15Wx79_76HDefault,
+    category: 'desks',
+    subcategory: 'regular',
+    dimensions: { depth: 75.95, width: 152.15, height: 79.76 },
+    material: 'default',
+    version: 1,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/regular_desks/regular_desk_1_75.95Dx152.15Wx79.76H-transformed.glb',
+  },
+  'Regular Desk 75.95m D × 152.15m W × 79.76m H v2 default': {
+    model: DeskRegular75_95Dx152_15Wx79_76HV2Default,
+    category: 'desks',
+    subcategory: 'regular',
+    dimensions: { depth: 75.95, width: 152.15, height: 79.76 },
+    material: 'default',
+    version: 2,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/regular_desks/regular_desk_2_75.95Dx152.15Wx79.76H-transformed.glb',
+  },
+  'Standing Desk 60.45m D × 131.32m W × 76.96m H default': {
+    model: DeskStanding60_45Dx131_32Wx76_96HDefault,
+    category: 'desks',
+    subcategory: 'standing',
+    dimensions: { depth: 60.45, width: 131.32, height: 76.96 },
+    material: 'default',
+    version: 1,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/standing_desks/standing_desk_1_60.45Dx131.32Wx76.96H-transformed.glb',
+  },
+  'Standing Desk 72.14m D × 139.7m W × 75.44m H v2 default': {
+    model: DeskStanding72_14Dx139_70Wx75_44HV2Default,
+    category: 'desks',
+    subcategory: 'standing',
+    dimensions: { depth: 72.14, width: 139.7, height: 75.44 },
+    material: 'default',
+    version: 2,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/standing_desks/standing_desk_2_72.14Dx139.7Wx75.44H-transformed.glb',
+  },
+  'Standing Desk v2 default': {
+    model: DeskStandingV2Default,
+    category: 'desks',
+    subcategory: 'standing',
+    material: 'default',
+    version: 2,
+    orientation: 'standard',
+    glbPath: '/glb/desks/standing_desks/standing_desk_2_white-transformed.glb',
+  },
+  'Standing Desk v2 light wood': {
+    model: DeskStandingV2Light_wood,
+    category: 'desks',
+    subcategory: 'standing',
+    material: 'light wood',
+    version: 2,
+    orientation: 'standard',
+    glbPath:
+      '/glb/desks/standing_desks/standing_desk_2_light-wood-transformed.glb',
+  },
   'tv:1 43" Monitor with Stand': {
     model: Monitortv143Stand,
     category: 'displays',
     subcategory: 'tv:1',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/tv/tv_1_43in-transformed.glb',
   },
@@ -522,6 +718,7 @@ export const modelComponents: {
     model: Monitortv149Stand,
     category: 'displays',
     subcategory: 'tv:1',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/tv/tv_1_49in-transformed.glb',
   },
@@ -529,6 +726,7 @@ export const modelComponents: {
     model: Monitortv155Stand,
     category: 'displays',
     subcategory: 'tv:1',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/tv/tv_1_55in-transformed.glb',
   },
@@ -536,6 +734,7 @@ export const modelComponents: {
     model: Monitortv165Stand,
     category: 'displays',
     subcategory: 'tv:1',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/tv/tv_1_65in-transformed.glb',
   },
@@ -543,6 +742,7 @@ export const modelComponents: {
     model: Monitortv175Stand,
     category: 'displays',
     subcategory: 'tv:1',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/tv/tv_1_75in-transformed.glb',
   },
@@ -550,6 +750,7 @@ export const modelComponents: {
     model: Monitortv185Stand,
     category: 'displays',
     subcategory: 'tv:1',
+    curved: 0,
     stand: true,
     glbPath: '/glb/displays/tv/tv_1_85in-transformed.glb',
   },

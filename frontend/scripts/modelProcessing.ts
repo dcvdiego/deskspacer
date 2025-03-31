@@ -51,6 +51,11 @@ export const findGLBFiles = (dir: string): string[] => {
     const fullPath = path.join(dir, dirent.name);
 
     if (dirent.isDirectory()) {
+      // Skip directories starting with IGNORE (case-sensitive)
+      if (dirent.name.startsWith('IGNORE')) {
+        console.log(`⏩ Skipping IGNORE directory: ${dirent.name}`);
+        return;
+      }
       results.push(...findGLBFiles(fullPath));
     } else if (
       dirent.isFile() &&
@@ -211,6 +216,10 @@ export const updateModelMapping = (
             if (typeof value === 'string') return `${key}: '${value}'`;
             if (typeof value === 'boolean' || typeof value === 'number')
               return `${key}: ${value}`;
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
+              // Serialize object values (like dimensions) properly.
+              return `${key}: ${JSON.stringify(value)}`;
+            }
             return `${key}: ${value}`;
           }),
         `glbPath: '${entry.glbPath}'`,

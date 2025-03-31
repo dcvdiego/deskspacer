@@ -16,7 +16,7 @@ export const quaternionsAreEqual = (
   q2: THREE.Quaternion
 ) => q1.toArray().toString() === q2.toArray().toString();
 export const NUKE_TRANSFORMED_GLB = () => {
-  const directory = path.join(process.cwd(), 'public/glb/displays');
+  const directory = path.join(process.cwd(), 'public/glb/desks');
   let deletedCount = 0;
 
   const deleteTransformedFiles = (dir: string) => {
