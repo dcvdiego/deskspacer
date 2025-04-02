@@ -1,4 +1,4 @@
-import { PivotControls } from '@react-three/drei';
+import { Helper, PivotControls } from '@react-three/drei';
 import { Select } from '@react-three/postprocessing';
 // import { Select as DreiSelect } from '@react-three/drei';
 import { useEffect, useRef, useState } from 'react';
@@ -17,7 +17,11 @@ const TransformModel = ({ ...props }) => {
     name,
     orbit,
     children,
-    // boundsA,
+    minBoundsZ,
+    maxBoundsZ,
+    minBoundsX,
+    maxBoundsX,
+    minBoundsY,
     enableY,
     called,
     reset,
@@ -31,6 +35,7 @@ const TransformModel = ({ ...props }) => {
     if (object.name !== '') return object.name;
     return getObjectWithName(object.parent);
   };
+  const [oldPosition, setOldPosition] = useState<any>();
   const ModelRef = useRef<THREE.Group<THREE.Object3DEventMap>>(null);
   const GroupRef = useRef<THREE.Group<THREE.Object3DEventMap>>(null);
   const updateModelPosition = () => {
@@ -41,7 +46,33 @@ const TransformModel = ({ ...props }) => {
     ModelRef.current.getWorldQuaternion(rotation);
     updateModel(isSelected, { position, rotation });
   };
+
   const model = useModelStore.getState().models.find((m) => m.id === name);
+  const [minZ, setMinZ] = useState<number>(
+    model?.minBoundsZ && model.minBoundsZ > -Infinity
+      ? model.minBoundsZ
+      : -Infinity
+  );
+  const [maxZ, setMaxZ] = useState<number>(
+    model?.maxBoundsZ && model.maxBoundsZ < Infinity
+      ? model.maxBoundsZ
+      : Infinity
+  );
+  const [minX, setMinX] = useState<number>(
+    model?.minBoundsX && model.minBoundsX > -Infinity
+      ? model.minBoundsX
+      : -Infinity
+  );
+  const [maxX, setMaxX] = useState<number>(
+    model?.maxBoundsX && model.maxBoundsX < Infinity
+      ? model.maxBoundsX
+      : Infinity
+  );
+  const [minY, setMinY] = useState<number>(
+    model?.minBoundsY && model.minBoundsY > -Infinity
+      ? model.minBoundsY
+      : -Infinity
+  );
   useEffect(() => {
     if (model && ModelRef.current && GroupRef.current && !initialized) {
       const savedPosition = model.position;
@@ -60,27 +91,36 @@ const TransformModel = ({ ...props }) => {
     }
   }, [ModelRef, model, initialized, GroupRef]);
 
-  //   TODO: figure out collision with floor/walls
-  // https://codepen.io/boytchev/pen/oNVoQwE and https://discourse.threejs.org/t/how-to-stop-dragging-of-an-object-when-collision-detected/60765/11
-  //   const oldPosition = new THREE.Vector3();
-
-  //   const boundsB = new THREE.Box3();
-  //   const checkForCollision = () => {
-  //     if (!ModelRef.current) return;
-  //     ModelRef.current.getWorldPosition(oldPosition);
-  //     // ModelRef.current.geometry.computeBoundingBox()
-  //     boundsB.setFromObject(ModelRef.current);
-  //     if (boundsA.intersectsBox(boundsB)) {
-  //       ModelRef.current.position.set(
-  //         oldPosition.x,
-  //         oldPosition.y,
-  //         oldPosition.z
-  //       );
-  //     } else {
-  //       ModelRef.current.getWorldPosition(oldPosition);
-  //     }
-  //     ModelRef.current.updateWorldMatrix(true, true);
-  //   };
+  const boundsModel = new THREE.Box3();
+  // TODO: Investigate bug where you have to drag once outside of collision before collision logic works
+  // rotation limits should take in place if in collision, tricky one... calculated per rotation no need to be saved
+  const checkForCollision = () => {
+    const oldPositionInit = new THREE.Vector3();
+    if (!GroupRef.current || !ModelRef.current) return;
+    ModelRef.current.getWorldPosition(oldPositionInit);
+    setOldPosition(oldPositionInit);
+    boundsModel.setFromObject(ModelRef.current);
+    if (minBoundsZ.intersectsBox(boundsModel)) {
+      setMinZ(oldPosition.z + 0.01);
+      updateModel(isSelected, { minBoundsZ: oldPosition.z + 0.01 });
+    } else if (maxBoundsZ.intersectsBox(boundsModel)) {
+      setMaxZ(oldPosition.z - 0.01);
+      updateModel(isSelected, { maxBoundsZ: oldPosition.z - 0.01 });
+    } else if (minBoundsY.intersectsBox(boundsModel)) {
+      setMinY(oldPosition.y + 0.01);
+      updateModel(isSelected, { minBoundsY: oldPosition.y + 0.01 });
+    } else if (minBoundsX.intersectsBox(boundsModel)) {
+      setMinX(oldPosition.x + 0.01);
+      updateModel(isSelected, { minBoundsX: oldPosition.x + 0.01 });
+    } else if (maxBoundsX.intersectsBox(boundsModel)) {
+      setMaxX(oldPosition.x - 0.01);
+      updateModel(isSelected, { maxBoundsX: oldPosition.x - 0.01 });
+    } else {
+      ModelRef.current.getWorldPosition(oldPositionInit);
+      setOldPosition(oldPositionInit);
+    }
+    ModelRef.current.updateWorldMatrix(true, true);
+  };
 
   //   use matrix to do a select all and be able to move multiple?
   const objPosition = new THREE.Vector3();
@@ -92,6 +132,7 @@ const TransformModel = ({ ...props }) => {
     <Select enabled={isHovered === name || isSelected === name} name={name}>
       <group ref={GroupRef}>
         <PivotControls
+          depthTest={false}
           scale={25}
           offset={[0, 20, 0]}
           rotation={[0, Math.PI / 2, 0]}
@@ -121,7 +162,7 @@ const TransformModel = ({ ...props }) => {
               setIsRotating(!hasPositionChanged && hasRotationChanged);
             }
 
-            // checkForCollision();
+            checkForCollision();
           }}
           onDragEnd={() => {
             setIsRotating(false);
@@ -130,9 +171,15 @@ const TransformModel = ({ ...props }) => {
           }}
           enabled={isSelected === name}
           translationLimits={[
-            undefined,
-            [savedPosition ? -savedPosition.y - 0.1 : 0.1, 100],
-            undefined,
+            savedPosition
+              ? [minX - savedPosition.x, maxX - savedPosition.x]
+              : [minX, maxX],
+            savedPosition
+              ? [minY - savedPosition.y, 100 - savedPosition.y]
+              : [minY, 100],
+            savedPosition
+              ? [minZ - savedPosition.z, maxZ - savedPosition.z]
+              : [minZ, maxZ],
           ]}
           annotations
           annotationsClass={isRotating ? undefined : 'annotations'}
@@ -151,6 +198,7 @@ const TransformModel = ({ ...props }) => {
             onPointerOver={(e) => setIsHovered(getObjectWithName(e.object))}
             onPointerOut={() => setIsHovered(null)}
           >
+            <Helper type={THREE.BoxHelper} args={['royalblue']} />
             {children}
           </group>
         </PivotControls>

@@ -123,6 +123,12 @@ function App() {
         0
       ),
       rotation: new THREE.Quaternion(0, -0.7071068, 0, 0.7071068),
+      minBoundsZ: -Infinity,
+      maxBoundsZ: Infinity,
+      minBoundsX: -Infinity,
+      maxBoundsX: Infinity,
+      minBoundsY: -Infinity,
+      maxBoundsY: Infinity,
     });
     await useModelStore.persist.rehydrate();
     if (addCalled) addReset();
@@ -336,10 +342,24 @@ function App() {
   };
 
   const sceneRef = useRef(null);
-  // const DefaultRoomRef = useRef<THREE.Mesh>(null);
+  const minBoundsZRef = useRef<THREE.Mesh>(null);
+  const maxBoundsZRef = useRef<THREE.Mesh>(null);
+  const minBoundsXRef = useRef<THREE.Mesh>(null);
+  const maxBoundsXRef = useRef<THREE.Mesh>(null);
+  const minBoundsYRef = useRef<THREE.Mesh>(null);
 
-  // const boundsA = new THREE.Box3();
-  // if (DefaultRoomRef.current) boundsA.setFromObject(DefaultRoomRef.current);
+  const minBoundsZ = new THREE.Box3();
+  const maxBoundsZ = new THREE.Box3();
+  const minBoundsX = new THREE.Box3();
+  const maxBoundsX = new THREE.Box3();
+  const minBoundsY = new THREE.Box3();
+  if (minBoundsZRef.current) minBoundsZ.setFromObject(minBoundsZRef.current);
+
+  if (minBoundsXRef.current) minBoundsX.setFromObject(minBoundsXRef.current);
+  if (minBoundsYRef.current) minBoundsY.setFromObject(minBoundsYRef.current);
+
+  if (maxBoundsZRef.current) maxBoundsZ.setFromObject(maxBoundsZRef.current);
+  if (maxBoundsXRef.current) maxBoundsX.setFromObject(maxBoundsXRef.current);
   // const StyledTransformModel = styled(TransformModel)`
   //   .annotations:after {
   //     content: 'm';
@@ -517,7 +537,9 @@ function App() {
                           ? 'Loading'
                           : addError
                           ? 'An error has occurred'
-                          : `http://localhost:5173/#${addStateData.addState.sharedState.id}`
+                          : `${import.meta.env.VITE_WEB_URL}/#${
+                              addStateData.addState.sharedState.id
+                            }`
                       }
                       slotProps={{
                         htmlInput: {
@@ -530,7 +552,9 @@ function App() {
                     <IconButton
                       onClick={() =>
                         navigator.clipboard.writeText(
-                          `http://localhost:5173/#${addStateData.addState.sharedState.id}`
+                          `${import.meta.env.VITE_WEB_URL}/#${
+                            addStateData.addState.sharedState.id
+                          }`
                         )
                       }
                     >
@@ -566,8 +590,29 @@ function App() {
                   onDecline={() => setDpr(1)}
                 />
                 <ambientLight />
+                <mesh position={[0, 20, -120]} ref={minBoundsZRef}>
+                  <boxGeometry args={[200, 155, 105]} />
+                  <meshPhongMaterial color="#ff0000" opacity={0} transparent />
+                </mesh>
+                <mesh position={[0, 20, 125]} ref={maxBoundsZRef}>
+                  <boxGeometry args={[200, 155, 105]} />
+                  <meshPhongMaterial color="#ff0000" opacity={0} transparent />
+                </mesh>
+                <mesh position={[148, 20, 0]} ref={minBoundsXRef}>
+                  <boxGeometry args={[100, 155, 150]} />
+                  <meshPhongMaterial color="#fbff00" opacity={0} transparent />
+                </mesh>
+                <mesh position={[-144.2, 20, 0]} ref={maxBoundsXRef}>
+                  <boxGeometry args={[100, 155, 150]} />
+                  <meshPhongMaterial color="#ff0000" opacity={0} transparent />
+                </mesh>
+                <mesh position={[0, -51.5, 0]} ref={minBoundsYRef}>
+                  <boxGeometry args={[200, 105, 225]} />
+                  <meshPhongMaterial color="#ff0000" opacity={0} transparent />
+                </mesh>
                 <group ref={sceneRef}>
                   <DefaultRoom position={[0, 0, 0]} />
+
                   <Selection>
                     <EffectComposer multisampling={0} autoClear={false}>
                       <Outline
@@ -594,7 +639,11 @@ function App() {
                             setIsSelected={setIsSelected}
                             key={modelName.id}
                             orbit={orbitRef}
-                            // boundsA={boundsA}
+                            minBoundsZ={minBoundsZ}
+                            maxBoundsZ={maxBoundsZ}
+                            minBoundsX={minBoundsX}
+                            maxBoundsX={maxBoundsX}
+                            minBoundsY={minBoundsY}
                             enableY={enableY}
                             called={addCalled}
                             reset={addReset}
@@ -630,6 +679,7 @@ function App() {
                     ref={orbitRef}
                     // minPolarAngle={Math.PI / 8}
                     maxPolarAngle={Math.PI / 2}
+                    maxDistance={400}
                   />
                 )}
               </Canvas>

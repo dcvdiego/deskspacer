@@ -209,15 +209,19 @@ export const updateModelMapping = (
         `category: '${entry.props.category}'`,
         `subcategory: '${entry.props.subcategory}'`,
         ...Object.entries(entry.props)
-          .filter(
-            ([key]) => !['model', 'category', 'subcategory'].includes(key)
-          )
+          .filter(([key, value]) => {
+            if (Array.isArray(value) && value.length === 0) return false;
+            return !['model', 'category', 'subcategory'].includes(key);
+          })
           .map(([key, value]) => {
+            if (Array.isArray(value)) {
+              return `${key}: ${JSON.stringify(value)}`;
+            }
             if (typeof value === 'string') return `${key}: '${value}'`;
-            if (typeof value === 'boolean' || typeof value === 'number')
+            if (typeof value === 'boolean' || typeof value === 'number') {
               return `${key}: ${value}`;
-            if (value && typeof value === 'object' && !Array.isArray(value)) {
-              // Serialize object values (like dimensions) properly.
+            }
+            if (typeof value === 'object' && value !== null) {
               return `${key}: ${JSON.stringify(value)}`;
             }
             return `${key}: ${value}`;

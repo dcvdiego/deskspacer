@@ -1,5 +1,6 @@
 import { NUKE_TRANSFORMED_GLB } from '../src/utils/utils';
 import { desksHandler } from './handlers/desksHandler';
+import { keyboardsHandler } from './handlers/keyboardsHandler';
 import { monitorsHandler } from './handlers/monitorsHandler';
 import {
   processModelFiles,
@@ -12,7 +13,7 @@ const MODEL_MAPPING_PATH = path.join(
   process.cwd(),
   'src/components/models/modelComponentsMapping.ts'
 );
-const modelHandlers = [monitorsHandler, desksHandler];
+const modelHandlers = [monitorsHandler, desksHandler, keyboardsHandler];
 const arg = process.argv[2];
 const selectedHandlers =
   arg && arg !== 'all'

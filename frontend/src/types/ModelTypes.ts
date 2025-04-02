@@ -20,5 +20,11 @@ export interface ModelInCanvas {
   id: string;
   position: THREE.Vector3;
   rotation: THREE.Quaternion;
+  minBoundsZ?: number;
+  maxBoundsZ?: number;
+  minBoundsY?: number;
+  maxBoundsY?: number;
+  minBoundsX?: number;
+  maxBoundsX?: number;
 }
 export type ModelComponentType = ComponentType<ModelComponentProps>;

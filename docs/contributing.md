@@ -71,7 +71,7 @@ pnpm i
 
 To run the development server (assuming you are in frontend folder):
 
-```bash
+```zsh
 pnpm dev
 ```
 
@@ -79,10 +79,16 @@ Keep in mind there are Prettier and ESLint rules in place. The only CI in place 
 
 ### Back-End Development
 
-Coming Soon
+Install [DOTNET](https://dotnet.microsoft.com/download)
+
+To run the development server (assuming you are in backend folder):
+
+```zsh
+dotnet watch
+```
 
 #### 3D Development Precautions
 
 Most if not all of these models were taken from the Deskspacing.com repository. A lot of work was put into these models, but the scale ratio is actually 1m=1in. I.e. if you import any model into a 3D software like Blender you will find a 25inch monitor is actually 25m instead! This means any new model that has accurate measurements need to be scaled by 39.3701 for it to be accurate in comparison to existing models. This is also the basis for the measurement tool.
 
-This MD is still work in progress, the app's features are my priority but if there is a bigger move to collaboration by the community I will make sure I keep this up to date.
+This MD is still work in progress, the app's features are my priority but when there is a bigger move to collaboration by the community I will make sure I keep this up to date.

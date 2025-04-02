@@ -38,6 +38,8 @@ Coming soon!
 
 - BYOC, upload your own component, add it to the environment! (Might have to involve user registration to store GLBs?)
 
+- XR Version tested in Quest devices
+
 ### Finished from roadmap
 
 - Share your creations a-la pcpartpicker
@@ -53,7 +55,7 @@ If you have any feedback, please feel free to start a Discussions thread
 
 ## Tech Stack
 
-**Client:** TypeScript, React, MUI, Three, React-Three Suite
+**Client:** TypeScript, React, MUI, Three.js, React-Three Suite
 
 **Server:** C#, .NET ASP Core, Hot Chocolate, GraphQL, PosgreSQL  
 
