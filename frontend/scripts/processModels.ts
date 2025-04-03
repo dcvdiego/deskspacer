@@ -1,7 +1,9 @@
-import { NUKE_TRANSFORMED_GLB } from '../src/utils/utils';
+// import { NUKE_TRANSFORMED_GLB } from '../src/utils/utils';
 import { desksHandler } from './handlers/desksHandler';
 import { keyboardsHandler } from './handlers/keyboardsHandler';
+import { miceHandler } from './handlers/miceHandler';
 import { monitorsHandler } from './handlers/monitorsHandler';
+import { mousepadsHandler } from './handlers/mousepadHandler';
 import {
   processModelFiles,
   updateModelMapping,
@@ -13,7 +15,13 @@ const MODEL_MAPPING_PATH = path.join(
   process.cwd(),
   'src/components/models/modelComponentsMapping.ts'
 );
-const modelHandlers = [monitorsHandler, desksHandler, keyboardsHandler];
+const modelHandlers = [
+  monitorsHandler,
+  desksHandler,
+  keyboardsHandler,
+  mousepadsHandler,
+  miceHandler,
+];
 const arg = process.argv[2];
 const selectedHandlers =
   arg && arg !== 'all'
@@ -26,7 +34,7 @@ if (selectedHandlers.length === 0) {
 }
 const run = () => {
   const allResults: ProcessingResult[] = [];
-  NUKE_TRANSFORMED_GLB();
+  // NUKE_TRANSFORMED_GLB();
   modelHandlers.forEach((handler) => {
     console.log(`\n🔨 Processing ${handler.category}...`);
     const result = processModelFiles(handler);

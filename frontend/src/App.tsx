@@ -22,6 +22,7 @@ import {
 } from '@react-three/postprocessing';
 import { Autocomplete, Button, Modal, TextField } from '@mui/material';
 import {
+  Bounds,
   Html,
   Loader,
   OrbitControls,
@@ -117,11 +118,7 @@ function App() {
     addModel({
       name: modelName,
       id: newId,
-      position: new THREE.Vector3(
-        0,
-        selectedCategory === 'displays' ? 20 : 0,
-        0
-      ),
+      position: new THREE.Vector3(0, selectedCategory !== 'desks' ? 20 : 0, 0),
       rotation: new THREE.Quaternion(0, -0.7071068, 0, 0.7071068),
       minBoundsZ: -Infinity,
       maxBoundsZ: Infinity,
@@ -486,9 +483,11 @@ function App() {
                   </ThemeProvider>
                 </Html>
                 {ModelPreview && (
-                  <PreviewModel cacheKey={selectedModel}>
-                    <ModelPreview />
-                  </PreviewModel>
+                  <Bounds fit clip observe margin={2}>
+                    <PreviewModel cacheKey={selectedModel}>
+                      <ModelPreview />
+                    </PreviewModel>
+                  </Bounds>
                 )}
               </Canvas>
             </StyledModal>

@@ -1,4 +1,4 @@
-import { Helper, PivotControls } from '@react-three/drei';
+import { PivotControls } from '@react-three/drei';
 import { Select } from '@react-three/postprocessing';
 // import { Select as DreiSelect } from '@react-three/drei';
 import { useEffect, useRef, useState } from 'react';
@@ -100,6 +100,7 @@ const TransformModel = ({ ...props }) => {
     ModelRef.current.getWorldPosition(oldPositionInit);
     setOldPosition(oldPositionInit);
     boundsModel.setFromObject(ModelRef.current);
+    //TODO: x bug: my guess as to why Z and Y works but X does not is the if else chain instead of checking if either are intersecting
     if (minBoundsZ.intersectsBox(boundsModel)) {
       setMinZ(oldPosition.z + 0.01);
       updateModel(isSelected, { minBoundsZ: oldPosition.z + 0.01 });
@@ -198,7 +199,6 @@ const TransformModel = ({ ...props }) => {
             onPointerOver={(e) => setIsHovered(getObjectWithName(e.object))}
             onPointerOut={() => setIsHovered(null)}
           >
-            <Helper type={THREE.BoxHelper} args={['royalblue']} />
             {children}
           </group>
         </PivotControls>

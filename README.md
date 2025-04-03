@@ -24,7 +24,7 @@ Please adhere to this project's `code of conduct`.
 
 ## Demo
 
-Coming soon!
+![Demo](https://github.com/dcvdiego/deskspacer/blob/main/frontend/public/DeskSpacerPreAlphaDemo.gif)
 
 ## Roadmap
 
