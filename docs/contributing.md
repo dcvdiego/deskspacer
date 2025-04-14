@@ -47,12 +47,12 @@ the action you have taken to solve it.
 The aim of this repository is:
 
 - To create a native-feeling cross-platform 3D application with a use-case, i.e. features need to have intent and they need to keep performance in mind
-- Keep it as simple as possible, reutilizing code wherever possible and complying with existing ESLint and Prettier rules
+- Keep it as simple as possible, re-utilizing code wherever possible and complying with existing ESLint and Prettier rules
 - It be a good example of the power of web engineering!
 
 ### Does it follow the contributor covenant
 
-This repository has a [code of conduct](codeofconduct.md), I will remove things that do not respect it.
+This repository has a [code of conduct](CODE_OF_CONDUCT.md), I will remove things that do not respect it.
 
 ## After forking/cloning the app
 
@@ -89,6 +89,6 @@ dotnet watch
 
 #### 3D Development Precautions
 
-Most if not all of these models were taken from the Deskspacing.com repository. A lot of work was put into these models, but the scale ratio is actually 1m=1in. I.e. if you import any model into a 3D software like Blender you will find a 25inch monitor is actually 25m instead! This means any new model that has accurate measurements need to be scaled by 39.3701 for it to be accurate in comparison to existing models. This is also the basis for the measurement tool.
+Most if not all of these models were taken from the Deskspacing.com repository. A lot of work was put into these models, but the scale ratio is actually 1m=1in. I.e. if you import any model into a 3D software like Blender you will find a 25inch monitor is actually 25m instead! This means any new model that has accurate measurements need to be scaled by 39.3701 for it to be accurate in comparison to existing models. This is also the basis for the measurement tool. Refactoring this would take a long time, however it could be automated using python scripts.
 
 This MD is still work in progress, the app's features are my priority but when there is a bigger move to collaboration by the community I will make sure I keep this up to date.

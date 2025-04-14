@@ -1,7 +1,7 @@
 # DeskSpacer
 
 ![Logo](https://github.com/dcvdiego/deskspacer/blob/main/frontend/public/logo.svg?raw=true)
-Inspired by [Deskspacing.com](https://deskspacing.com), deskspacer allows you to draft your dream setup before you actually get it!
+Inspired by [Deskspacing.com](https://deskspacing.com), DeskSpacer allows you to draft your dream setup before you actually get it!
 
 > [!WARNING]  
 > This project is currently under heavy development. An alpha release is in the works soon. Build at your own risk!
@@ -19,7 +19,7 @@ Inspired by [Deskspacing.com](https://deskspacing.com), deskspacer allows you to
 
 Contributions are always welcome!
 
-See [contributing](/docs/contributing.md) for ways to get started.
+See [contributing](/docs/CONTRIBUTING.md) for ways to get started.
 
 Please adhere to this project's `code of conduct`.
 
@@ -27,9 +27,11 @@ Please adhere to this project's `code of conduct`.
 
 ![Demo](https://github.com/dcvdiego/deskspacer/blob/main/frontend/public/DeskSpacerPreAlphaDemo.gif)
 
-## Roadmap
+## Road map
 
 - Default y-axis/relative to existing table positioning for peripherals
+
+- Locking certain models from transformation
 
 - For Alpha: Testing
 
@@ -39,7 +41,7 @@ Please adhere to this project's `code of conduct`.
 
 - Component Editor: Make your dream peripheral :D
 
-- Scaling to affect the right things for certain devices (y-axis for tables just the legs, xz tabletop, diagonally for monitors only, potentially snap to aspect ratio)
+- Scaling to affect the right things for certain devices (y-axis for tables just the legs, xz tabletop, diagonally only for monitors, potentially snap to aspect ratio)
 
 - BYOC, upload your own component, add it to the environment! (Might have to involve user registration to store GLBs?)
 
@@ -77,6 +79,6 @@ I'm a full stack developer wanting to give back to the open source community.
 [![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://diegochuman.com/experiences)
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/diegochuman)
 
-## Licence
+## License
 
 [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)

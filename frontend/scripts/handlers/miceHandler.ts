@@ -86,6 +86,8 @@ export const miceHandler: ModelHandler = {
       ...(parsedData.brand && { brand: parsedData.brand }),
       ...(parsedData.features.length > 0 && { features: parsedData.features }),
       ...(parsedData.dimensions && { dimensions: parsedData.dimensions }),
+      initPosition: [9, 31.2, -50],
+      initRotationY: parsedData.version === 1 ? Math.PI : Math.PI / 2,
     },
     glbPath: publicGlbPath,
   }),

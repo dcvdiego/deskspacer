@@ -14,7 +14,8 @@ export interface ModelEntry {
   props: {
     model: string;
     category: string;
-    subcategory: string;
+    initPosition: [number, number, number];
+    initRotationY: number;
     [key: string]: any; // Allow custom attributes
   };
   glbPath: string;
@@ -140,7 +141,7 @@ export const processModelFiles = (handler: ModelHandler): ProcessingResult => {
       }
 
       execSync(
-        `pnpm dlx gltfjsx ${glbPath} -t -E -T -o ${path.join(
+        `pnpm exec gltfjsx ${glbPath} -t -E -T -o ${path.join(
           outputDir,
           outputFilename
         )}.tsx`,
@@ -199,7 +200,9 @@ export const updateModelMapping = (
     .map((model) => {
       const entry = allEntries.find((e) => e.props.model === model)!;
       const subdirectory = entry.glbPath.split('/').slice(-2, -1)[0];
-      return `import ${model} from './${entry.props.category}/${subdirectory}/${model}';`;
+      return `import ${model} from './${entry.props.category}${
+        entry.props?.subcategory ? `/${subdirectory}` : ''
+      }/${model}';`;
     });
 
   const mappingContent = allEntries
@@ -207,11 +210,17 @@ export const updateModelMapping = (
       const props = [
         `model: ${entry.props.model}`,
         `category: '${entry.props.category}'`,
-        `subcategory: '${entry.props.subcategory}'`,
+        `initPosition: [${entry.props.initPosition.join(', ')}]`,
+        `initRotationY: ${entry.props.initRotationY}`,
         ...Object.entries(entry.props)
           .filter(([key, value]) => {
             if (Array.isArray(value) && value.length === 0) return false;
-            return !['model', 'category', 'subcategory'].includes(key);
+            return ![
+              'model',
+              'category',
+              'initPosition',
+              'initRotationY',
+            ].includes(key);
           })
           .map(([key, value]) => {
             if (Array.isArray(value)) {
@@ -235,7 +244,9 @@ export const updateModelMapping = (
     })
     .join(',\n');
 
-  const fileContent = `import { ModelComponentType } from '../../types/ModelTypes';
+  const fileContent = `
+  // This file has been auto-generated from scripts folder. DO NOT MANUALLY MODIFY.
+  import { ModelComponentType } from '../../types/ModelTypes';
   
 ${importsArray.join('\n')}
 
@@ -243,7 +254,8 @@ export const modelComponents: {
   [key: string]: {
     model: ModelComponentType;
     category: string;
-    subcategory: string;
+    initPosition: [number, number, number];
+    initRotationY: number;
     [key: string]: any;
     glbPath: string;
   };
@@ -253,6 +265,7 @@ ${mappingContent}
 
   fs.writeFileSync(MODEL_MAPPING_PATH, fileContent);
   console.log(
+    // TODO: newEntries is not accurate
     `\n📦 Updated model mapping with ${allEntries.length} entries (${newEntries.length} new)`
   );
 };
@@ -288,7 +301,8 @@ const getExistingMappingEntries = (
           props: {
             model: props.model,
             category: props.category,
-            subcategory: props.subcategory,
+            initPosition: props.initPosition,
+            initRotationY: props.initRotationY,
             ...props,
           },
           glbPath: props.glbPath,

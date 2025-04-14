@@ -1,5 +1,14 @@
 import path from 'path';
 import { ModelHandler } from '../modelProcessing';
+const keyboardPositionMap: Record<
+  string,
+  { position: [number, number, number]; rotation: number }
+> = {
+  '60': { position: [-3, 31.35, -50], rotation: Math.PI / 2 + Math.PI },
+  '75': { position: [-4, 31.35, -50], rotation: Math.PI / 2 + Math.PI },
+  tkl: { position: [-5, 31.35, -49], rotation: Math.PI / 2 + Math.PI },
+  full_size: { position: [-6, 31.35, -49], rotation: Math.PI / 2 + Math.PI },
+};
 
 export const keyboardsHandler: ModelHandler = {
   category: 'keyboards',
@@ -65,27 +74,38 @@ export const keyboardsHandler: ModelHandler = {
       .join('');
   },
 
-  generateModelEntry: (componentName, publicGlbPath, parsedData) => ({
-    name: [
-      `${parsedData.layout.replace('_', ' ')}% Keyboard`,
-      parsedData.version > 1 ? `v${parsedData.version}` : '',
-      parsedData.colors.join(' '),
-      parsedData.features.length > 0
-        ? `(${parsedData.features.join(', ')})`
-        : '',
-    ]
-      .filter(Boolean)
-      .join(' '),
-    props: {
-      model: componentName,
-      category: 'keyboards',
-      subcategory: parsedData.layout,
-      version: parsedData.version,
-      colors: parsedData.colors,
-      features: parsedData.features,
-    },
-    glbPath: publicGlbPath,
-  }),
+  generateModelEntry: (componentName, publicGlbPath, parsedData) => {
+    const getPosition = (parsedData: any): [number, number, number] => {
+      return keyboardPositionMap[parsedData.layout]?.position || [0, 0, 0];
+    };
+
+    const getRotationY = (parsedData: any): number => {
+      return keyboardPositionMap[parsedData.layout]?.rotation || 0;
+    };
+    return {
+      name: [
+        `${parsedData.layout.replace('_', ' ')}% Keyboard`,
+        parsedData.version > 1 ? `v${parsedData.version}` : '',
+        parsedData.colors.join(' '),
+        parsedData.features.length > 0
+          ? `(${parsedData.features.join(', ')})`
+          : '',
+      ]
+        .filter(Boolean)
+        .join(' '),
+      props: {
+        model: componentName,
+        category: 'keyboards',
+        subcategory: parsedData.layout,
+        version: parsedData.version,
+        colors: parsedData.colors,
+        features: parsedData.features,
+        initPosition: getPosition(parsedData),
+        initRotationY: getRotationY(parsedData),
+      },
+      glbPath: publicGlbPath,
+    };
+  },
 };
 
 // Shared helper function

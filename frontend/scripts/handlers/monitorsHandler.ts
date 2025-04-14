@@ -52,7 +52,19 @@ export const monitorsHandler: ModelHandler = {
     const baseName = `${subcategory} ${size}${curved ? ' Curved' : ''} Monitor`;
     const versionString = version > 1 ? ` v${version}` : '';
     const standString = stand ? ' with Stand' : '';
+    const getPosition = (): [number, number, number] => {
+      const baseY = stand ? 61.2 : 60;
+      const baseZ = curved && aspectRatio === '21_9' ? -59.5 : -57;
+      return [
+        0, // X position
+        baseY - 1.4, // Y position with standard adjustment
+        baseZ, // Z position
+      ];
+    };
 
+    const getRotationY = () => {
+      return curved ? Math.PI / 2 : Math.PI / 2 + Math.PI;
+    };
     return {
       name: `${baseName}${versionString}${standString}`,
       props: {
@@ -61,6 +73,8 @@ export const monitorsHandler: ModelHandler = {
         subcategory,
         curved: curved ? 1000 : 0,
         stand,
+        initPosition: getPosition(),
+        initRotationY: getRotationY(),
       },
       glbPath: publicGlbPath,
     };

@@ -327,23 +327,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <MissedVideoCall />
               </IconButton>
             </Tooltip>
-            <Tooltip title={'Reset Room'} arrow>
-              <IconButton onClick={() => setModels([])}>
-                <NoMeetingRoom />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={'Import custom file'} arrow>
-              <span>
-                <IconButton disabled>
-                  <Upload />
-                </IconButton>
-              </span>
-            </Tooltip>
-            <Tooltip title={'Download as glb'} arrow>
-              <IconButton onClick={() => handleExport()}>
-                <Download />
-              </IconButton>
-            </Tooltip>
+
             <Tooltip title={'Share'} arrow>
               <IconButton disabled={called} onClick={() => handleShare()}>
                 <Share />
@@ -394,6 +378,32 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => console.log('toggleRoom')}
               icon={<LocationOn />}
               text="Change room"
+            />
+          </ListItem>
+
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListToggleButton
+              open={open}
+              onClick={() => setModels([])}
+              icon={<NoMeetingRoom />}
+              text="Reset Room"
+            />
+          </ListItem>
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListToggleButton
+              open={open}
+              disabled
+              onClick={() => setModels([])}
+              icon={<Upload />}
+              text="Import Custom File"
+            />
+          </ListItem>
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListToggleButton
+              open={open}
+              onClick={() => handleExport()}
+              icon={<Download />}
+              text="Download as GLB"
             />
           </ListItem>
         </List>

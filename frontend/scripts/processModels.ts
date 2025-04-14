@@ -1,4 +1,4 @@
-// import { NUKE_TRANSFORMED_GLB } from '../src/utils/utils';
+import { NUKE_TRANSFORMED_GLB } from '../src/utils/utils';
 import { desksHandler } from './handlers/desksHandler';
 import { keyboardsHandler } from './handlers/keyboardsHandler';
 import { miceHandler } from './handlers/miceHandler';
@@ -34,7 +34,11 @@ if (selectedHandlers.length === 0) {
 }
 const run = () => {
   const allResults: ProcessingResult[] = [];
-  // NUKE_TRANSFORMED_GLB();
+  NUKE_TRANSFORMED_GLB('desks');
+  NUKE_TRANSFORMED_GLB('displays');
+  NUKE_TRANSFORMED_GLB('keyboards');
+  NUKE_TRANSFORMED_GLB('mice');
+  NUKE_TRANSFORMED_GLB('mousepads');
   modelHandlers.forEach((handler) => {
     console.log(`\n🔨 Processing ${handler.category}...`);
     const result = processModelFiles(handler);

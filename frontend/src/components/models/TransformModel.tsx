@@ -100,25 +100,26 @@ const TransformModel = ({ ...props }) => {
     ModelRef.current.getWorldPosition(oldPositionInit);
     setOldPosition(oldPositionInit);
     boundsModel.setFromObject(ModelRef.current);
-    //TODO: x bug: my guess as to why Z and Y works but X does not is the if else chain instead of checking if either are intersecting
+
     if (minBoundsZ.intersectsBox(boundsModel)) {
       setMinZ(oldPosition.z + 0.01);
       updateModel(isSelected, { minBoundsZ: oldPosition.z + 0.01 });
-    } else if (maxBoundsZ.intersectsBox(boundsModel)) {
+    }
+    if (maxBoundsZ.intersectsBox(boundsModel)) {
       setMaxZ(oldPosition.z - 0.01);
       updateModel(isSelected, { maxBoundsZ: oldPosition.z - 0.01 });
-    } else if (minBoundsY.intersectsBox(boundsModel)) {
+    }
+    if (minBoundsY.intersectsBox(boundsModel)) {
       setMinY(oldPosition.y + 0.01);
       updateModel(isSelected, { minBoundsY: oldPosition.y + 0.01 });
-    } else if (minBoundsX.intersectsBox(boundsModel)) {
-      setMinX(oldPosition.x + 0.01);
-      updateModel(isSelected, { minBoundsX: oldPosition.x + 0.01 });
-    } else if (maxBoundsX.intersectsBox(boundsModel)) {
-      setMaxX(oldPosition.x - 0.01);
-      updateModel(isSelected, { maxBoundsX: oldPosition.x - 0.01 });
-    } else {
-      ModelRef.current.getWorldPosition(oldPositionInit);
-      setOldPosition(oldPositionInit);
+    }
+    if (maxBoundsX.intersectsBox(boundsModel)) {
+      setMinX(oldPosition.x - 0.01);
+      updateModel(isSelected, { minBoundsX: oldPosition.x - 0.01 });
+    }
+    if (minBoundsX.intersectsBox(boundsModel)) {
+      setMaxX(oldPosition.x + 0.01);
+      updateModel(isSelected, { maxBoundsX: oldPosition.x + 0.01 });
     }
     ModelRef.current.updateWorldMatrix(true, true);
   };
@@ -134,6 +135,7 @@ const TransformModel = ({ ...props }) => {
       <group ref={GroupRef}>
         <PivotControls
           depthTest={false}
+          // TODO: offset should match initial position somehow, scale could be calculated too-ish
           scale={25}
           offset={[0, 20, 0]}
           rotation={[0, Math.PI / 2, 0]}
@@ -149,6 +151,7 @@ const TransformModel = ({ ...props }) => {
           onDrag={() => {
             if (orbit.current) orbit.current.enabled = false;
 
+            checkForCollision();
             if (ModelRef.current && model) {
               ModelRef.current.getWorldPosition(objPosition);
               ModelRef.current.getWorldQuaternion(objQuaternion);
@@ -160,10 +163,9 @@ const TransformModel = ({ ...props }) => {
                 model?.rotation,
                 objQuaternion
               );
+              //TODO: this makes it difficult to only check if rotation is occurring, maybe instead of quaternions we need euler
               setIsRotating(!hasPositionChanged && hasRotationChanged);
             }
-
-            checkForCollision();
           }}
           onDragEnd={() => {
             setIsRotating(false);

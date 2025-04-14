@@ -1,8 +1,40 @@
 import path from 'path';
 import { ModelHandler } from '../modelProcessing';
 
-// TODO: Fix undefined subcategory (should be features maybe) fix mousepads/mousepads
-
+const positionMap: Record<
+  string,
+  {
+    position: [number, number, number];
+    rotation: number;
+  }
+> = {
+  qck_small: {
+    position: [9, 31.25, -50],
+    rotation: Math.PI / 2,
+  },
+  qck_medium: {
+    position: [9, 31.25, -50],
+    rotation: Math.PI / 2,
+  },
+  qck_large: {
+    position: [9, 31.25, -53],
+    rotation: Math.PI / 2,
+  },
+  qck_xxl: {
+    position: [1, 31.35, -52],
+    rotation: Math.PI,
+  },
+  rgb_medium: {
+    position: [12, 31.25, -50],
+    rotation: Math.PI / 2 + Math.PI,
+  },
+};
+const getPositionKey = (parsedData: any): string => {
+  const { brand, size, features } = parsedData;
+  if (brand === 'qck') return `qck_${size.toLowerCase()}`;
+  if (features.includes('rgb')) return 'rgb_medium';
+  return `${brand || 'standard'}_${size}`;
+};
 export const mousepadsHandler: ModelHandler = {
   category: 'mousepads',
   publicGlbDir: path.join(process.cwd(), 'public/glb/mousepads'),
@@ -78,28 +110,43 @@ export const mousepadsHandler: ModelHandler = {
       .join('');
   },
 
-  generateModelEntry: (componentName, publicGlbPath, parsedData) => ({
-    name: [
-      pascalCase(parsedData.size),
-      parsedData.brand ? pascalCase(parsedData.brand) : '',
-      'Mousepad',
-      parsedData.dimensions ? formatDimensions(parsedData.dimensions) : '',
-      parsedData.features.length > 0
-        ? `(${parsedData.features.join(', ')})`
-        : '',
-    ]
-      .filter(Boolean)
-      .join(' '),
-    props: {
-      model: componentName,
-      category: 'mousepads',
-      size: parsedData.size,
-      ...(parsedData.brand && { brand: parsedData.brand }),
-      ...(parsedData.features.length > 0 && { features: parsedData.features }),
-      ...(parsedData.dimensions && { dimensions: parsedData.dimensions }),
-    },
-    glbPath: publicGlbPath,
-  }),
+  generateModelEntry: (componentName, publicGlbPath, parsedData) => {
+    const getPosition = (parsedData: any): [number, number, number] => {
+      const key = getPositionKey(parsedData);
+      return positionMap[key]?.position || [0, 0, 0];
+    };
+
+    const getRotationY = (parsedData: any): number => {
+      const key = getPositionKey(parsedData);
+      return positionMap[key]?.rotation || 0;
+    };
+    return {
+      name: [
+        pascalCase(parsedData.size),
+        parsedData.brand ? pascalCase(parsedData.brand) : '',
+        'Mousepad',
+        parsedData.dimensions ? formatDimensions(parsedData.dimensions) : '',
+        parsedData.features.length > 0
+          ? `(${parsedData.features.join(', ')})`
+          : '',
+      ]
+        .filter(Boolean)
+        .join(' '),
+      props: {
+        model: componentName,
+        category: 'mousepads',
+        size: parsedData.size,
+        ...(parsedData.brand && { brand: parsedData.brand }),
+        ...(parsedData.features.length > 0 && {
+          features: parsedData.features,
+        }),
+        ...(parsedData.dimensions && { dimensions: parsedData.dimensions }),
+        initPosition: getPosition(parsedData),
+        initRotationY: getRotationY(parsedData),
+      },
+      glbPath: publicGlbPath,
+    };
+  },
 };
 
 // Helper functions

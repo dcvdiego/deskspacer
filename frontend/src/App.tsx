@@ -66,7 +66,16 @@ const darkTheme = createTheme({
     },
   },
 });
-
+const heightAdjustmentMap: Record<string, number> = {
+  standing: 0.25,
+  alex: -1.5,
+  l_shaped: 0.87,
+  regular: 1.08,
+  linnmon: 0,
+  malm: -1.7,
+  output: 0.25,
+  // ... other desk types
+};
 function App() {
   const { addModel, deleteModel } = useModelStore();
   const [transformMode, setTransformMode] = useState('');
@@ -115,11 +124,61 @@ function App() {
         .models.filter((model: ModelInCanvas) => model.name === modelName)
         .length
     }`;
+    const existingDeskName = useModelStore
+      .getState()
+      .models.find(
+        (model: ModelInCanvas) =>
+          modelComponents[model.name]?.category === 'desks'
+      )?.name;
+
+    const existingDeskPosition = useModelStore
+      .getState()
+      .models.find(
+        (model: ModelInCanvas) =>
+          modelComponents[model.name]?.category === 'desks'
+      )?.position;
+    // difference between starting position and existingDeskPosition
+    const offsetPosition = new THREE.Vector3();
+    // const existingDeskRotation = useModelStore
+    //   .getState()
+    //   .models.find(
+    //     (model: ModelInCanvas) =>
+    //       modelComponents[model.name]?.category === 'desks'
+    //   )?.rotation;
+    const initRotation = new THREE.Quaternion().setFromEuler(
+      new THREE.Euler(0, modelComponents[modelName].initRotationY, 0)
+    );
+    if (existingDeskName && existingDeskPosition)
+      offsetPosition.subVectors(
+        existingDeskPosition,
+        new THREE.Vector3().fromArray(
+          modelComponents[existingDeskName].initPosition
+        )
+      );
+    const heightAdjustment =
+      existingDeskName &&
+      heightAdjustmentMap[existingDeskName.toLowerCase().split(' ')[0]]
+        ? heightAdjustmentMap[existingDeskName.toLowerCase().split(' ')[0]]
+        : 0;
+
     addModel({
       name: modelName,
       id: newId,
-      position: new THREE.Vector3(0, selectedCategory !== 'desks' ? 20 : 0, 0),
-      rotation: new THREE.Quaternion(0, -0.7071068, 0, 0.7071068),
+      position: new THREE.Vector3(
+        modelComponents[modelName].initPosition[0] +
+          (existingDeskPosition ? offsetPosition.x : 0),
+        modelComponents[modelName].initPosition[1] +
+          (existingDeskPosition ? offsetPosition.y + heightAdjustment : 0),
+        modelComponents[modelName].initPosition[2] +
+          (existingDeskPosition ? offsetPosition.z : 0)
+      ),
+      rotation:
+        // TODO: fix deskRotation
+        // existingDeskRotation
+        // ? initRotation.multiplyQuaternions(initRotation, existingDeskRotation)
+        // :
+        initRotation,
+      // TODO: change this to Number method
       minBoundsZ: -Infinity,
       maxBoundsZ: Infinity,
       minBoundsX: -Infinity,
@@ -149,6 +208,7 @@ function App() {
         .models.filter((model: ModelInCanvas) => model.name === modelName)
         .length
     }`;
+
     addModel({
       name: modelName,
       id: newId,
@@ -294,6 +354,7 @@ function App() {
   // }, []);
 
   const handleExport = () => {
+    // TODO: selfhost streamsaver https://github.com/jimmywarting/StreamSaver.js/issues/183
     setExportLoading(true);
     if (sceneRef.current) {
       exporter.parse(
@@ -535,10 +596,10 @@ function App() {
                         addLoading
                           ? 'Loading'
                           : addError
-                          ? 'An error has occurred'
-                          : `${import.meta.env.VITE_WEB_URL}/#${
-                              addStateData.addState.sharedState.id
-                            }`
+                            ? 'An error has occurred'
+                            : `${import.meta.env.VITE_WEB_URL}/#${
+                                addStateData.addState.sharedState.id
+                              }`
                       }
                       slotProps={{
                         htmlInput: {
@@ -575,7 +636,7 @@ function App() {
                 frameloop="demand"
                 camera={{
                   fov: 45,
-                  position: [165, 110, 230],
+                  position: [165, 138, 230],
                 }}
                 style={{
                   height: '100vh',
@@ -589,28 +650,28 @@ function App() {
                   onDecline={() => setDpr(1)}
                 />
                 <ambientLight />
-                <mesh position={[0, 20, -120]} ref={minBoundsZRef}>
+                <mesh position={[0, 48, -120]} ref={minBoundsZRef}>
                   <boxGeometry args={[200, 155, 105]} />
                   <meshPhongMaterial color="#ff0000" opacity={0} transparent />
                 </mesh>
-                <mesh position={[0, 20, 125]} ref={maxBoundsZRef}>
+                <mesh position={[0, 48, 125]} ref={maxBoundsZRef}>
                   <boxGeometry args={[200, 155, 105]} />
                   <meshPhongMaterial color="#ff0000" opacity={0} transparent />
                 </mesh>
-                <mesh position={[148, 20, 0]} ref={minBoundsXRef}>
+                <mesh position={[148, 48, 0]} ref={maxBoundsXRef}>
                   <boxGeometry args={[100, 155, 150]} />
                   <meshPhongMaterial color="#fbff00" opacity={0} transparent />
                 </mesh>
-                <mesh position={[-144.2, 20, 0]} ref={maxBoundsXRef}>
+                <mesh position={[-144.2, 48, 0]} ref={minBoundsXRef}>
                   <boxGeometry args={[100, 155, 150]} />
-                  <meshPhongMaterial color="#ff0000" opacity={0} transparent />
+                  <meshPhongMaterial color="#003cff" opacity={0} transparent />
                 </mesh>
-                <mesh position={[0, -51.5, 0]} ref={minBoundsYRef}>
+                <mesh position={[0, -23.5, 0]} ref={minBoundsYRef}>
                   <boxGeometry args={[200, 105, 225]} />
                   <meshPhongMaterial color="#ff0000" opacity={0} transparent />
                 </mesh>
                 <group ref={sceneRef}>
-                  <DefaultRoom position={[0, 0, 0]} />
+                  <DefaultRoom position={[0, 28, 0]} />
 
                   <Selection>
                     <EffectComposer multisampling={0} autoClear={false}>
