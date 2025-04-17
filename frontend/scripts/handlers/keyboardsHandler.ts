@@ -4,10 +4,10 @@ const keyboardPositionMap: Record<
   string,
   { position: [number, number, number]; rotation: number }
 > = {
-  '60': { position: [-3, 31.35, -50], rotation: Math.PI / 2 + Math.PI },
-  '75': { position: [-4, 31.35, -50], rotation: Math.PI / 2 + Math.PI },
-  tkl: { position: [-5, 31.35, -49], rotation: Math.PI / 2 + Math.PI },
-  full_size: { position: [-6, 31.35, -49], rotation: Math.PI / 2 + Math.PI },
+  '60': { position: [-3, 60, -50], rotation: Math.PI / 2 + Math.PI },
+  '75': { position: [-4, 60, -50], rotation: Math.PI / 2 + Math.PI },
+  tkl: { position: [-5, 60, -49], rotation: Math.PI / 2 + Math.PI },
+  full_size: { position: [-6, 60, -49], rotation: Math.PI / 2 + Math.PI },
 };
 
 export const keyboardsHandler: ModelHandler = {

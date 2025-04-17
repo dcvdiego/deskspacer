@@ -1,7 +1,6 @@
+// This file has been auto-generated from scripts folder. DO NOT MANUALLY MODIFY.
+import { ModelComponentType } from '../../types/ModelTypes';
 
-  // This file has been auto-generated from scripts folder. DO NOT MANUALLY MODIFY.
-  import { ModelComponentType } from '../../types/ModelTypes';
-  
 import DeskAlex0_60Dx2Wx0_73HDefault from './desks/alex_desks/DeskAlex0_60Dx2Wx0_73HDefault';
 import DeskAlex0_79Dx1_70Wx0_73HDefault from './desks/alex_desks/DeskAlex0_79Dx1_70Wx0_73HDefault';
 import DeskAlex1_02Dx1_55Wx0_73HDefault from './desks/alex_desks/DeskAlex1_02Dx1_55Wx0_73HDefault';
@@ -137,7 +136,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_22in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_22in_no_stand-transformed.glb',
   },
   '16:9 22" Monitor v3 with Stand': {
     model: Monitor169322Stand,
@@ -147,7 +147,7 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_22in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_22in-transformed.glb',
   },
   '16:9 23.5" Curved Monitor v2': {
     model: Monitor169223dot5Curved,
@@ -157,7 +157,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_23.5in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_23.5in_no_stand-transformed.glb',
   },
   '16:9 23.5" Curved Monitor v2 with Stand': {
     model: Monitor169223dot5CurvedStand,
@@ -167,7 +168,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_23.5in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_23.5in-transformed.glb',
   },
   '16:9 23" Monitor v3': {
     model: Monitor169323,
@@ -177,7 +179,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_23in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_23in_no_stand-transformed.glb',
   },
   '16:9 23" Monitor v3 with Stand': {
     model: Monitor169323Stand,
@@ -187,7 +190,7 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_23in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_23in-transformed.glb',
   },
   '16:9 24" Monitor v3': {
     model: Monitor169324,
@@ -197,7 +200,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_24in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_24in_no_stand-transformed.glb',
   },
   '16:9 24" Monitor v3 with Stand': {
     model: Monitor169324Stand,
@@ -207,7 +211,7 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_24in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_24in-transformed.glb',
   },
   '16:9 25" Curved Monitor': {
     model: Monitor16925Curved,
@@ -217,7 +221,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_25in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_25in_no_stand-transformed.glb',
   },
   '16:9 25" Curved Monitor with Stand': {
     model: Monitor16925CurvedStand,
@@ -227,7 +232,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_25in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_25in-transformed.glb',
   },
   '16:9 25" Monitor v3': {
     model: Monitor169325,
@@ -237,7 +243,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_25in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_25in_no_stand-transformed.glb',
   },
   '16:9 25" Monitor v3 with Stand': {
     model: Monitor169325Stand,
@@ -247,7 +254,7 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_25in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_25in-transformed.glb',
   },
   '16:9 27" Curved Monitor': {
     model: Monitor16927Curved,
@@ -257,7 +264,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_27in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_27in_no_stand-transformed.glb',
   },
   '16:9 27" Curved Monitor v2': {
     model: Monitor169227Curved,
@@ -267,7 +275,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_27in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_27in_no_stand-transformed.glb',
   },
   '16:9 27" Curved Monitor v2 with Stand': {
     model: Monitor169227CurvedStand,
@@ -277,7 +286,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_27in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_27in-transformed.glb',
   },
   '16:9 27" Curved Monitor with Stand': {
     model: Monitor16927CurvedStand,
@@ -287,7 +297,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_27in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_27in-transformed.glb',
   },
   '16:9 27" Monitor v3': {
     model: Monitor169327,
@@ -297,7 +308,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_27in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_27in_no_stand-transformed.glb',
   },
   '16:9 27" Monitor v3 with Stand': {
     model: Monitor169327Stand,
@@ -307,7 +319,7 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_27in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_27in-transformed.glb',
   },
   '16:9 28" Monitor v3': {
     model: Monitor169328,
@@ -317,7 +329,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_28in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_28in_no_stand-transformed.glb',
   },
   '16:9 28" Monitor v3 with Stand': {
     model: Monitor169328Stand,
@@ -327,7 +340,7 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_28in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_28in-transformed.glb',
   },
   '16:9 31.5" Curved Monitor': {
     model: Monitor16931dot5Curved,
@@ -337,7 +350,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_31.5in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_31.5in_no_stand-transformed.glb',
   },
   '16:9 31.5" Curved Monitor v2': {
     model: Monitor169231dot5Curved,
@@ -347,7 +361,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_31.5in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_2_curved_31.5in_no_stand-transformed.glb',
   },
   '16:9 31.5" Curved Monitor v2 with Stand': {
     model: Monitor169231dot5CurvedStand,
@@ -357,7 +372,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_31.5in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_2_curved_31.5in-transformed.glb',
   },
   '16:9 31.5" Curved Monitor with Stand': {
     model: Monitor16931dot5CurvedStand,
@@ -367,7 +383,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_31.5in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_31.5in-transformed.glb',
   },
   '16:9 31.5" Monitor v3': {
     model: Monitor169331dot5,
@@ -377,7 +394,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_31.5in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors_no_stand/16_9_monitor_3_31.5in_no_stand-transformed.glb',
   },
   '16:9 31.5" Monitor v3 with Stand': {
     model: Monitor169331dot5Stand,
@@ -387,7 +405,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_3_31.5in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_monitors/16_9_monitor_3_31.5in-transformed.glb',
   },
   '16:9 34" Curved Monitor': {
     model: Monitor16934Curved,
@@ -397,7 +416,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_34in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors_no_stand/16_9_monitor_curved_34in_no_stand-transformed.glb',
   },
   '16:9 34" Curved Monitor with Stand': {
     model: Monitor16934CurvedStand,
@@ -407,7 +427,8 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_34in-transformed.glb'
+    glbPath:
+      '/glb/displays/16_9_curved_monitors/16_9_monitor_curved_34in-transformed.glb',
   },
   '16:9 43" Monitor v4 with Stand': {
     model: Monitor169443Stand,
@@ -417,7 +438,7 @@ export const modelComponents: {
     subcategory: '16:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_4_43in-transformed.glb'
+    glbPath: '/glb/displays/16_9_monitors/16_9_monitor_4_43in-transformed.glb',
   },
   '21:9 25" Monitor v2': {
     model: Monitor219225,
@@ -427,7 +448,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_25in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_25in_no_stand-transformed.glb',
   },
   '21:9 25" Monitor v2 with Stand': {
     model: Monitor219225Stand,
@@ -437,7 +459,7 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_25in-transformed.glb'
+    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_25in-transformed.glb',
   },
   '21:9 29" Monitor v2': {
     model: Monitor219229,
@@ -447,7 +469,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_29in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_29in_no_stand-transformed.glb',
   },
   '21:9 29" Monitor v2 with Stand': {
     model: Monitor219229Stand,
@@ -457,7 +480,7 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_29in-transformed.glb'
+    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_29in-transformed.glb',
   },
   '21:9 30" Curved Monitor': {
     model: Monitor21930Curved,
@@ -467,7 +490,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_30in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_30in_no_stand-transformed.glb',
   },
   '21:9 30" Curved Monitor v2': {
     model: Monitor219230Curved,
@@ -477,7 +501,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_30in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_30in_no_stand-transformed.glb',
   },
   '21:9 30" Curved Monitor v2 with Stand': {
     model: Monitor219230CurvedStand,
@@ -487,7 +512,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_30in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_30in-transformed.glb',
   },
   '21:9 30" Curved Monitor with Stand': {
     model: Monitor21930CurvedStand,
@@ -497,7 +523,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_30in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_30in-transformed.glb',
   },
   '21:9 34" Curved Monitor': {
     model: Monitor21934Curved,
@@ -507,7 +534,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_34in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_34in_no_stand-transformed.glb',
   },
   '21:9 34" Curved Monitor v2': {
     model: Monitor219234Curved,
@@ -517,7 +545,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_34in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_34in_no_stand-transformed.glb',
   },
   '21:9 34" Curved Monitor v2 with Stand': {
     model: Monitor219234CurvedStand,
@@ -527,7 +556,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_34in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_34in-transformed.glb',
   },
   '21:9 34" Curved Monitor with Stand': {
     model: Monitor21934CurvedStand,
@@ -537,7 +567,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_34in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_34in-transformed.glb',
   },
   '21:9 34" Monitor v2': {
     model: Monitor219234,
@@ -547,7 +578,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 0,
     stand: false,
-    glbPath: '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_34in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_monitors_no_stand/21_9_monitor_2_34in_no_stand-transformed.glb',
   },
   '21:9 34" Monitor v2 with Stand': {
     model: Monitor219234Stand,
@@ -557,7 +589,7 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_34in-transformed.glb'
+    glbPath: '/glb/displays/21_9_monitors/21_9_monitor_2_34in-transformed.glb',
   },
   '21:9 38" Curved Monitor': {
     model: Monitor21938Curved,
@@ -567,7 +599,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_38in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_1_curved_38in_no_stand-transformed.glb',
   },
   '21:9 38" Curved Monitor v2': {
     model: Monitor219238Curved,
@@ -577,7 +610,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_38in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors_no_stand/21_9_monitor_2_curved_38in_no_stand-transformed.glb',
   },
   '21:9 38" Curved Monitor v2 with Stand': {
     model: Monitor219238CurvedStand,
@@ -587,7 +621,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_38in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_2_curved_38in-transformed.glb',
   },
   '21:9 38" Curved Monitor with Stand': {
     model: Monitor21938CurvedStand,
@@ -597,7 +632,8 @@ export const modelComponents: {
     subcategory: '21:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_38in-transformed.glb'
+    glbPath:
+      '/glb/displays/21_9_curved_monitors/21_9_monitor_1_curved_38in-transformed.glb',
   },
   '32:9 43.4" Curved Monitor': {
     model: Monitor32943dot4Curved,
@@ -607,7 +643,8 @@ export const modelComponents: {
     subcategory: '32:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/32_9_monitors_no_stand/32_9_monitor_curved_43.4in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/32_9_monitors_no_stand/32_9_monitor_curved_43.4in_no_stand-transformed.glb',
   },
   '32:9 43.4" Curved Monitor with Stand': {
     model: Monitor32943dot4CurvedStand,
@@ -617,7 +654,8 @@ export const modelComponents: {
     subcategory: '32:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/32_9_monitors/32_9_monitor_curved_43.4in-transformed.glb'
+    glbPath:
+      '/glb/displays/32_9_monitors/32_9_monitor_curved_43.4in-transformed.glb',
   },
   '32:9 49" Curved Monitor': {
     model: Monitor32949Curved,
@@ -627,7 +665,8 @@ export const modelComponents: {
     subcategory: '32:9',
     curved: 1000,
     stand: false,
-    glbPath: '/glb/displays/32_9_monitors_no_stand/32_9_monitor_curved_49in_no_stand-transformed.glb'
+    glbPath:
+      '/glb/displays/32_9_monitors_no_stand/32_9_monitor_curved_49in_no_stand-transformed.glb',
   },
   '32:9 49" Curved Monitor with Stand': {
     model: Monitor32949CurvedStand,
@@ -637,17 +676,18 @@ export const modelComponents: {
     subcategory: '32:9',
     curved: 1000,
     stand: true,
-    glbPath: '/glb/displays/32_9_monitors/32_9_monitor_curved_49in-transformed.glb'
+    glbPath:
+      '/glb/displays/32_9_monitors/32_9_monitor_curved_49in-transformed.glb',
   },
   '60% Keyboard grey': {
     model: Keyboard60Grey,
     category: 'keyboards',
-    initPosition: [-3, 31.35, -50],
+    initPosition: [-3, 60, -50],
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 1,
-    colors: ["grey"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_grey-transformed.glb'
+    colors: ['grey'],
+    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_grey-transformed.glb',
   },
   '60% Keyboard minimalist': {
     model: Keyboard60Minimalist,
@@ -656,8 +696,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 1,
-    colors: ["minimalist"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_minimalist_1-transformed.glb'
+    colors: ['minimalist'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_1_minimalist_1-transformed.glb',
   },
   '60% Keyboard nightrunner': {
     model: Keyboard60Nightrunner,
@@ -666,8 +707,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 1,
-    colors: ["nightrunner"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_nightrunner-transformed.glb'
+    colors: ['nightrunner'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_1_nightrunner-transformed.glb',
   },
   '60% Keyboard orange black white': {
     model: Keyboard60OrangeBlackWhite,
@@ -676,8 +718,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 1,
-    colors: ["orange","black","white"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_orange_black_white-transformed.glb'
+    colors: ['orange', 'black', 'white'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_1_orange_black_white-transformed.glb',
   },
   '60% Keyboard v2 grey': {
     model: Keyboard60V2Grey,
@@ -686,8 +729,8 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 2,
-    colors: ["grey"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_grey-transformed.glb'
+    colors: ['grey'],
+    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_grey-transformed.glb',
   },
   '60% Keyboard v2 minimalist': {
     model: Keyboard60V2Minimalist,
@@ -696,8 +739,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 2,
-    colors: ["minimalist"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_minimalist-transformed.glb'
+    colors: ['minimalist'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_2_minimalist-transformed.glb',
   },
   '60% Keyboard v2 nightrunner': {
     model: Keyboard60V2Nightrunner,
@@ -706,8 +750,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 2,
-    colors: ["nightrunner"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_nightrunner-transformed.glb'
+    colors: ['nightrunner'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_2_nightrunner-transformed.glb',
   },
   '60% Keyboard v2 orange black white': {
     model: Keyboard60V2OrangeBlackWhite,
@@ -716,8 +761,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 2,
-    colors: ["orange","black","white"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_orange_black_white-transformed.glb'
+    colors: ['orange', 'black', 'white'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_2_orange_black_white-transformed.glb',
   },
   '60% Keyboard v2 purple black red': {
     model: Keyboard60V2PurpleBlackRed,
@@ -726,8 +772,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 2,
-    colors: ["purple","black","red"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_purple_black_red-transformed.glb'
+    colors: ['purple', 'black', 'red'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_2_purple_black_red-transformed.glb',
   },
   '60% Keyboard v2 white': {
     model: Keyboard60V2White,
@@ -736,8 +783,8 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 2,
-    colors: ["white"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_white-transformed.glb'
+    colors: ['white'],
+    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_white-transformed.glb',
   },
   '60% Keyboard v2 white grey red': {
     model: Keyboard60V2WhiteGreyRed,
@@ -746,8 +793,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 2,
-    colors: ["white","grey","red"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_white_grey_red-transformed.glb'
+    colors: ['white', 'grey', 'red'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_2_white_grey_red-transformed.glb',
   },
   '60% Keyboard v8008 default': {
     model: Keyboard60V8008Default,
@@ -756,8 +804,8 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 8008,
-    colors: ["default"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_8008-transformed.glb'
+    colors: ['default'],
+    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_2_8008-transformed.glb',
   },
   '60% Keyboard white': {
     model: Keyboard60White,
@@ -766,8 +814,8 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 1,
-    colors: ["white"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_white-transformed.glb'
+    colors: ['white'],
+    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_white-transformed.glb',
   },
   '60% Keyboard white grey red': {
     model: Keyboard60WhiteGreyRed,
@@ -776,8 +824,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 1,
-    colors: ["white","grey","red"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_white_grey_red-transformed.glb'
+    colors: ['white', 'grey', 'red'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_1_white_grey_red-transformed.glb',
   },
   '60% Keyboard yellow purple (grad)': {
     model: Keyboard60YellowPurpleGrad,
@@ -786,9 +835,10 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 1,
-    colors: ["yellow","purple"],
-    features: ["grad"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_yellow_purple_grad-transformed.glb'
+    colors: ['yellow', 'purple'],
+    features: ['grad'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_1_yellow_purple_grad-transformed.glb',
   },
   '60% Keyboard yellow white': {
     model: Keyboard60YellowWhite,
@@ -797,8 +847,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: '60',
     version: 1,
-    colors: ["yellow","white"],
-    glbPath: '/glb/keyboards/60_keyboards/60_Keyboard_1_yellow_white-transformed.glb'
+    colors: ['yellow', 'white'],
+    glbPath:
+      '/glb/keyboards/60_keyboards/60_Keyboard_1_yellow_white-transformed.glb',
   },
   'Alex Desk 0.6m D × 2m W × 0.73m H default': {
     model: DeskAlex0_60Dx2Wx0_73HDefault,
@@ -806,11 +857,11 @@ export const modelComponents: {
     initPosition: [0, 29, -50],
     initRotationY: 4.71238898038469,
     subcategory: 'alex',
-    dimensions: {"depth":0.6,"width":2,"height":0.73},
+    dimensions: { depth: 0.6, width: 2, height: 0.73 },
     material: 'default',
     version: 0,
     orientation: 'standard',
-    glbPath: '/glb/desks/alex_desks/alex_desk_0.6Dx2Wx0.73H-transformed.glb'
+    glbPath: '/glb/desks/alex_desks/alex_desk_0.6Dx2Wx0.73H-transformed.glb',
   },
   'Alex Desk 0.79m D × 1.7m W × 0.73m H default': {
     model: DeskAlex0_79Dx1_70Wx0_73HDefault,
@@ -818,11 +869,11 @@ export const modelComponents: {
     initPosition: [0, 29, -50],
     initRotationY: 4.71238898038469,
     subcategory: 'alex',
-    dimensions: {"depth":0.79,"width":1.7,"height":0.73},
+    dimensions: { depth: 0.79, width: 1.7, height: 0.73 },
     material: 'default',
     version: 0,
     orientation: 'standard',
-    glbPath: '/glb/desks/alex_desks/alex_desk_0.79Dx1.7Wx0.73H-transformed.glb'
+    glbPath: '/glb/desks/alex_desks/alex_desk_0.79Dx1.7Wx0.73H-transformed.glb',
   },
   'Alex Desk 1.02m D × 1.55m W × 0.73m H default': {
     model: DeskAlex1_02Dx1_55Wx0_73HDefault,
@@ -830,11 +881,12 @@ export const modelComponents: {
     initPosition: [0, 29, -50],
     initRotationY: 4.71238898038469,
     subcategory: 'alex',
-    dimensions: {"depth":1.02,"width":1.55,"height":0.73},
+    dimensions: { depth: 1.02, width: 1.55, height: 0.73 },
     material: 'default',
     version: 1,
     orientation: 'standard',
-    glbPath: '/glb/desks/alex_desks/alex_desk_1.02Dx1.55Wx0.73H-transformed.glb'
+    glbPath:
+      '/glb/desks/alex_desks/alex_desk_1.02Dx1.55Wx0.73H-transformed.glb',
   },
   'Big Mousepad 31.75cm D × 91.44cm W': {
     model: MousepadBig31_75Dx91_44W,
@@ -842,8 +894,8 @@ export const modelComponents: {
     initPosition: [0, 0, 0],
     initRotationY: 0,
     size: 'big',
-    dimensions: {"depth":31.75,"width":91.44},
-    glbPath: '/glb/mousepads/big_mousepad_31.75Dx91.44W-transformed.glb'
+    dimensions: { depth: 31.75, width: 91.44 },
+    glbPath: '/glb/mousepads/big_mousepad_31.75Dx91.44W-transformed.glb',
   },
   'full size% Keyboard grey': {
     model: KeyboardFullSizeGrey,
@@ -852,8 +904,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'full_size',
     version: 1,
-    colors: ["grey"],
-    glbPath: '/glb/keyboards/full_size_keyboards/full_size_keyboard_grey-transformed.glb'
+    colors: ['grey'],
+    glbPath:
+      '/glb/keyboards/full_size_keyboards/full_size_keyboard_grey-transformed.glb',
   },
   'full size% Keyboard nightrunner': {
     model: KeyboardFullSizeNightrunner,
@@ -862,8 +915,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'full_size',
     version: 1,
-    colors: ["nightrunner"],
-    glbPath: '/glb/keyboards/full_size_keyboards/full_size_keyboard_nightrunner-transformed.glb'
+    colors: ['nightrunner'],
+    glbPath:
+      '/glb/keyboards/full_size_keyboards/full_size_keyboard_nightrunner-transformed.glb',
   },
   'full size% Keyboard orange black white': {
     model: KeyboardFullSizeOrangeBlackWhite,
@@ -872,8 +926,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'full_size',
     version: 1,
-    colors: ["orange","black","white"],
-    glbPath: '/glb/keyboards/full_size_keyboards/full_size_keyboard_orange_black_white-transformed.glb'
+    colors: ['orange', 'black', 'white'],
+    glbPath:
+      '/glb/keyboards/full_size_keyboards/full_size_keyboard_orange_black_white-transformed.glb',
   },
   'full size% Keyboard purple black red': {
     model: KeyboardFullSizePurpleBlackRed,
@@ -882,8 +937,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'full_size',
     version: 1,
-    colors: ["purple","black","red"],
-    glbPath: '/glb/keyboards/full_size_keyboards/full_size_keyboard_purple_black_red-transformed.glb'
+    colors: ['purple', 'black', 'red'],
+    glbPath:
+      '/glb/keyboards/full_size_keyboards/full_size_keyboard_purple_black_red-transformed.glb',
   },
   'full size% Keyboard white': {
     model: KeyboardFullSizeWhite,
@@ -892,8 +948,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'full_size',
     version: 1,
-    colors: ["white"],
-    glbPath: '/glb/keyboards/full_size_keyboards/full_size_keyboard_white-transformed.glb'
+    colors: ['white'],
+    glbPath:
+      '/glb/keyboards/full_size_keyboards/full_size_keyboard_white-transformed.glb',
   },
   'full size% Keyboard white grey red': {
     model: KeyboardFullSizeWhiteGreyRed,
@@ -902,8 +959,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'full_size',
     version: 1,
-    colors: ["white","grey","red"],
-    glbPath: '/glb/keyboards/full_size_keyboards/full_size_keyboard_white_grey_red-transformed.glb'
+    colors: ['white', 'grey', 'red'],
+    glbPath:
+      '/glb/keyboards/full_size_keyboards/full_size_keyboard_white_grey_red-transformed.glb',
   },
   'full size% Keyboard yellow purple (grad)': {
     model: KeyboardFullSizeYellowPurpleGrad,
@@ -912,9 +970,10 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'full_size',
     version: 1,
-    colors: ["yellow","purple"],
-    features: ["grad"],
-    glbPath: '/glb/keyboards/full_size_keyboards/full_size_keyboard_yellow_purple_grad-transformed.glb'
+    colors: ['yellow', 'purple'],
+    features: ['grad'],
+    glbPath:
+      '/glb/keyboards/full_size_keyboards/full_size_keyboard_yellow_purple_grad-transformed.glb',
   },
   'L_shaped Desk default left': {
     model: DeskL_shapedDefaultleft,
@@ -925,7 +984,7 @@ export const modelComponents: {
     material: 'default',
     version: 1,
     orientation: 'left',
-    glbPath: '/glb/desks/L_shaped_desks/L_shaped_desk_left-transformed.glb'
+    glbPath: '/glb/desks/L_shaped_desks/L_shaped_desk_left-transformed.glb',
   },
   'L_shaped Desk default right': {
     model: DeskL_shapedDefaultright,
@@ -936,7 +995,7 @@ export const modelComponents: {
     material: 'default',
     version: 1,
     orientation: 'right',
-    glbPath: '/glb/desks/L_shaped_desks/L_shaped_desk_right-transformed.glb'
+    glbPath: '/glb/desks/L_shaped_desks/L_shaped_desk_right-transformed.glb',
   },
   'Large Qck Mousepad 39.88cm D × 44.96cm W': {
     model: MousepadLargeQck39_88Dx44_96W,
@@ -945,8 +1004,8 @@ export const modelComponents: {
     initRotationY: 1.5707963267948966,
     size: 'large',
     brand: 'qck',
-    dimensions: {"depth":39.88,"width":44.96},
-    glbPath: '/glb/mousepads/large_qck_mousepad_39.88Dx44.96W-transformed.glb'
+    dimensions: { depth: 39.88, width: 44.96 },
+    glbPath: '/glb/mousepads/large_qck_mousepad_39.88Dx44.96W-transformed.glb',
   },
   'Linnmon Desk 0.61m D × 1.2m W × 0.77m H default': {
     model: DeskLinnmon0_61Dx1_20Wx0_77HDefault,
@@ -954,11 +1013,12 @@ export const modelComponents: {
     initPosition: [0, 29.5, -55],
     initRotationY: 1.5707963267948966,
     subcategory: 'linnmon',
-    dimensions: {"depth":0.61,"width":1.2,"height":0.77},
+    dimensions: { depth: 0.61, width: 1.2, height: 0.77 },
     material: 'default',
     version: 0,
     orientation: 'standard',
-    glbPath: '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1.2Wx0.77H-transformed.glb'
+    glbPath:
+      '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1.2Wx0.77H-transformed.glb',
   },
   'Linnmon Desk 0.61m D × 1.5m W × 0.77m H default': {
     model: DeskLinnmon0_61Dx1_50Wx0_77HDefault,
@@ -966,11 +1026,12 @@ export const modelComponents: {
     initPosition: [0, 29.5, -55],
     initRotationY: 1.5707963267948966,
     subcategory: 'linnmon',
-    dimensions: {"depth":0.61,"width":1.5,"height":0.77},
+    dimensions: { depth: 0.61, width: 1.5, height: 0.77 },
     material: 'default',
     version: 0,
     orientation: 'standard',
-    glbPath: '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1.5Wx0.77H-transformed.glb'
+    glbPath:
+      '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1.5Wx0.77H-transformed.glb',
   },
   'Linnmon Desk 0.61m D × 1m W × 0.77m H default': {
     model: DeskLinnmon0_61Dx1Wx0_77HDefault,
@@ -978,11 +1039,12 @@ export const modelComponents: {
     initPosition: [0, 29.5, -55],
     initRotationY: 1.5707963267948966,
     subcategory: 'linnmon',
-    dimensions: {"depth":0.61,"width":1,"height":0.77},
+    dimensions: { depth: 0.61, width: 1, height: 0.77 },
     material: 'default',
     version: 0,
     orientation: 'standard',
-    glbPath: '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1Wx0.77H-transformed.glb'
+    glbPath:
+      '/glb/desks/linnmon_desks/linnmon_desk_0.61Dx1Wx0.77H-transformed.glb',
   },
   'Malm Desk dark ash': {
     model: DeskMalmDark_ash,
@@ -993,7 +1055,7 @@ export const modelComponents: {
     material: 'dark ash',
     version: 1,
     orientation: 'standard',
-    glbPath: '/glb/desks/malm_desks/malm_desk_dark-ash-transformed.glb'
+    glbPath: '/glb/desks/malm_desks/malm_desk_dark-ash-transformed.glb',
   },
   'Malm Desk default': {
     model: DeskMalmDefault,
@@ -1004,16 +1066,16 @@ export const modelComponents: {
     material: 'default',
     version: 1,
     orientation: 'standard',
-    glbPath: '/glb/desks/malm_desks/malm_desk_white-transformed.glb'
+    glbPath: '/glb/desks/malm_desks/malm_desk_white-transformed.glb',
   },
   'Medium Mousepad (rgb)': {
     model: MousepadMediumRgb,
     category: 'mousepads',
-    initPosition: [12, 31.25, -50],
+    initPosition: [12, 59.45, -50],
     initRotationY: 4.71238898038469,
     size: 'medium',
-    features: ["rgb"],
-    glbPath: '/glb/mousepads/medium_rgb_mousepad-transformed.glb'
+    features: ['rgb'],
+    glbPath: '/glb/mousepads/medium_rgb_mousepad-transformed.glb',
   },
   'Medium Mousepad 31.75cm D × 37.85cm W (rgb)': {
     model: MousepadMediumRgb31_75Dx37_85W,
@@ -1021,9 +1083,9 @@ export const modelComponents: {
     initPosition: [12, 31.25, -50],
     initRotationY: 4.71238898038469,
     size: 'medium',
-    features: ["rgb"],
-    dimensions: {"depth":31.75,"width":37.85},
-    glbPath: '/glb/mousepads/medium_rgb_mousepad_31.75Dx37.85W-transformed.glb'
+    features: ['rgb'],
+    dimensions: { depth: 31.75, width: 37.85 },
+    glbPath: '/glb/mousepads/medium_rgb_mousepad_31.75Dx37.85W-transformed.glb',
   },
   'Medium Qck Mousepad 26.92cm D × 32cm W': {
     model: MousepadMediumQck26_92Dx32W,
@@ -1032,17 +1094,17 @@ export const modelComponents: {
     initRotationY: 1.5707963267948966,
     size: 'medium',
     brand: 'qck',
-    dimensions: {"depth":26.92,"width":32},
-    glbPath: '/glb/mousepads/medium_qck_mousepad_26.92Dx32W-transformed.glb'
+    dimensions: { depth: 26.92, width: 32 },
+    glbPath: '/glb/mousepads/medium_qck_mousepad_26.92Dx32W-transformed.glb',
   },
   'Mouse v1 (textured)': {
     model: MouseV1Textured,
     category: 'mice',
-    initPosition: [9, 31.2, -50],
+    initPosition: [9, 59.5, -50],
     initRotationY: 3.141592653589793,
     version: 1,
-    features: ["textured"],
-    glbPath: '/glb/mice/mouse_1_textured-transformed.glb'
+    features: ['textured'],
+    glbPath: '/glb/mice/mouse_1_textured-transformed.glb',
   },
   'Mouse v1 10.41cm D × 5.59cm W × 4.06cm H': {
     model: MouseV110_41Dx5_59Wx4_06H,
@@ -1050,8 +1112,8 @@ export const modelComponents: {
     initPosition: [9, 31.2, -50],
     initRotationY: 3.141592653589793,
     version: 1,
-    dimensions: {"depth":10.41,"width":5.59,"height":4.06},
-    glbPath: '/glb/mice/mouse_1_10.41Dx5.59Wx4.06H-transformed.glb'
+    dimensions: { depth: 10.41, width: 5.59, height: 4.06 },
+    glbPath: '/glb/mice/mouse_1_10.41Dx5.59Wx4.06H-transformed.glb',
   },
   'Mouse v2 12.45cm D × 8.89cm W × 5.08cm H': {
     model: MouseV212_45Dx8_89Wx5_08H,
@@ -1059,8 +1121,8 @@ export const modelComponents: {
     initPosition: [9, 31.2, -50],
     initRotationY: 1.5707963267948966,
     version: 2,
-    dimensions: {"depth":12.45,"width":8.89,"height":5.08},
-    glbPath: '/glb/mice/mouse_2_12.45Dx8.89Wx5.08H-transformed.glb'
+    dimensions: { depth: 12.45, width: 8.89, height: 5.08 },
+    glbPath: '/glb/mice/mouse_2_12.45Dx8.89Wx5.08H-transformed.glb',
   },
   'Mouse v3': {
     model: MouseV3,
@@ -1068,7 +1130,7 @@ export const modelComponents: {
     initPosition: [9, 31.2, -50],
     initRotationY: 1.5707963267948966,
     version: 3,
-    glbPath: '/glb/mice/mouse_3-transformed.glb'
+    glbPath: '/glb/mice/mouse_3-transformed.glb',
   },
   'Output Desk default': {
     model: DeskOutputDefault,
@@ -1079,7 +1141,8 @@ export const modelComponents: {
     material: 'default',
     version: 1,
     orientation: 'standard',
-    glbPath: '/glb/desks/output_platform_desks/output_platform_desk-transformed.glb'
+    glbPath:
+      '/glb/desks/output_platform_desks/output_platform_desk-transformed.glb',
   },
   'Regular Desk 75.95m D × 152.15m W × 79.76m H default': {
     model: DeskRegular75_95Dx152_15Wx79_76HDefault,
@@ -1087,11 +1150,12 @@ export const modelComponents: {
     initPosition: [0, 29, -47],
     initRotationY: 1.5707963267948966,
     subcategory: 'regular',
-    dimensions: {"depth":75.95,"width":152.15,"height":79.76},
+    dimensions: { depth: 75.95, width: 152.15, height: 79.76 },
     material: 'default',
     version: 1,
     orientation: 'standard',
-    glbPath: '/glb/desks/regular_desks/regular_desk_1_75.95Dx152.15Wx79.76H-transformed.glb'
+    glbPath:
+      '/glb/desks/regular_desks/regular_desk_1_75.95Dx152.15Wx79.76H-transformed.glb',
   },
   'Regular Desk 75.95m D × 152.15m W × 79.76m H v2 default': {
     model: DeskRegular75_95Dx152_15Wx79_76HV2Default,
@@ -1099,11 +1163,12 @@ export const modelComponents: {
     initPosition: [0, 29, -47],
     initRotationY: 1.5707963267948966,
     subcategory: 'regular',
-    dimensions: {"depth":75.95,"width":152.15,"height":79.76},
+    dimensions: { depth: 75.95, width: 152.15, height: 79.76 },
     material: 'default',
     version: 2,
     orientation: 'standard',
-    glbPath: '/glb/desks/regular_desks/regular_desk_2_75.95Dx152.15Wx79.76H-transformed.glb'
+    glbPath:
+      '/glb/desks/regular_desks/regular_desk_2_75.95Dx152.15Wx79.76H-transformed.glb',
   },
   'slim% Keyboard default': {
     model: KeyboardSlimDefault,
@@ -1112,8 +1177,8 @@ export const modelComponents: {
     initRotationY: 0,
     subcategory: 'slim',
     version: 1,
-    colors: ["default"],
-    glbPath: '/glb/keyboards/work_keyboards/slim_keyboard-transformed.glb'
+    colors: ['default'],
+    glbPath: '/glb/keyboards/work_keyboards/slim_keyboard-transformed.glb',
   },
   'Small Qck Mousepad 21.34cm D × 24.89cm W': {
     model: MousepadSmallQck21_34Dx24_89W,
@@ -1122,8 +1187,8 @@ export const modelComponents: {
     initRotationY: 1.5707963267948966,
     size: 'small',
     brand: 'qck',
-    dimensions: {"depth":21.34,"width":24.89},
-    glbPath: '/glb/mousepads/small_qck_mousepad_21.34Dx24.89W-transformed.glb'
+    dimensions: { depth: 21.34, width: 24.89 },
+    glbPath: '/glb/mousepads/small_qck_mousepad_21.34Dx24.89W-transformed.glb',
   },
   'Standing Desk 60.45m D × 131.32m W × 76.96m H default': {
     model: DeskStanding60_45Dx131_32Wx76_96HDefault,
@@ -1131,11 +1196,12 @@ export const modelComponents: {
     initPosition: [-28, 30, -45],
     initRotationY: 1.5707963267948966,
     subcategory: 'standing',
-    dimensions: {"depth":60.45,"width":131.32,"height":76.96},
+    dimensions: { depth: 60.45, width: 131.32, height: 76.96 },
     material: 'default',
     version: 1,
     orientation: 'standard',
-    glbPath: '/glb/desks/standing_desks/standing_desk_1_60.45Dx131.32Wx76.96H-transformed.glb'
+    glbPath:
+      '/glb/desks/standing_desks/standing_desk_1_60.45Dx131.32Wx76.96H-transformed.glb',
   },
   'Standing Desk 72.14m D × 139.7m W × 75.44m H v2 default': {
     model: DeskStanding72_14Dx139_70Wx75_44HV2Default,
@@ -1143,11 +1209,12 @@ export const modelComponents: {
     initPosition: [-28, 30, -45],
     initRotationY: 1.5707963267948966,
     subcategory: 'standing',
-    dimensions: {"depth":72.14,"width":139.7,"height":75.44},
+    dimensions: { depth: 72.14, width: 139.7, height: 75.44 },
     material: 'default',
     version: 2,
     orientation: 'standard',
-    glbPath: '/glb/desks/standing_desks/standing_desk_2_72.14Dx139.7Wx75.44H-transformed.glb'
+    glbPath:
+      '/glb/desks/standing_desks/standing_desk_2_72.14Dx139.7Wx75.44H-transformed.glb',
   },
   'Standing Desk v2 default': {
     model: DeskStandingV2Default,
@@ -1158,7 +1225,7 @@ export const modelComponents: {
     material: 'default',
     version: 2,
     orientation: 'standard',
-    glbPath: '/glb/desks/standing_desks/standing_desk_2_white-transformed.glb'
+    glbPath: '/glb/desks/standing_desks/standing_desk_2_white-transformed.glb',
   },
   'Standing Desk v2 light wood': {
     model: DeskStandingV2Light_wood,
@@ -1169,7 +1236,8 @@ export const modelComponents: {
     material: 'light wood',
     version: 2,
     orientation: 'standard',
-    glbPath: '/glb/desks/standing_desks/standing_desk_2_light-wood-transformed.glb'
+    glbPath:
+      '/glb/desks/standing_desks/standing_desk_2_light-wood-transformed.glb',
   },
   'tkl% Keyboard grey': {
     model: KeyboardTklGrey,
@@ -1178,8 +1246,8 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'tkl',
     version: 1,
-    colors: ["grey"],
-    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_grey-transformed.glb'
+    colors: ['grey'],
+    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_grey-transformed.glb',
   },
   'tkl% Keyboard orange black white': {
     model: KeyboardTklOrangeBlackWhite,
@@ -1188,8 +1256,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'tkl',
     version: 1,
-    colors: ["orange","black","white"],
-    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_orange_black_white-transformed.glb'
+    colors: ['orange', 'black', 'white'],
+    glbPath:
+      '/glb/keyboards/tkl_keyboards/tkl_keyboard_orange_black_white-transformed.glb',
   },
   'tkl% Keyboard v8008 default': {
     model: KeyboardTklV8008Default,
@@ -1198,8 +1267,8 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'tkl',
     version: 8008,
-    colors: ["default"],
-    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_8008-transformed.glb'
+    colors: ['default'],
+    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_8008-transformed.glb',
   },
   'tkl% Keyboard white': {
     model: KeyboardTklWhite,
@@ -1208,8 +1277,8 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'tkl',
     version: 1,
-    colors: ["white"],
-    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_white-transformed.glb'
+    colors: ['white'],
+    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_white-transformed.glb',
   },
   'tkl% Keyboard white grey red': {
     model: KeyboardTklWhiteGreyRed,
@@ -1218,8 +1287,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'tkl',
     version: 1,
-    colors: ["white","grey","red"],
-    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_white_grey_red-transformed.glb'
+    colors: ['white', 'grey', 'red'],
+    glbPath:
+      '/glb/keyboards/tkl_keyboards/tkl_keyboard_white_grey_red-transformed.glb',
   },
   'tkl% Keyboard yellow grey black': {
     model: KeyboardTklYellowGreyBlack,
@@ -1228,8 +1298,9 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'tkl',
     version: 1,
-    colors: ["yellow","grey","black"],
-    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_yellow_grey_black-transformed.glb'
+    colors: ['yellow', 'grey', 'black'],
+    glbPath:
+      '/glb/keyboards/tkl_keyboards/tkl_keyboard_yellow_grey_black-transformed.glb',
   },
   'tkl% Keyboard yellow purple (grad)': {
     model: KeyboardTklYellowPurpleGrad,
@@ -1238,9 +1309,10 @@ export const modelComponents: {
     initRotationY: 4.71238898038469,
     subcategory: 'tkl',
     version: 1,
-    colors: ["yellow","purple"],
-    features: ["grad"],
-    glbPath: '/glb/keyboards/tkl_keyboards/tkl_keyboard_yellow_purple_grad-transformed.glb'
+    colors: ['yellow', 'purple'],
+    features: ['grad'],
+    glbPath:
+      '/glb/keyboards/tkl_keyboards/tkl_keyboard_yellow_purple_grad-transformed.glb',
   },
   'tv:1 43" Monitor with Stand': {
     model: Monitortv143Stand,
@@ -1250,7 +1322,7 @@ export const modelComponents: {
     subcategory: 'tv:1',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_43in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_43in-transformed.glb',
   },
   'tv:1 49" Monitor with Stand': {
     model: Monitortv149Stand,
@@ -1260,7 +1332,7 @@ export const modelComponents: {
     subcategory: 'tv:1',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_49in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_49in-transformed.glb',
   },
   'tv:1 55" Monitor with Stand': {
     model: Monitortv155Stand,
@@ -1270,7 +1342,7 @@ export const modelComponents: {
     subcategory: 'tv:1',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_55in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_55in-transformed.glb',
   },
   'tv:1 65" Monitor with Stand': {
     model: Monitortv165Stand,
@@ -1280,7 +1352,7 @@ export const modelComponents: {
     subcategory: 'tv:1',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_65in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_65in-transformed.glb',
   },
   'tv:1 75" Monitor with Stand': {
     model: Monitortv175Stand,
@@ -1290,7 +1362,7 @@ export const modelComponents: {
     subcategory: 'tv:1',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_75in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_75in-transformed.glb',
   },
   'tv:1 85" Monitor with Stand': {
     model: Monitortv185Stand,
@@ -1300,7 +1372,7 @@ export const modelComponents: {
     subcategory: 'tv:1',
     curved: 0,
     stand: true,
-    glbPath: '/glb/displays/tv/tv_1_85in-transformed.glb'
+    glbPath: '/glb/displays/tv/tv_1_85in-transformed.glb',
   },
   'Xxl Qck Mousepad': {
     model: MousepadXxlQck,
@@ -1309,6 +1381,6 @@ export const modelComponents: {
     initRotationY: 3.141592653589793,
     size: 'xxl',
     brand: 'qck',
-    glbPath: '/glb/mousepads/XXL_qck_mousepad-transformed.glb'
-  }
+    glbPath: '/glb/mousepads/XXL_qck_mousepad-transformed.glb',
+  },
 };

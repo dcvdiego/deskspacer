@@ -31,7 +31,7 @@ Please adhere to this project's `code of conduct`.
 
 - Default y-axis/relative to existing table positioning for peripherals
 
-- Locking certain models from transformation
+- Undo/Redo History
 
 - For Alpha: Testing
 
@@ -54,6 +54,8 @@ Please adhere to this project's `code of conduct`.
 - Share your creations a-la pcpartpicker
 
 - Boundaries
+
+- Locking certain models from transformation
 
 ## Acknowledgements
 

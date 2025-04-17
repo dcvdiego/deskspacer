@@ -4,6 +4,7 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
 import {
   Box,
+  Chip,
   Divider,
   FormControl,
   IconButton,
@@ -14,6 +15,7 @@ import {
   ListItemIcon,
   ListItemText,
   MenuItem,
+  OutlinedInput,
   Select,
   SelectChangeEvent,
   ToggleButton,
@@ -40,10 +42,15 @@ import {
   Upload,
   MissedVideoCall,
   NoMeetingRoom,
+  Undo,
+  Redo,
+  Lock,
+  LockOpen,
 } from '@mui/icons-material';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { OrbitControls } from 'three-stdlib';
 import { useModelStore } from '../../utils/store';
+import { darkTheme } from '../../styles/theme.styles';
 
 const drawerWidth = 240;
 
@@ -160,7 +167,101 @@ const TransformModeSelect = ({
     </FormControl>
   );
 };
+const LockedListSelect = ({
+  lockedModels,
+  setLockedModels,
+}: {
+  lockedModels: string[];
+  setLockedModels: React.Dispatch<React.SetStateAction<string[]>>;
+}) => {
+  const { updateModel } = useModelStore();
+  const models = useModelStore.getState().models;
+  const previousLockedModels = useRef(lockedModels);
+  const handleChange = (event: SelectChangeEvent<typeof lockedModels>) => {
+    const {
+      target: { value },
+    } = event;
+    const newLockedModels =
+      typeof value === 'string' ? value.split(',') : value;
+    // Find models that need to be locked
+    const modelsToLock = newLockedModels.filter(
+      (model) => !previousLockedModels.current.includes(model)
+    );
 
+    // Find models that need to be unlocked
+    const modelsToUnlock = previousLockedModels.current.filter(
+      (model) => !newLockedModels.includes(model)
+    );
+
+    setLockedModels(newLockedModels);
+
+    modelsToLock.forEach(async (model) => {
+      updateModel(model, { locked: true });
+    });
+
+    modelsToUnlock.forEach(async (model) => {
+      updateModel(model, { locked: false });
+    });
+
+    previousLockedModels.current = newLockedModels;
+    useModelStore.persist.rehydrate();
+  };
+  const ITEM_HEIGHT = 42;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 150,
+      },
+    },
+  };
+  function getStyles(
+    name: string,
+    lockedModels: readonly string[],
+    theme: Theme
+  ) {
+    return {
+      fontWeight: lockedModels.includes(name)
+        ? theme.typography.fontWeightMedium
+        : theme.typography.fontWeightRegular,
+    };
+  }
+  //TODO: figure out why the dropdown chip does not update when lockedModels is updated
+  return (
+    <FormControl sx={{ m: 1, width: 200 }}>
+      <InputLabel id="demo-multiple-chip-label">Locked Models List</InputLabel>
+      <Select
+        labelId="demo-multiple-chip-label"
+        id="demo-multiple-chip"
+        multiple
+        value={lockedModels}
+        onChange={handleChange}
+        input={
+          <OutlinedInput id="select-multiple-chip" label="Locked Models List" />
+        }
+        renderValue={(selected) => (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {selected.map((value) => (
+              <Chip key={value} label={value} />
+            ))}
+          </Box>
+        )}
+        MenuProps={MenuProps}
+      >
+        {models.map((name) => (
+          <MenuItem
+            key={name.id}
+            value={name.id}
+            style={getStyles(name.id, lockedModels, darkTheme)}
+          >
+            {name.id}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};
 const CameraToggle = ({
   disabled,
   onToggle,
@@ -196,6 +297,21 @@ const YAxisToggle = ({
         onChange={onToggle}
       >
         <ImportExport sx={enabled ? { fill: 'lightgreen' } : { fill: 'red' }} />
+      </ToggleButton>
+    </Tooltip>
+  );
+};
+const LockToggle = ({
+  isLocked,
+  onToggle,
+}: {
+  isLocked: boolean;
+  onToggle: () => void;
+}) => {
+  return (
+    <Tooltip title={!isLocked ? 'Lock model' : 'Unlock model'} arrow>
+      <ToggleButton value="Lock Toggle" selected={isLocked} onChange={onToggle}>
+        {!isLocked ? <LockOpen /> : <Lock />}
       </ToggleButton>
     </Tooltip>
   );
@@ -246,7 +362,9 @@ interface HeaderProps {
   setDisableCamera: React.Dispatch<React.SetStateAction<boolean>>;
   enableY: boolean;
   setEnableY: React.Dispatch<React.SetStateAction<boolean>>;
-  setContentModal: React.Dispatch<React.SetStateAction<string | null>>;
+  setContentModal: React.Dispatch<
+    React.SetStateAction<'tutorial' | 'share' | 'settings' | null>
+  >;
   isSelected: string | null;
   setManualRemove: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAddObjectModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -254,6 +372,8 @@ interface HeaderProps {
   called: boolean;
   handleExport: () => void;
   orbitRef: React.RefObject<OrbitControls | null>;
+  lockedModels: string[];
+  setLockedModels: React.Dispatch<React.SetStateAction<string[]>>;
   // handleImport: (file: string) => void;
 }
 
@@ -272,16 +392,29 @@ export const Header: React.FC<HeaderProps> = ({
   called,
   handleExport,
   orbitRef,
+  lockedModels,
+  setLockedModels,
   // handleImport,
 }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
+  const { setModels, updateModel } = useModelStore();
+  const models = useModelStore.getState().models;
+  const model = useModelStore
+    .getState()
+    .models.find((m) => m.id === isSelected);
   const handleToggleCamera = () => setDisableCamera(!disableCamera);
   const handleToggleYAxis = () => setEnableY(!enableY);
+  const handleToggleLock = () => {
+    if (isSelected) updateModel(isSelected, { locked: !model?.locked });
+    setLockedModels(
+      models.filter((model) => model.locked === true).map((model) => model.id)
+    );
+  };
   const handleTransformChange = (event: SelectChangeEvent) =>
     setTransformMode(event.target.value);
-  const { setModels } = useModelStore();
+
   return (
     <>
       <AppBar position="fixed" open={open}>
@@ -313,6 +446,27 @@ export const Header: React.FC<HeaderProps> = ({
               value={transformMode}
               onChange={handleTransformChange}
             />
+            <LockedListSelect
+              lockedModels={lockedModels}
+              setLockedModels={setLockedModels}
+            />
+            {isSelected && model && (
+              <LockToggle isLocked={model.locked} onToggle={handleToggleLock} />
+            )}
+            <Tooltip title={'Undo (soon)'} arrow>
+              <span>
+                <IconButton disabled>
+                  <Undo />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title={'Redo (soon)'} arrow>
+              <span>
+                <IconButton disabled>
+                  <Redo />
+                </IconButton>
+              </span>
+            </Tooltip>
             <CameraToggle
               disabled={disableCamera}
               onToggle={handleToggleCamera}

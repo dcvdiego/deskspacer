@@ -131,7 +131,10 @@ const TransformModel = ({ ...props }) => {
   return (
     // https://github.com/pmndrs/drei/discussions/1495
     // <DreiSelect multiple box onChange={(selected) => console.log(selected)}>
-    <Select enabled={isHovered === name || isSelected === name} name={name}>
+    <Select
+      enabled={(isHovered === name || isSelected === name) && !model?.locked}
+      name={name}
+    >
       <group ref={GroupRef}>
         <PivotControls
           depthTest={false}
@@ -172,7 +175,7 @@ const TransformModel = ({ ...props }) => {
             updateModelPosition();
             if (orbit.current) orbit.current.enabled = true;
           }}
-          enabled={isSelected === name}
+          enabled={isSelected === name && !model?.locked}
           translationLimits={[
             savedPosition
               ? [minX - savedPosition.x, maxX - savedPosition.x]
@@ -192,7 +195,7 @@ const TransformModel = ({ ...props }) => {
             ref={ModelRef}
             onClick={(e) => {
               setIsSelected(
-                isSelected === getObjectWithName(e.object)
+                isSelected === getObjectWithName(e.object) || model?.locked
                   ? null
                   : getObjectWithName(e.object)
               );

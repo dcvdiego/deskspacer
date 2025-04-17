@@ -26,5 +26,6 @@ export interface ModelInCanvas {
   maxBoundsY?: number;
   minBoundsX?: number;
   maxBoundsX?: number;
+  locked: boolean;
 }
 export type ModelComponentType = ComponentType<ModelComponentProps>;

@@ -5,41 +5,24 @@ import DefaultRoom from './components/models/rooms/DefaultRoom';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { Container } from './styles/global.styles';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 
 import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-
-import { SwapHoriz, ContentCopy } from '@mui/icons-material';
 import {
   Selection,
   EffectComposer,
   Outline,
 } from '@react-three/postprocessing';
-import { Autocomplete, Button, Modal, TextField } from '@mui/material';
-import {
-  Bounds,
-  Html,
-  Loader,
-  OrbitControls,
-  PerformanceMonitor,
-} from '@react-three/drei';
+import { Loader, OrbitControls, PerformanceMonitor } from '@react-three/drei';
 import { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import { DrawerHeader, Header } from './components/UI/Header';
 import { modelComponents } from './components/models/modelComponentsMapping';
 import TransformModel from './components/models/TransformModel';
-import PreviewModel from './components/models/PreviewModel';
-import { purple } from '@mui/material/colors';
 import * as THREE from 'three';
 import * as streamsaver from 'streamsaver';
 import { useModelStore } from './utils/store';
 import { ModelInCanvas } from './types/ModelTypes';
-import { Spacer } from './components/UI/Spacer';
-import { StyledModal } from './components/UI/Modal';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import STATES_BY_ID_QUERY from './graphql/state/statesById';
 import ADD_STATE_QUERY from './graphql/state/addState';
@@ -48,36 +31,16 @@ import {
   // GLTFLoader,
   // DRACOLoader,
 } from 'three/examples/jsm/Addons.js';
+import { darkTheme } from './styles/theme.styles';
+import CollisionBounds from './components/models/utils/CollisionBounds';
+import InfoModal from './components/UI/modals/InfoModal';
+import AddModal from './components/UI/modals/AddModal';
 // import Logo from '../public/logo.svg?react';
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: purple['500'],
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          color: 'white',
-        },
-      },
-    },
-  },
-});
-const heightAdjustmentMap: Record<string, number> = {
-  standing: 0.25,
-  alex: -1.5,
-  l_shaped: 0.87,
-  regular: 1.08,
-  linnmon: 0,
-  malm: -1.7,
-  output: 0.25,
-  // ... other desk types
-};
+
 function App() {
-  const { addModel, deleteModel } = useModelStore();
+  const { deleteModel } = useModelStore();
+
+  const models = useModelStore.getState().models;
   const [transformMode, setTransformMode] = useState('');
 
   const [isHovered, setIsHovered] = useState<string | null>(null);
@@ -85,13 +48,18 @@ function App() {
   const [isSelected, setIsSelected] = useState<string | null>(null);
   const [isAddObjectModalOpen, setIsAddObjectModalOpen] =
     useState<boolean>(false);
-  const [contentModal, setContentModal] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [contentModal, setContentModal] = useState<
+    'tutorial' | 'share' | 'settings' | null
+  >(null);
   const [manualRemove, setManualRemove] = useState<boolean>(false);
   const [disableCamera, setDisableCamera] = useState<boolean>(false);
   const [dpr, setDpr] = useState(1.5);
   const [enableY, setEnableY] = useState<boolean>(false);
+  const [lockedModels, setLockedModels] = useState<string[]>(
+    models
+      ? models.filter((model) => model.locked === true).map((model) => model.id)
+      : []
+  );
   const [
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     exportLoading,
@@ -117,140 +85,14 @@ function App() {
       reset: addReset,
     },
   ] = useMutation(ADD_STATE_QUERY);
-  const handleAddModel = async (modelName: string) => {
-    const newId = `${modelName}__${
-      useModelStore
-        .getState()
-        .models.filter((model: ModelInCanvas) => model.name === modelName)
-        .length
-    }`;
-    const existingDeskName = useModelStore
-      .getState()
-      .models.find(
-        (model: ModelInCanvas) =>
-          modelComponents[model.name]?.category === 'desks'
-      )?.name;
-
-    const existingDeskPosition = useModelStore
-      .getState()
-      .models.find(
-        (model: ModelInCanvas) =>
-          modelComponents[model.name]?.category === 'desks'
-      )?.position;
-    // difference between starting position and existingDeskPosition
-    const offsetPosition = new THREE.Vector3();
-    // const existingDeskRotation = useModelStore
-    //   .getState()
-    //   .models.find(
-    //     (model: ModelInCanvas) =>
-    //       modelComponents[model.name]?.category === 'desks'
-    //   )?.rotation;
-    const initRotation = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(0, modelComponents[modelName].initRotationY, 0)
-    );
-    if (existingDeskName && existingDeskPosition)
-      offsetPosition.subVectors(
-        existingDeskPosition,
-        new THREE.Vector3().fromArray(
-          modelComponents[existingDeskName].initPosition
-        )
-      );
-    const heightAdjustment =
-      existingDeskName &&
-      heightAdjustmentMap[existingDeskName.toLowerCase().split(' ')[0]]
-        ? heightAdjustmentMap[existingDeskName.toLowerCase().split(' ')[0]]
-        : 0;
-
-    addModel({
-      name: modelName,
-      id: newId,
-      position: new THREE.Vector3(
-        modelComponents[modelName].initPosition[0] +
-          (existingDeskPosition ? offsetPosition.x : 0),
-        modelComponents[modelName].initPosition[1] +
-          (existingDeskPosition ? offsetPosition.y + heightAdjustment : 0),
-        modelComponents[modelName].initPosition[2] +
-          (existingDeskPosition ? offsetPosition.z : 0)
-      ),
-      rotation:
-        // TODO: fix deskRotation
-        // existingDeskRotation
-        // ? initRotation.multiplyQuaternions(initRotation, existingDeskRotation)
-        // :
-        initRotation,
-      // TODO: change this to Number method
-      minBoundsZ: -Infinity,
-      maxBoundsZ: Infinity,
-      minBoundsX: -Infinity,
-      maxBoundsX: Infinity,
-      minBoundsY: -Infinity,
-      maxBoundsY: Infinity,
-    });
-    await useModelStore.persist.rehydrate();
-    if (addCalled) addReset();
-    setSelectedModel(null);
-    setSelectedCategory(null);
-    setIsAddObjectModalOpen(false);
-  };
-  const handleSwapModel = async (modelName: string) => {
-    if (!isSelected) return;
-
-    const model = useModelStore
-      .getState()
-      .models.find((m) => m.id === isSelected);
-
-    deleteModel(isSelected);
-    setIsSelected(null);
-
-    const newId = `${modelName}__${
-      useModelStore
-        .getState()
-        .models.filter((model: ModelInCanvas) => model.name === modelName)
-        .length
-    }`;
-
-    addModel({
-      name: modelName,
-      id: newId,
-      position: model!.position,
-      rotation: model!.rotation,
-    });
-
-    await useModelStore.persist.rehydrate();
-    if (addCalled) addReset();
-    setSelectedModel(null);
-    setSelectedCategory(null);
-    setIsAddObjectModalOpen(false);
-  };
-
   const orbitRef = useRef<OrbitControlsType>(null);
-  const ModelPreview = selectedModel
-    ? modelComponents[selectedModel].model
-    : null;
-  const categories = Array.from(
-    new Set(
-      Object.values(modelComponents).map((component) => component.category)
-    )
-  );
-  const filteredComponents = selectedCategory
-    ? Object.values(modelComponents).filter(
-        (component) => component.category === selectedCategory
-      )
-    : [];
-  const options = filteredComponents.map((component) => {
-    const title = Object.keys(modelComponents).find(
-      (key) => modelComponents[key] === component
-    );
-    if (!title) {
-      throw new Error(
-        `No title found for component: ${Object.keys(component)}`
-      );
-    }
-    return {
-      title: title,
-      subcategory: component.subcategory,
-    };
-  });
+  const sceneRef = useRef(null);
+  const minBoundsZRef = useRef<THREE.Mesh>(null);
+  const maxBoundsZRef = useRef<THREE.Mesh>(null);
+  const minBoundsXRef = useRef<THREE.Mesh>(null);
+  const maxBoundsXRef = useRef<THREE.Mesh>(null);
+  const minBoundsYRef = useRef<THREE.Mesh>(null);
+
   useEffect(() => {
     if (!isSelected) return;
     const handleModelDelete = () => {
@@ -272,28 +114,7 @@ function App() {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isSelected, manualRemove, deleteModel, addCalled, addReset]);
-  const sortedOptions = options.toSorted((a, b) => {
-    if (a.subcategory !== b.subcategory) {
-      return a.subcategory.localeCompare(b.subcategory);
-    } else {
-      return a.title.localeCompare(b.title);
-    }
-  });
-  // TODO: Make Logo drawable (currently paths but need strokes)
-  // const StyledLogo = styled(Logo)`
-  //   width: 35px;
-  //   height: 35px;
-  //   margin: 0.25rem;
-  //   path {
-  //     fill: white;
 
-  //     stroke: white;
-  //     stroke-width: 15;
-  //     stroke-dasharray: 1000;
-  //     stroke-dashoffset: 1000;
-  //     animation: draw 2s ease-out;
-  //   }
-  // `;
   const fragmentIdentifier = window.location.hash.substring(1);
 
   useEffect(() => {
@@ -399,13 +220,6 @@ function App() {
     setExportLoading(false);
   };
 
-  const sceneRef = useRef(null);
-  const minBoundsZRef = useRef<THREE.Mesh>(null);
-  const maxBoundsZRef = useRef<THREE.Mesh>(null);
-  const minBoundsXRef = useRef<THREE.Mesh>(null);
-  const maxBoundsXRef = useRef<THREE.Mesh>(null);
-  const minBoundsYRef = useRef<THREE.Mesh>(null);
-
   const minBoundsZ = new THREE.Box3();
   const maxBoundsZ = new THREE.Box3();
   const minBoundsX = new THREE.Box3();
@@ -423,8 +237,15 @@ function App() {
   //     content: 'm';
   //   }
   // `;
-
-  // things to add to a potential context: transformMode, setTransformMode, isSelected, enableY, addCalled, orbit it removes 10 lines of code but adding context adds way more
+  const infoModalShareData = {
+    loading: addLoading,
+    error: !!addError,
+    url: addStateData?.addState?.sharedState?.id
+      ? `${import.meta.env.VITE_WEB_URL}/#${
+          addStateData.addState.sharedState.id
+        }`
+      : null,
+  };
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -444,192 +265,25 @@ function App() {
           called={addCalled}
           handleExport={handleExport}
           orbitRef={orbitRef}
+          lockedModels={lockedModels}
+          setLockedModels={setLockedModels}
           // handleImport={handleImport}
         />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
-          <Modal
-            keepMounted
-            open={isAddObjectModalOpen}
-            onClose={() => setIsAddObjectModalOpen(false)}
-            aria-labelledby="keep-mounted-modal-title"
-            aria-describedby="keep-mounted-modal-description"
-          >
-            <StyledModal>
-              {categories.map((category) =>
-                selectedCategory === category ? (
-                  <Autocomplete
-                    key={category}
-                    options={sortedOptions}
-                    groupBy={(option: { title: string; subcategory: string }) =>
-                      option.subcategory
-                    }
-                    getOptionLabel={(option) => option.title}
-                    sx={{ width: 300 }}
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        label={`Select a${
-                          category.toLowerCase().startsWith('a') ||
-                          category.toLowerCase().startsWith('e') ||
-                          category.toLowerCase().startsWith('i') ||
-                          category.toLowerCase().startsWith('o') ||
-                          category.toLowerCase().startsWith('u')
-                            ? 'n '
-                            : ' '
-                        }${category.slice(0, -1)}`}
-                      />
-                    )}
-                    onChange={(
-                      _event: any,
-                      value: {
-                        title: React.SetStateAction<string | null>;
-                      } | null
-                    ) => {
-                      if (value !== null) {
-                        setSelectedModel(value.title);
-                      } else {
-                        setSelectedModel(null);
-                      }
-                    }}
-                  />
-                ) : (
-                  <Button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                  >
-                    {category.charAt(0).toUpperCase() +
-                      category.slice(1).replace('-', ' ')}
-                  </Button>
-                )
-              )}
-              <Canvas
-                camera={{
-                  position: [70, 35, 20],
-                }}
-                style={{ width: '500px', height: '500px' }}
-              >
-                <ambientLight />
-                <Html
-                  as="div"
-                  style={{
-                    display: 'flex',
-                    left: '-14rem',
-                    gap: '20rem',
-                  }}
-                >
-                  <ThemeProvider theme={darkTheme}>
-                    {ModelPreview && (
-                      <>
-                        <IconButton>
-                          <AddCircleIcon
-                            onClick={() =>
-                              selectedModel && handleAddModel(selectedModel)
-                            }
-                            fontSize="large"
-                          />
-                        </IconButton>
-                        {isSelected && (
-                          <IconButton>
-                            <SwapHoriz
-                              onClick={() =>
-                                selectedModel && handleSwapModel(selectedModel)
-                              }
-                              fontSize="large"
-                            />
-                          </IconButton>
-                        )}
-                      </>
-                    )}
-                  </ThemeProvider>
-                </Html>
-                {ModelPreview && (
-                  <Bounds fit clip observe margin={2}>
-                    <PreviewModel cacheKey={selectedModel}>
-                      <ModelPreview />
-                    </PreviewModel>
-                  </Bounds>
-                )}
-              </Canvas>
-            </StyledModal>
-          </Modal>
-          <Modal
-            keepMounted
-            open={typeof contentModal === 'string'}
+          <AddModal
+            addCalled={addCalled}
+            addReset={addReset}
+            isAddObjectModalOpen={isAddObjectModalOpen}
+            setIsAddObjectModalOpen={setIsAddObjectModalOpen}
+            isSelected={isSelected}
+            setIsSelected={setIsSelected}
+          />
+          <InfoModal
+            modalType={contentModal}
             onClose={() => setContentModal(null)}
-            aria-labelledby="keep-mounted-modal-title"
-            aria-describedby="keep-mounted-modal-description"
-          >
-            <StyledModal>
-              {contentModal === 'tutorial' ? (
-                <>
-                  <div>
-                    Welcome to{' '}
-                    <Typography variant="h6" noWrap component="div">
-                      DESK{' '}
-                      <Spacer time={24} spacing={5}>
-                        SPACER
-                      </Spacer>
-                    </Typography>
-                  </div>
-                  <div>
-                    The left side menu has everything you need to
-                    add/remove/modify your canvas.
-                  </div>
-                  <div>
-                    The top menu has everything you need at a glance while
-                    inside the canvas.
-                  </div>
-                  <div>Have fun</div>
-                  <Button onClick={() => setContentModal(null)}>
-                    Continue
-                  </Button>
-                </>
-              ) : contentModal === 'share' ? (
-                <>
-                  <div>Here is the link, it expires in 15 days:</div>
-                  <div>
-                    <TextField
-                      disabled
-                      id="outlined-disabled"
-                      value={
-                        addLoading
-                          ? 'Loading'
-                          : addError
-                            ? 'An error has occurred'
-                            : `${import.meta.env.VITE_WEB_URL}/#${
-                                addStateData.addState.sharedState.id
-                              }`
-                      }
-                      slotProps={{
-                        htmlInput: {
-                          size: addLoading
-                            ? undefined
-                            : addStateData.addState.sharedState.id.length + 14,
-                        },
-                      }}
-                    />
-                    <IconButton
-                      onClick={() =>
-                        navigator.clipboard.writeText(
-                          `${import.meta.env.VITE_WEB_URL}/#${
-                            addStateData.addState.sharedState.id
-                          }`
-                        )
-                      }
-                    >
-                      <ContentCopy />
-                    </IconButton>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>Settings</div>
-                  <div>These are the settings</div>
-                </>
-              )}
-            </StyledModal>
-          </Modal>
+            shareData={infoModalShareData}
+          />
           <Container style={{ paddingTop: 0 }}>
             <Suspense>
               <Canvas
@@ -644,32 +298,20 @@ function App() {
                   overflowX: 'hidden',
                 }}
                 dpr={dpr}
+                onClick={() => isSelected && !isHovered && setIsSelected(null)}
               >
                 <PerformanceMonitor
                   onIncline={() => setDpr(2)}
                   onDecline={() => setDpr(1)}
                 />
                 <ambientLight />
-                <mesh position={[0, 48, -120]} ref={minBoundsZRef}>
-                  <boxGeometry args={[200, 155, 105]} />
-                  <meshPhongMaterial color="#ff0000" opacity={0} transparent />
-                </mesh>
-                <mesh position={[0, 48, 125]} ref={maxBoundsZRef}>
-                  <boxGeometry args={[200, 155, 105]} />
-                  <meshPhongMaterial color="#ff0000" opacity={0} transparent />
-                </mesh>
-                <mesh position={[148, 48, 0]} ref={maxBoundsXRef}>
-                  <boxGeometry args={[100, 155, 150]} />
-                  <meshPhongMaterial color="#fbff00" opacity={0} transparent />
-                </mesh>
-                <mesh position={[-144.2, 48, 0]} ref={minBoundsXRef}>
-                  <boxGeometry args={[100, 155, 150]} />
-                  <meshPhongMaterial color="#003cff" opacity={0} transparent />
-                </mesh>
-                <mesh position={[0, -23.5, 0]} ref={minBoundsYRef}>
-                  <boxGeometry args={[200, 105, 225]} />
-                  <meshPhongMaterial color="#ff0000" opacity={0} transparent />
-                </mesh>
+                <CollisionBounds
+                  minBoundsZRef={minBoundsZRef}
+                  maxBoundsZRef={maxBoundsZRef}
+                  maxBoundsXRef={maxBoundsXRef}
+                  minBoundsXRef={minBoundsXRef}
+                  minBoundsYRef={minBoundsYRef}
+                />
                 <group ref={sceneRef}>
                   <DefaultRoom position={[0, 28, 0]} />
 

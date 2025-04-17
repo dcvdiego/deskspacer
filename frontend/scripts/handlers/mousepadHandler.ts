@@ -9,23 +9,23 @@ const positionMap: Record<
   }
 > = {
   qck_small: {
-    position: [9, 31.25, -50],
+    position: [9, 59.45, -50],
     rotation: Math.PI / 2,
   },
   qck_medium: {
-    position: [9, 31.25, -50],
+    position: [9, 59.45, -50],
     rotation: Math.PI / 2,
   },
   qck_large: {
-    position: [9, 31.25, -53],
+    position: [9, 59.45, -53],
     rotation: Math.PI / 2,
   },
   qck_xxl: {
-    position: [1, 31.35, -52],
+    position: [1, 59.45, -52],
     rotation: Math.PI,
   },
   rgb_medium: {
-    position: [12, 31.25, -50],
+    position: [12, 59.45, -50],
     rotation: Math.PI / 2 + Math.PI,
   },
 };
