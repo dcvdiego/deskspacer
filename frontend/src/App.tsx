@@ -314,7 +314,6 @@ function App() {
                 />
                 <group ref={sceneRef}>
                   <DefaultRoom position={[0, 28, 0]} />
-
                   <Selection>
                     <EffectComposer multisampling={0} autoClear={false}>
                       <Outline
