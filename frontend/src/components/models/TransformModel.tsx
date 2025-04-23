@@ -1,10 +1,12 @@
 import { PivotControls } from '@react-three/drei';
 import { Select } from '@react-three/postprocessing';
 // import { Select as DreiSelect } from '@react-three/drei';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useModelStore } from '../../utils/store';
 import { positionsAreEqual, quaternionsAreEqual } from '../../utils/utils';
+import { useFrame, useThree } from '@react-three/fiber';
+import { isTouchDevice } from './utils/general';
 
 const TransformModel = ({ ...props }) => {
   const {
@@ -30,6 +32,7 @@ const TransformModel = ({ ...props }) => {
   const [initialized, setInitialized] = useState<boolean>(false);
   const [isRotating, setIsRotating] = useState<boolean>(false);
   const [savedPosition, setSavedPosition] = useState<THREE.Vector3>();
+  const [drag, setDrag] = useState<boolean>(false);
   const getObjectWithName = (object: any) => {
     if (object.parent === null) return null;
     if (object.name !== '') return object.name;
@@ -90,8 +93,150 @@ const TransformModel = ({ ...props }) => {
       setInitialized(true);
     }
   }, [ModelRef, model, initialized, GroupRef]);
-
+  const { camera } = useThree();
   const boundsModel = new THREE.Box3();
+  const [offset, setOffset] = useState<[number, number, number]>([0, 0, 0]);
+
+  // Predefined face data with normals and center computation
+  const faces = useMemo(
+    () => [
+      {
+        normal: new THREE.Vector3(0, 0, 1),
+        computeCenter: (
+          bbox: {
+            min: { x: number; y: number };
+            max: { x: number; y: number; z: number };
+          },
+          target: { set: (arg0: number, arg1: number, arg2: any) => any }
+        ) =>
+          target.set(
+            (bbox.min.x + bbox.max.x) / 2,
+            (bbox.min.y + bbox.max.y) / 2,
+            bbox.max.z
+          ),
+      },
+      {
+        normal: new THREE.Vector3(0, 0, -1),
+        computeCenter: (
+          bbox: {
+            min: { x: number; y: number; z: number };
+            max: { x: number; y: number };
+          },
+          target: { set: (arg0: number, arg1: number, arg2: any) => any }
+        ) =>
+          target.set(
+            (bbox.min.x + bbox.max.x) / 2,
+            (bbox.min.y + bbox.max.y) / 2,
+            bbox.min.z
+          ),
+      },
+      {
+        normal: new THREE.Vector3(-1, 0, 0),
+        computeCenter: (
+          bbox: {
+            min: { x: number; y: number; z: number };
+            max: { y: number; z: number };
+          },
+          target: { set: (arg0: any, arg1: number, arg2: number) => any }
+        ) =>
+          target.set(
+            bbox.min.x,
+            (bbox.min.y + bbox.max.y) / 2,
+            (bbox.min.z + bbox.max.z) / 2
+          ),
+      },
+      {
+        normal: new THREE.Vector3(1, 0, 0),
+        computeCenter: (
+          bbox: {
+            max: { x: number; y: number; z: number };
+            min: { y: number; z: number };
+          },
+          target: { set: (arg0: any, arg1: number, arg2: number) => any }
+        ) =>
+          target.set(
+            bbox.max.x,
+            (bbox.min.y + bbox.max.y) / 2,
+            (bbox.min.z + bbox.max.z) / 2
+          ),
+      },
+      {
+        normal: new THREE.Vector3(0, 1, 0),
+        computeCenter: (
+          bbox: {
+            min: { x: number; z: number };
+            max: { x: number; y: number; z: number };
+          },
+          target: { set: (arg0: number, arg1: any, arg2: number) => any }
+        ) =>
+          target.set(
+            (bbox.min.x + bbox.max.x) / 2,
+            bbox.max.y,
+            (bbox.min.z + bbox.max.z) / 2
+          ),
+      },
+      {
+        normal: new THREE.Vector3(0, -1, 0),
+        computeCenter: (
+          bbox: {
+            min: { x: number; y: number; z: number };
+            max: { x: number; z: number };
+          },
+          target: { set: (arg0: number, arg1: any, arg2: number) => any }
+        ) =>
+          target.set(
+            (bbox.min.x + bbox.max.x) / 2,
+            bbox.min.y,
+            (bbox.min.z + bbox.max.z) / 2
+          ),
+      },
+    ],
+    []
+  );
+
+  // Reusable vectors to avoid garbage collection
+  const cameraForward = useMemo(() => new THREE.Vector3(), []);
+  const bbox = useMemo(() => new THREE.Box3(), []); // better than BoundsModel because two different logics in updating them
+  const componentPosition = useMemo(() => new THREE.Vector3(), []);
+  const faceCenter = useMemo(() => new THREE.Vector3(), []);
+  const offsetVector = useMemo(() => new THREE.Vector3(), []);
+  const offsetRef = useRef<[number, number, number]>([0, 0, 0]);
+
+  useFrame(() => {
+    // TODO: improve offset calculations and apply rotations to different faces too?
+    if (!ModelRef.current) return;
+
+    // Update bounding box and camera direction
+    bbox.setFromObject(ModelRef.current);
+    camera.getWorldDirection(cameraForward);
+
+    // Find the closest face
+    let maxDot = -Infinity;
+    let closestFace = null;
+    faces.forEach((face) => {
+      const dot = cameraForward.dot(face.normal);
+      if (dot > maxDot) {
+        maxDot = dot;
+        closestFace = face;
+      }
+    });
+
+    if (closestFace) {
+      closestFace.computeCenter(bbox, faceCenter);
+      ModelRef.current.getWorldPosition(componentPosition);
+      offsetVector.subVectors(faceCenter, componentPosition);
+
+      // Update state only if offset changes significantly
+      if (
+        Math.abs(offsetVector.x - offsetRef.current[0]) > 0.001 ||
+        Math.abs(offsetVector.y - offsetRef.current[1]) > 0.001 ||
+        Math.abs(offsetVector.z - offsetRef.current[2]) > 0.001
+      ) {
+        offsetRef.current = [offsetVector.x, offsetVector.y, offsetVector.z];
+        setOffset([...offsetRef.current]);
+      }
+    }
+  });
   // TODO: Investigate bug where you have to drag once outside of collision before collision logic works
   // rotation limits should take in place if in collision, tricky one... calculated per rotation no need to be saved
   const checkForCollision = () => {
@@ -138,9 +283,10 @@ const TransformModel = ({ ...props }) => {
       <group ref={GroupRef}>
         <PivotControls
           depthTest={false}
-          // TODO: offset should match initial position somehow, scale could be calculated too-ish
-          scale={25}
-          offset={[0, 20, 0]}
+          // TODO: offset should match initial position somehow
+          scale={150}
+          offset={offset}
+          fixed
           rotation={[0, Math.PI / 2, 0]}
           disableRotations={!['', 'rotate'].includes(transformMode)}
           disableScaling={!['', 'scale'].includes(transformMode)}
@@ -149,6 +295,7 @@ const TransformModel = ({ ...props }) => {
           activeAxes={[true, enableY, true]}
           onDragStart={() => {
             setIsRotating(true);
+            setDrag(true);
             if (called) reset();
           }}
           onDrag={() => {
@@ -171,6 +318,7 @@ const TransformModel = ({ ...props }) => {
             }
           }}
           onDragEnd={() => {
+            setDrag(false);
             setIsRotating(false);
             updateModelPosition();
             if (orbit.current) orbit.current.enabled = true;
@@ -203,6 +351,16 @@ const TransformModel = ({ ...props }) => {
             }}
             onPointerOver={(e) => setIsHovered(getObjectWithName(e.object))}
             onPointerOut={() => setIsHovered(null)}
+            onPointerDown={(e) => {
+              if (!drag && isTouchDevice()) {
+                setIsSelected(
+                  isSelected === getObjectWithName(e.object) || model?.locked
+                    ? null
+                    : getObjectWithName(e.object)
+                );
+                setTransformMode('');
+              }
+            }}
           >
             {children}
           </group>
