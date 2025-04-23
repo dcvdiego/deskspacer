@@ -9,8 +9,6 @@
     "test": "vitest",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preview:worker": "vite build && wrangler dev",
-    "deploy:worker": "vite build && wrangler deploy",
     "generate": "tsx scripts/processModels.ts"
   },
   "dependencies": {
@@ -30,7 +28,6 @@
     "three": "^0.173.0",
     "three-stdlib": "^2.35.14",
     "vite-plugin-svgr": "^4.3.0",
-    "wrangler": "^4.13.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
