@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react-swc';
 import svgr from 'vite-plugin-svgr';
 import { fileURLToPath } from 'node:url';
 
-const filesNeedToExclude = ['public/DeskSpacerPreAlphaDemo.gif'];
+const filesNeedToExclude = ['src/assets/DeskSpacerPreAlphaDemo.gif'];
 
 const filesPathToExclude = filesNeedToExclude.map((src) => {
   return fileURLToPath(new URL(src, import.meta.url));

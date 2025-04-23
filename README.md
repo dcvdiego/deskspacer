@@ -25,7 +25,7 @@ Please adhere to this project's `code of conduct`.
 
 ## Demo
 
-![Demo](https://github.com/dcvdiego/deskspacer/blob/main/frontend/public/DeskSpacerPreAlphaDemo.gif)
+![Demo](https://github.com/dcvdiego/deskspacer/blob/main/frontend/src/assets/DeskSpacerPreAlphaDemo.gif)
 
 ## Road map
 
