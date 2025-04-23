@@ -289,7 +289,7 @@ function App() {
               <Canvas
                 frameloop="demand"
                 camera={{
-                  fov: 45,
+                  fov: 50,
                   position: [165, 138, 230],
                 }}
                 style={{

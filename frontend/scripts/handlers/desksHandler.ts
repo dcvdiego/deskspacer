@@ -5,20 +5,20 @@ interface DeskPositionConfig {
   rotation: number;
 }
 const deskPositionMap: Record<string, DeskPositionConfig> = {
-  regularDesk: { position: [0, 29, -47], rotation: Math.PI / 2 },
+  regularDesk: { position: [0, 29, -47], rotation: Math.PI },
   modernDesk: { position: [0, 30.7, -53], rotation: Math.PI / 2 },
   drawerDesk: { position: [0, 1, -38], rotation: Math.PI },
-  standingDesk: { position: [-28, 30, -45], rotation: Math.PI / 2 },
+  standingDesk: { position: [-28, 29.8, -45], rotation: Math.PI / 2 }, // v2 is 0.95 too high (or v1 is 0.95 too low might be easier)
   malmDesk: { position: [0, 51, -53], rotation: Math.PI / 2 },
-  outputPlatformDesk: { position: [0, 30.5, -59], rotation: -Math.PI / 2 },
-  linnmonDesk: { position: [0, 29.5, -55], rotation: Math.PI / 2 }, // Base for 39/47/59
+  outputPlatformDesk: { position: [0, 31, -59], rotation: -Math.PI / 2 },
+  linnmonDesk: { position: [0, 29.5, -55], rotation: Math.PI / 2 }, // Base for 39/47/59, 59 is 0.4m too high
   alexDesk: { position: [0, 29, -50], rotation: Math.PI / 2 + Math.PI }, // Base for 61/67/79
   bekantLShapedLeft: {
-    position: [0, 31, -55],
+    position: [0, 29.9, -55],
     rotation: Math.PI / 2 + Math.PI,
   },
   bekantLShapedRight: {
-    position: [0, 31, -55],
+    position: [0, 29.9, -55],
     rotation: Math.PI / 2 + Math.PI,
   },
   customDesk: { position: [0, 30.2, -53], rotation: 0 },

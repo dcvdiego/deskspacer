@@ -53,7 +53,9 @@ export const monitorsHandler: ModelHandler = {
     const versionString = version > 1 ? ` v${version}` : '';
     const standString = stand ? ' with Stand' : '';
     const getPosition = (): [number, number, number] => {
-      const baseY = stand ? 61.2 : 60;
+      const baseY = stand ? 61.2 : 60; //seems different for 32:9, all curved monitors w/ stand
+      // 30" curved with stand is fine
+      // all tvs need more
       const baseZ = curved && aspectRatio === '21_9' ? -59.5 : -57;
       return [
         0, // X position
@@ -63,7 +65,8 @@ export const monitorsHandler: ModelHandler = {
     };
 
     const getRotationY = () => {
-      return curved ? Math.PI / 2 : Math.PI / 2 + Math.PI;
+      return Math.PI + curved ? Math.PI / 2 : Math.PI / 2;
+      // 21:9 38" v2/34"/30" w/ and without stand curved has wrong rotation
     };
     return {
       name: `${baseName}${versionString}${standString}`,

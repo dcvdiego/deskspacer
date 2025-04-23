@@ -1,0 +1,3 @@
+name = "deskspacer"
+compatibility_date = "2025-04-23"
+pages_build_output_dir = "./dist"
