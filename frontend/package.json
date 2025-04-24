@@ -15,7 +15,7 @@
     "@apollo/client": "^3.13.3",
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.7",
-    "@mui/styled-engine-sc": "^6.4.6",
+    "@mui/styled-engine-sc": "^7.0.2",
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.17.14",
     "@react-three/postprocessing": "^2.19.1",
