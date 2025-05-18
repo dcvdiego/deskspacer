@@ -67,8 +67,8 @@ importers:
         specifier: ^9.23.0
         version: 9.24.0
       '@react-three/test-renderer':
-        specifier: ^9.0.1
-        version: 9.0.1(@react-three/fiber@8.17.14(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(react@18.3.1)(three@0.173.0)
+        specifier: ^9.1.0
+        version: 9.1.0(@react-three/fiber@8.17.14(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(react@18.3.1)(three@0.173.0)
       '@swc/core':
         specifier: ^1.11.21
         version: 1.11.21
@@ -967,8 +967,8 @@ packages:
       react: ^18.0
       three: '>= 0.138.0'
 
-  '@react-three/test-renderer@9.0.1':
-    resolution: {integrity: sha512-CbMsjbjzZgRdIXL278bwlcg5hu8M/nrNJ81EKwxFeZCZEkyIsbiDQWQ35W1ed5BZzv+j6vz7toXCl67UIgelAA==}
+  '@react-three/test-renderer@9.1.0':
+    resolution: {integrity: sha512-bLjG+cdpVW69wG1W3TuziHrHvA1JQbLesYddY94QMaFF8yzpgwovWK8hGaHWBET1dvsCPIOWVNYHbKAbRj2xSg==}
     peerDependencies:
       '@react-three/fiber': '>=9.0.0'
       react: ^19.0.0
@@ -3659,7 +3659,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/three'
 
-  '@react-three/test-renderer@9.0.1(@react-three/fiber@8.17.14(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(react@18.3.1)(three@0.173.0)':
+  '@react-three/test-renderer@9.1.0(@react-three/fiber@8.17.14(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0))(react@18.3.1)(three@0.173.0)':
     dependencies:
       '@react-three/fiber': 8.17.14(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.173.0)
       react: 18.3.1
