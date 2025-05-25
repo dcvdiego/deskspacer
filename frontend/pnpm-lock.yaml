@@ -15,8 +15,8 @@ importers:
         specifier: ^3.13.8
         version: 3.13.8(@types/react@19.0.10)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mui/icons-material':
-        specifier: ^6.4.7
-        version: 6.4.10(@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@types/react@19.0.10)(react@18.3.1)
+        specifier: ^7.1.0
+        version: 7.1.0(@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@types/react@19.0.10)(react@18.3.1)
       '@mui/material':
         specifier: ^6.4.7
         version: 6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
@@ -791,11 +791,11 @@ packages:
   '@mui/core-downloads-tracker@6.4.7':
     resolution: {integrity: sha512-XjJrKFNt9zAKvcnoIIBquXyFyhfrHYuttqMsoDS7lM7VwufYG4fAPw4kINjBFg++fqXM2BNAuWR9J7XVIuKIKg==}
 
-  '@mui/icons-material@6.4.10':
-    resolution: {integrity: sha512-c2KdFl4KZ0QYC+JSDTMCNjcuOL2rVSdIx/beo7FwJDh2e9XqC1MoLCjw6L1Jo40zbArkgJyg3oFORbXcRfgZOA==}
+  '@mui/icons-material@7.1.0':
+    resolution: {integrity: sha512-1mUPMAZ+Qk3jfgL5ftRR06ATH/Esi0izHl1z56H+df6cwIlCWG66RXciUqeJCttbOXOQ5y2DCjLZI/4t3Yg3LA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      '@mui/material': ^6.4.10
+      '@mui/material': ^7.1.0
       '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
       react: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
@@ -3448,9 +3448,9 @@ snapshots:
 
   '@mui/core-downloads-tracker@6.4.7': {}
 
-  '@mui/icons-material@6.4.10(@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@types/react@19.0.10)(react@18.3.1)':
+  '@mui/icons-material@7.1.0(@mui/material@6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1)))(@types/react@19.0.10)(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.26.9
+      '@babel/runtime': 7.27.1
       '@mui/material': 6.4.7(@types/react@19.0.10)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       react: 18.3.1
     optionalDependencies:
@@ -3497,7 +3497,7 @@ snapshots:
 
   '@mui/system@6.4.7(@types/react@19.0.10)(react@18.3.1)(styled-components@6.1.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@babel/runtime': 7.26.9
+      '@babel/runtime': 7.27.1
       '@mui/private-theming': 6.4.6(@types/react@19.0.10)(react@18.3.1)
       '@mui/styled-engine': '@mui/styled-engine-sc@7.1.0(styled-components@6.1.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1))'
       '@mui/types': 7.2.21(@types/react@19.0.10)
@@ -3517,7 +3517,7 @@ snapshots:
 
   '@mui/utils@6.4.6(@types/react@19.0.10)(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.26.9
+      '@babel/runtime': 7.27.1
       '@mui/types': 7.2.21(@types/react@19.0.10)
       '@types/prop-types': 15.7.14
       clsx: 2.1.1
@@ -5120,7 +5120,7 @@ snapshots:
 
   react-transition-group@4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@babel/runtime': 7.26.9
+      '@babel/runtime': 7.27.1
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
