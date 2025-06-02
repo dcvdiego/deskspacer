@@ -26,7 +26,7 @@
     "streamsaver": "^2.0.6",
     "styled-components": "^6.1.17",
     "three": "^0.173.0",
-    "three-stdlib": "^2.35.14",
+    "three-stdlib": "^2.36.0",
     "vite-plugin-svgr": "^4.3.0",
     "zustand": "^5.0.3"
   },
