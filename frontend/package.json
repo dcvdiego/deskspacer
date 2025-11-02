@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.27.0",
-    "@react-three/test-renderer": "^9.1.0",
+    "@react-three/test-renderer": "^8.2.4",
     "@swc/core": "^1.11.21",
     "@swc/plugin-styled-components": "^7.1.0",
     "@testing-library/dom": "^10.4.0",
