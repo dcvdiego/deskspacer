@@ -11,7 +11,7 @@ const filesPathToExclude = filesNeedToExclude.map((src) => {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react({ plugins: [['@swc/plugin-styled-components', {}]] }),
+    react(),
     svgr(),
   ],
   test: {
