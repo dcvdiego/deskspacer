@@ -8,7 +8,8 @@ DeskSpacer is a 3D desk setup visualization tool inspired by Deskspacing.com. Us
 
 **Tech Stack:**
 - **Frontend**: React + TypeScript + Vite, Three.js with React-Three/Fiber ecosystem (@react-three/fiber, @react-three/drei, @react-three/postprocessing), MUI + Emotion, Zustand for state management, Apollo Client for GraphQL
-- **Backend**: .NET 9 with ASP.NET Core, Hot Chocolate (GraphQL), PostgreSQL via Entity Framework Core
+- **Backend (C#)**: .NET 9 with ASP.NET Core, Hot Chocolate (GraphQL), PostgreSQL via Entity Framework Core
+- **Backend (Go)**: Go 1.23+, graphql-go, pgx/v5 for PostgreSQL, chi router (see `/backend-go` directory)
 - **Testing**: Vitest, Testing Library, @react-three/test-renderer
 
 ## Development Commands
@@ -35,7 +36,7 @@ pnpm lint
 pnpm generate [category]  # categories: monitors, desks, keyboards, mousepads, mice, or 'all'
 ```
 
-### Backend (from `/backend` directory)
+### Backend - C# (from `/backend` directory)
 
 ```bash
 # Run development server with hot reload (default port 5221)
@@ -47,6 +48,24 @@ dotnet build
 # Run migrations
 dotnet ef database update
 ```
+
+### Backend - Go (from `/backend-go` directory)
+
+```bash
+# Run with hot reload (requires air: make install-tools)
+make dev
+
+# Build and run
+make build && make run
+
+# Or run directly
+go run ./cmd/server
+
+# Install development tools (air for hot reload)
+make install-tools
+```
+
+**Note:** The Go backend provides the same GraphQL API as the C# backend with additional improvements (rate limiting, input validation, health checks). Both backends are functionally equivalent and use the same database schema.
 
 ### Full Stack
 
@@ -83,7 +102,7 @@ Frontend requires `.env` file based on `.env.example` with `VITE_BACKEND_URL` an
 - Category handlers in `scripts/handlers/` define processing rules per model type
 - Automatically updates `modelComponentsMapping.ts` registry
 
-### Backend Architecture
+### Backend Architecture (C#)
 
 **GraphQL API:**
 - Hot Chocolate GraphQL server on .NET
@@ -103,6 +122,41 @@ Frontend requires `.env` file based on `.env.example` with `VITE_BACKEND_URL` an
 
 **CORS Configuration:**
 - Allows localhost and Apollo Studio origins for development
+
+### Backend Architecture (Go)
+
+**Project Structure (Standard Go Layout):**
+- `cmd/server/main.go` - Application entry point
+- `internal/config/` - Configuration management with environment variables
+- `internal/database/` - pgx connection pool setup and migrations
+- `internal/graph/` - GraphQL schema definition and resolvers
+- `internal/models/` - Data models (SharedState)
+- `internal/repository/` - Data access layer with pgx queries
+- `internal/service/` - Background cleanup service
+- `internal/middleware/` - CORS, rate limiting, logging, health checks
+
+**GraphQL API:**
+- graphql-go/graphql for schema implementation
+- Queries: `states` (all non-expired), `statesById(id: UUID)`
+- Mutation: `addState(sharedState: String!)`
+- Custom scalar types: UUID, Time
+
+**Data Layer:**
+- pgx/v5 with connection pooling (25 max, 5 min connections)
+- Embedded SQL migrations run automatically on startup
+- Repository pattern for database operations
+
+**Improvements over C# backend:**
+- Rate limiting: 10 requests/minute per IP (configurable)
+- Input validation: JSON format validation and 10MB size limit
+- Health check endpoint: `/health` returns JSON status
+- Structured logging: JSON-formatted logs with slog
+- Graceful shutdown: Proper cleanup of connections and services
+
+**Configuration:**
+- All settings via environment variables (`.env` file supported)
+- Same default values as C# backend for compatibility
+- See `backend-go/.env.example` for all options
 
 ### Commit Conventions
 

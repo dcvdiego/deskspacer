@@ -1,0 +1,49 @@
+# GraphQL schema for DeskSpacer backend
+
+scalar Time
+scalar UUID
+
+"""
+SharedState represents a saved desk setup state
+"""
+type SharedState {
+  """
+  Unique identifier for the shared state
+  """
+  id: UUID!
+
+  """
+  JSON-serialized desk setup state data
+  """
+  stateData: String!
+
+  """
+  Expiration timestamp (UTC)
+  """
+  expiresAt: Time!
+}
+
+"""
+Query operations
+"""
+type Query {
+  """
+  Get all non-expired shared states
+  """
+  states: [SharedState!]!
+
+  """
+  Get a specific shared state by ID (returns array for API compatibility)
+  """
+  statesById(id: UUID!): [SharedState!]!
+}
+
+"""
+Mutation operations
+"""
+type Mutation {
+  """
+  Create a new shared state with automatic expiration
+  """
+  addState(sharedState: String!): SharedState!
+}
