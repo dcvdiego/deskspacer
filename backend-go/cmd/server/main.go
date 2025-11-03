@@ -10,15 +10,17 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/dcvdiego/deskspacer/backend-go/internal/config"
 	"github.com/dcvdiego/deskspacer/backend-go/internal/database"
 	"github.com/dcvdiego/deskspacer/backend-go/internal/graph"
+	"github.com/dcvdiego/deskspacer/backend-go/internal/graph/generated"
 	"github.com/dcvdiego/deskspacer/backend-go/internal/middleware"
 	"github.com/dcvdiego/deskspacer/backend-go/internal/repository"
 	"github.com/dcvdiego/deskspacer/backend-go/internal/service"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
-	"github.com/graphql-go/handler"
 )
 
 func main() {
@@ -63,21 +65,13 @@ func main() {
 	// Initialize repository
 	repo := repository.NewSharedStateRepository(db.Pool)
 
-	// Initialize GraphQL resolver and schema
+	// Initialize GraphQL resolver
 	resolver := graph.NewResolver(repo, cfg)
-	schema, err := graph.NewSchema(resolver)
-	if err != nil {
-		slog.Error("Failed to create GraphQL schema", "error", err)
-		os.Exit(1)
-	}
 
-	// Create GraphQL handler
-	graphqlHandler := handler.New(&handler.Config{
-		Schema:     &schema,
-		Pretty:     true,
-		GraphiQL:   true, // Enable GraphiQL interface
-		Playground: true,  // Enable GraphQL Playground
-	})
+	// Create gqlgen schema and handler
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: resolver}))
+	graphqlHandler := srv
+	playgroundHandler := playground.Handler("GraphQL Playground", "/graphql")
 
 	// Initialize router
 	r := chi.NewRouter()
@@ -96,12 +90,30 @@ func main() {
 	// Health check endpoint
 	r.Get("/health", middleware.NewHealthHandler(db))
 
+	// GraphQL Playground (development interface)
+	r.Handle("/", playgroundHandler)
+
 	// GraphQL endpoint
 	r.Handle("/graphql", graphqlHandler)
 
-	// Start background cleanup service
+	// Start background cleanup service for expired states
 	cleanupService := service.NewCleanupService(repo, cfg.CleanupIntervalHours)
 	go cleanupService.Start(ctx)
+
+	// Start rate limiter cleanup (runs every 1 hour to prevent memory leaks)
+	go func() {
+		ticker := time.NewTicker(1 * time.Hour)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				rateLimiter.Cleanup()
+				slog.Debug("Rate limiter map cleaned up")
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
 
 	// HTTP server configuration
 	server := &http.Server{

@@ -43,12 +43,16 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
-  UUID:
+  SharedState:
     model:
-      - github.com/google/uuid.UUID
-  Time:
-    model:
-      - time.Time
+      - github.com/dcvdiego/deskspacer/backend-go/internal/models.SharedState
+    fields:
+      id:
+        resolver: false
+      stateData:
+        resolver: false
+      expiresAt:
+        resolver: false
 
 # Uncomment to enable federation
 # federation:

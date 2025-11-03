@@ -19,7 +19,7 @@ Go backend for DeskSpacer, providing a GraphQL API for managing shared desk setu
 ## Tech Stack
 
 - **Go 1.23+**
-- **graphql-go/graphql** - GraphQL implementation
+- **gqlgen** - Type-safe GraphQL server with code generation
 - **pgx/v5** - PostgreSQL driver with connection pooling
 - **chi** - Lightweight HTTP router
 - **godotenv** - Environment variable management
@@ -236,13 +236,13 @@ This Go implementation maintains exact feature parity with the original C# backe
 
 | Feature | C# Backend | Go Backend |
 |---------|-----------|------------|
-| GraphQL Framework | Hot Chocolate | graphql-go |
+| GraphQL Framework | Hot Chocolate | gqlgen (type-safe) |
 | Database | EF Core + Npgsql | pgx/v5 |
 | Port | 5221 | 5221 |
 | State Expiration | 15 days | 15 days |
 | Cleanup Interval | 24 hours | 24 hours |
 | CORS | localhost + Apollo | localhost + Apollo |
-| Rate Limiting | ❌ | ✅ 10 req/min |
+| Rate Limiting | ❌ | ✅ 10 req/min + cleanup |
 | Input Validation | ❌ | ✅ JSON + size check |
 | Health Check | ❌ | ✅ /health |
 
@@ -250,12 +250,14 @@ This Go implementation maintains exact feature parity with the original C# backe
 
 The Go implementation includes several enhancements:
 
-1. **Rate Limiting**: Per-IP rate limiting prevents API abuse
-2. **Input Validation**: Validates JSON format and enforces 10MB size limit
-3. **Health Checks**: `/health` endpoint for monitoring and load balancers
-4. **Structured Logging**: JSON-formatted logs with slog
-5. **Connection Pooling**: Explicit pgx pool configuration with health checks
-6. **Graceful Shutdown**: Proper cleanup of resources on termination
+1. **Type-Safe GraphQL**: Using gqlgen for compile-time type safety and automatic code generation
+2. **Rate Limiting**: Per-IP rate limiting prevents API abuse (10 req/min with automatic cleanup)
+3. **Input Validation**: Validates JSON format and enforces 10MB size limit
+4. **Health Checks**: `/health` endpoint for monitoring and load balancers
+5. **Structured Logging**: JSON-formatted logs with slog
+6. **Connection Pooling**: Explicit pgx pool configuration with health checks
+7. **Graceful Shutdown**: Proper cleanup of resources on termination
+8. **Memory Leak Prevention**: Hourly rate limiter cleanup to prevent unbounded memory growth
 
 ## License
 
