@@ -134,22 +134,52 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 		},
 	})
 
+	addStateInputType := graphql.NewInputObject(graphql.InputObjectConfig{
+		Name:        "AddStateInput",
+		Description: "Input type for adding a new shared state",
+		Fields: graphql.InputObjectConfigFieldMap{
+			"sharedState": &graphql.InputObjectFieldConfig{
+				Type:        graphql.NewNonNull(graphql.String),
+				Description: "JSON-serialized desk setup state",
+			},
+		},
+	})
+
+	addStatePayloadType := graphql.NewObject(graphql.ObjectConfig{
+		Name:        "AddStatePayload",
+		Description: "Payload returned when adding a state",
+		Fields: graphql.Fields{
+			"sharedState": &graphql.Field{
+				Type:        graphql.NewNonNull(sharedStateType),
+				Description: "The created shared state",
+			},
+		},
+	})
+
 	// Mutation type
 	mutationType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Mutation",
 		Fields: graphql.Fields{
 			"addState": &graphql.Field{
-				Type:        graphql.NewNonNull(sharedStateType),
+				Type:        graphql.NewNonNull(addStatePayloadType),
 				Description: "Create a new shared state with automatic expiration",
 				Args: graphql.FieldConfigArgument{
-					"sharedState": &graphql.ArgumentConfig{
-						Type:        graphql.NewNonNull(graphql.String),
-						Description: "JSON-serialized desk setup state",
+					"input": &graphql.ArgumentConfig{
+						Type:        graphql.NewNonNull(addStateInputType),
+						Description: "Input containing the shared state data",
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					sharedState := p.Args["sharedState"].(string)
-					return resolver.AddState(p.Context, sharedState)
+					input := p.Args["input"].(map[string]interface{})
+					sharedState := input["sharedState"].(string)
+					state, err := resolver.AddState(p.Context, sharedState)
+					if err != nil {
+						return nil, err
+					}
+					// Wrap the result in the payload structure
+					return map[string]interface{}{
+						"sharedState": state,
+					}, nil
 				},
 			},
 		},

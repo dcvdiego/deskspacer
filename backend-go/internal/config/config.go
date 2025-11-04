@@ -53,6 +53,7 @@ func Load() (*Config, error) {
 
 		// CORS defaults
 		CORSAllowedOrigins: getEnvSlice("CORS_ALLOWED_ORIGINS", []string{
+			"http://localhost:5173",
 			"http://localhost",
 			"https://studio.apollographql.com",
 		}),
