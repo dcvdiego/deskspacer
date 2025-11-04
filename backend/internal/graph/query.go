@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/dcvdiego/deskspacer/backend-go/internal/models"
+	"github.com/dcvdiego/deskspacer/backend/internal/models"
 	"github.com/google/uuid"
 )
 

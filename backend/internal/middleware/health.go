@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dcvdiego/deskspacer/backend-go/internal/database"
+	"github.com/dcvdiego/deskspacer/backend/internal/database"
 )
 
 // HealthChecker interface for database health checks

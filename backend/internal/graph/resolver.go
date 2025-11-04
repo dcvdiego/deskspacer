@@ -1,8 +1,8 @@
 package graph
 
 import (
-	"github.com/dcvdiego/deskspacer/backend-go/internal/config"
-	"github.com/dcvdiego/deskspacer/backend-go/internal/repository"
+	"github.com/dcvdiego/deskspacer/backend/internal/config"
+	"github.com/dcvdiego/deskspacer/backend/internal/repository"
 	"github.com/go-playground/validator/v10"
 )
 

@@ -1,4 +1,4 @@
-module github.com/dcvdiego/deskspacer/backend-go
+module github.com/dcvdiego/deskspacer/backend
 
 go 1.24.0
 

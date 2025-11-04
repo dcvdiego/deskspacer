@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/dcvdiego/deskspacer/backend-go/internal/repository"
+	"github.com/dcvdiego/deskspacer/backend/internal/repository"
 )
 
 // CleanupService periodically removes expired states from the database

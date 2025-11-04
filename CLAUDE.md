@@ -8,8 +8,7 @@ DeskSpacer is a 3D desk setup visualization tool inspired by Deskspacing.com. Us
 
 **Tech Stack:**
 - **Frontend**: React + TypeScript + Vite, Three.js with React-Three/Fiber ecosystem (@react-three/fiber, @react-three/drei, @react-three/postprocessing), MUI + Emotion, Zustand for state management, Apollo Client for GraphQL
-- **Backend (C#)**: .NET 9 with ASP.NET Core, Hot Chocolate (GraphQL), PostgreSQL via Entity Framework Core
-- **Backend (Go)**: Go 1.23+, graphql-go, pgx/v5 for PostgreSQL, chi router (see `/backend-go` directory)
+- **Backend**: Go 1.23+, graphql-go, pgx/v5 for PostgreSQL, chi router (see `/backend` directory)
 - **Testing**: Vitest, Testing Library, @react-three/test-renderer
 
 ## Development Commands
@@ -36,20 +35,7 @@ pnpm lint
 pnpm generate [category]  # categories: monitors, desks, keyboards, mousepads, mice, or 'all'
 ```
 
-### Backend - C# (from `/backend` directory)
-
-```bash
-# Run development server with hot reload (default port 5221)
-dotnet watch
-
-# Build
-dotnet build
-
-# Run migrations
-dotnet ef database update
-```
-
-### Backend - Go (from `/backend-go` directory)
+### Backend (from `/backend` directory)
 
 ```bash
 # Run with hot reload (requires air: make install-tools)
@@ -65,11 +51,9 @@ go run ./cmd/server
 make install-tools
 ```
 
-**Note:** The Go backend provides the same GraphQL API as the C# backend with additional improvements (rate limiting, input validation, health checks). Both backends are functionally equivalent and use the same database schema.
-
 ### Full Stack
 
-Backend requires PostgreSQL running on port 5432. Default credentials in `appsettings.json`: database=deskspacer, user=postgres, password=12345678. Use Docker/Podman to run PostgreSQL locally.
+Backend requires PostgreSQL running on port 5432. Default configuration: database=deskspacer, user=postgres, password=12345678. Use Docker/Podman to run PostgreSQL locally.
 
 Frontend requires `.env` file based on `.env.example` with `VITE_BACKEND_URL` and `VITE_WEB_URL`.
 
@@ -102,28 +86,7 @@ Frontend requires `.env` file based on `.env.example` with `VITE_BACKEND_URL` an
 - Category handlers in `scripts/handlers/` define processing rules per model type
 - Automatically updates `modelComponentsMapping.ts` registry
 
-### Backend Architecture (C#)
-
-**GraphQL API:**
-- Hot Chocolate GraphQL server on .NET
-- `GraphQL/Types/Query.cs` - Queries (GetStatesById)
-- `GraphQL/Types/Mutation.cs` - Mutations (AddStateToDb)
-- `GraphQL/Types/SharedState.cs` - State entity type
-- `GraphQL/Types/AddStateToDbInput.cs` - Input types
-
-**Data Layer:**
-- `Data/AppDbContext.cs` - EF Core database context
-- PostgreSQL database via Entity Framework Core
-- Migrations in `Migrations/` directory
-
-**Services:**
-- `Services/ExpiredStateCleanupService.cs` - Background service to clean up old shared states
-- Registered as hosted service in `Program.cs`
-
-**CORS Configuration:**
-- Allows localhost and Apollo Studio origins for development
-
-### Backend Architecture (Go)
+### Backend Architecture
 
 **Project Structure (Standard Go Layout):**
 - `cmd/server/main.go` - Application entry point
@@ -146,7 +109,7 @@ Frontend requires `.env` file based on `.env.example` with `VITE_BACKEND_URL` an
 - Embedded SQL migrations run automatically on startup
 - Repository pattern for database operations
 
-**Improvements over C# backend:**
+**Features:**
 - Rate limiting: 10 requests/minute per IP (configurable)
 - Input validation: JSON format validation and 10MB size limit
 - Health check endpoint: `/health` returns JSON status
@@ -155,8 +118,7 @@ Frontend requires `.env` file based on `.env.example` with `VITE_BACKEND_URL` an
 
 **Configuration:**
 - All settings via environment variables (`.env` file supported)
-- Same default values as C# backend for compatibility
-- See `backend-go/.env.example` for all options
+- See `backend/.env.example` for all options
 
 ### Commit Conventions
 

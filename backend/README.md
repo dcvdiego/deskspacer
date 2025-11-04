@@ -28,7 +28,7 @@ Go backend for DeskSpacer, providing a GraphQL API for managing shared desk setu
 ## Project Structure
 
 ```
-backend-go/
+backend/
 ├── cmd/
 │   └── server/
 │       └── main.go              # Application entry point
@@ -78,7 +78,7 @@ podman run --name deskspacer-postgres \
 ### 1. Clone and navigate to the directory
 
 ```bash
-cd backend-go
+cd backend
 ```
 
 ### 2. Set up environment variables

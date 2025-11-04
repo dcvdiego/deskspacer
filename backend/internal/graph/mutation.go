@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/dcvdiego/deskspacer/backend-go/internal/models"
+	"github.com/dcvdiego/deskspacer/backend/internal/models"
 )
 
 // AddState creates a new shared state
