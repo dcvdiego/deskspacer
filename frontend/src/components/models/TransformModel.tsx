@@ -34,7 +34,29 @@ const TransformModel = ({ ...props }) => {
   const historyVersion = useModelStore((state) => state.historyVersion);
 
   // Get model snapshot (non-reactive) - prevents re-render conflicts during drag
-  const getModel = () => useModelStore.getState().models.find((m) => m.id === name);
+  // Also normalizes position/rotation to THREE.js objects (handles localStorage deserialization)
+  const getModel = () => {
+    const model = useModelStore.getState().models.find((m) => m.id === name);
+    if (!model) return undefined;
+
+    // Ensure position and rotation are proper THREE.js objects, not plain objects from localStorage
+    const position =
+      model.position instanceof THREE.Vector3
+        ? model.position
+        : new THREE.Vector3(model.position.x, model.position.y, model.position.z);
+
+    const rotation =
+      model.rotation instanceof THREE.Quaternion
+        ? model.rotation
+        : new THREE.Quaternion(
+            model.rotation.x,
+            model.rotation.y,
+            model.rotation.z,
+            model.rotation.w
+          );
+
+    return { ...model, position, rotation };
+  };
 
   const [initialized, setInitialized] = useState<boolean>(false);
   const [isRotating, setIsRotating] = useState<boolean>(false);
