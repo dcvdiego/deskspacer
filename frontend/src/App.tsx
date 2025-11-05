@@ -38,7 +38,7 @@ import AddModal from './components/UI/modals/AddModal';
 // import Logo from '../public/logo.svg?react';
 
 function App() {
-  const { deleteModel } = useModelStore();
+  const { deleteModel, setModels, clearHistory } = useModelStore();
 
   const models = useModelStore.getState().models;
   const [transformMode, setTransformMode] = useState('');
@@ -131,16 +131,16 @@ function App() {
     if (queryStateLoading) return;
     if (queryStateError) return;
     if (queryStateData) {
-      useModelStore.setState({
-        models: JSON.parse(queryStateData.statesById[0].stateData),
-      });
+      // Load shared state without saving to history and clear existing history
+      setModels(JSON.parse(queryStateData.statesById[0].stateData), false);
+      clearHistory();
       history.replaceState(
         '',
         document.title,
         window.location.pathname + window.location.search
       );
     }
-  }, [queryStateData, queryStateLoading, queryStateError, queryStateCalled]);
+  }, [queryStateData, queryStateLoading, queryStateError, queryStateCalled, setModels, clearHistory]);
 
   const handleShare = () => {
     addState({

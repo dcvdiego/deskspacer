@@ -28,7 +28,7 @@ const TransformModel = ({ ...props }) => {
     called,
     reset,
   } = props;
-  const { updateModel } = useModelStore();
+  const { updateModel, saveToHistory } = useModelStore();
   const [initialized, setInitialized] = useState<boolean>(false);
   const [isRotating, setIsRotating] = useState<boolean>(false);
   const [savedPosition, setSavedPosition] = useState<THREE.Vector3>();
@@ -47,7 +47,8 @@ const TransformModel = ({ ...props }) => {
     const rotation = new THREE.Quaternion();
     ModelRef.current.getWorldPosition(position);
     ModelRef.current.getWorldQuaternion(rotation);
-    updateModel(isSelected, { position, rotation });
+    // Don't save to history here - we save at drag start instead
+    updateModel(isSelected, { position, rotation }, false);
   };
 
   const model = useModelStore.getState().models.find((m) => m.id === name);
@@ -248,23 +249,23 @@ const TransformModel = ({ ...props }) => {
 
     if (minBoundsZ.intersectsBox(boundsModel)) {
       setMinZ(oldPosition.z + 0.01);
-      updateModel(isSelected, { minBoundsZ: oldPosition.z + 0.01 });
+      updateModel(isSelected, { minBoundsZ: oldPosition.z + 0.01 }, false);
     }
     if (maxBoundsZ.intersectsBox(boundsModel)) {
       setMaxZ(oldPosition.z - 0.01);
-      updateModel(isSelected, { maxBoundsZ: oldPosition.z - 0.01 });
+      updateModel(isSelected, { maxBoundsZ: oldPosition.z - 0.01 }, false);
     }
     if (minBoundsY.intersectsBox(boundsModel)) {
       setMinY(oldPosition.y + 0.01);
-      updateModel(isSelected, { minBoundsY: oldPosition.y + 0.01 });
+      updateModel(isSelected, { minBoundsY: oldPosition.y + 0.01 }, false);
     }
     if (maxBoundsX.intersectsBox(boundsModel)) {
       setMinX(oldPosition.x - 0.01);
-      updateModel(isSelected, { minBoundsX: oldPosition.x - 0.01 });
+      updateModel(isSelected, { minBoundsX: oldPosition.x - 0.01 }, false);
     }
     if (minBoundsX.intersectsBox(boundsModel)) {
       setMaxX(oldPosition.x + 0.01);
-      updateModel(isSelected, { maxBoundsX: oldPosition.x + 0.01 });
+      updateModel(isSelected, { maxBoundsX: oldPosition.x + 0.01 }, false);
     }
     ModelRef.current.updateWorldMatrix(true, true);
   };
@@ -294,6 +295,8 @@ const TransformModel = ({ ...props }) => {
           disableAxes={!['', 'translate'].includes(transformMode)}
           activeAxes={[true, enableY, true]}
           onDragStart={() => {
+            // Save to history before any changes are made
+            saveToHistory();
             setIsRotating(true);
             setDrag(true);
             if (called) reset();
