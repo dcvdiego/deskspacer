@@ -121,23 +121,25 @@ const TransformModel = ({ ...props }) => {
     const currentModel = getModel();
     if (!currentModel) return;
 
-    const currentPosition = GroupRef.current.position;
-    const currentQuaternion = GroupRef.current.quaternion;
+    // Read WORLD position/quaternion (not local) to compare with store values
+    const currentWorldPosition = new THREE.Vector3();
+    const currentWorldQuaternion = new THREE.Quaternion();
+    GroupRef.current.getWorldPosition(currentWorldPosition);
+    GroupRef.current.getWorldQuaternion(currentWorldQuaternion);
 
-    // Check if store position differs from current 3D position
-    const positionChanged =
-      Math.abs(currentPosition.x - currentModel.position.x) > 0.0001 ||
-      Math.abs(currentPosition.y - currentModel.position.y) > 0.0001 ||
-      Math.abs(currentPosition.z - currentModel.position.z) > 0.0001;
-
-    const rotationChanged =
-      Math.abs(currentQuaternion.x - currentModel.rotation.x) > 0.0001 ||
-      Math.abs(currentQuaternion.y - currentModel.rotation.y) > 0.0001 ||
-      Math.abs(currentQuaternion.z - currentModel.rotation.z) > 0.0001 ||
-      Math.abs(currentQuaternion.w - currentModel.rotation.w) > 0.0001;
+    // Use utility functions for proper comparison (handles floating point precision)
+    const positionChanged = !positionsAreEqual(
+      currentWorldPosition,
+      currentModel.position
+    );
+    const rotationChanged = !quaternionsAreEqual(
+      currentWorldQuaternion,
+      currentModel.rotation
+    );
 
     if (positionChanged || rotationChanged) {
       // Update 3D object to match store (from undo/redo)
+      // Since GroupRef is at scene root, world position = local position
       GroupRef.current.position.set(
         currentModel.position.x,
         currentModel.position.y,
