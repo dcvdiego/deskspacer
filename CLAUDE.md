@@ -8,7 +8,7 @@ DeskSpacer is a 3D desk setup visualization tool inspired by Deskspacing.com. Us
 
 **Tech Stack:**
 - **Frontend**: React + TypeScript + Vite, Three.js with React-Three/Fiber ecosystem (@react-three/fiber, @react-three/drei, @react-three/postprocessing), MUI + Emotion, Zustand for state management, Apollo Client for GraphQL
-- **Backend**: .NET 9 with ASP.NET Core, Hot Chocolate (GraphQL), PostgreSQL via Entity Framework Core
+- **Backend**: Go 1.23+, graphql-go, pgx/v5 for PostgreSQL, chi router (see `/backend` directory)
 - **Testing**: Vitest, Testing Library, @react-three/test-renderer
 
 ## Development Commands
@@ -38,19 +38,22 @@ pnpm generate [category]  # categories: monitors, desks, keyboards, mousepads, m
 ### Backend (from `/backend` directory)
 
 ```bash
-# Run development server with hot reload (default port 5221)
-dotnet watch
+# Run with hot reload (requires air: make install-tools)
+make dev
 
-# Build
-dotnet build
+# Build and run
+make build && make run
 
-# Run migrations
-dotnet ef database update
+# Or run directly
+go run ./cmd/server
+
+# Install development tools (air for hot reload)
+make install-tools
 ```
 
 ### Full Stack
 
-Backend requires PostgreSQL running on port 5432. Default credentials in `appsettings.json`: database=deskspacer, user=postgres, password=12345678. Use Docker/Podman to run PostgreSQL locally.
+Backend requires PostgreSQL running on port 5432. Default configuration: database=deskspacer, user=postgres, password=12345678. Use Docker/Podman to run PostgreSQL locally.
 
 Frontend requires `.env` file based on `.env.example` with `VITE_BACKEND_URL` and `VITE_WEB_URL`.
 
@@ -85,24 +88,37 @@ Frontend requires `.env` file based on `.env.example` with `VITE_BACKEND_URL` an
 
 ### Backend Architecture
 
+**Project Structure (Standard Go Layout):**
+- `cmd/server/main.go` - Application entry point
+- `internal/config/` - Configuration management with environment variables
+- `internal/database/` - pgx connection pool setup and migrations
+- `internal/graph/` - GraphQL schema definition and resolvers
+- `internal/models/` - Data models (SharedState)
+- `internal/repository/` - Data access layer with pgx queries
+- `internal/service/` - Background cleanup service
+- `internal/middleware/` - CORS, rate limiting, logging, health checks
+
 **GraphQL API:**
-- Hot Chocolate GraphQL server on .NET
-- `GraphQL/Types/Query.cs` - Queries (GetStatesById)
-- `GraphQL/Types/Mutation.cs` - Mutations (AddStateToDb)
-- `GraphQL/Types/SharedState.cs` - State entity type
-- `GraphQL/Types/AddStateToDbInput.cs` - Input types
+- graphql-go/graphql for schema implementation
+- Queries: `states` (all non-expired), `statesById(id: UUID)`
+- Mutation: `addState(sharedState: String!)`
+- Custom scalar types: UUID, Time
 
 **Data Layer:**
-- `Data/AppDbContext.cs` - EF Core database context
-- PostgreSQL database via Entity Framework Core
-- Migrations in `Migrations/` directory
+- pgx/v5 with connection pooling (25 max, 5 min connections)
+- Embedded SQL migrations run automatically on startup
+- Repository pattern for database operations
 
-**Services:**
-- `Services/ExpiredStateCleanupService.cs` - Background service to clean up old shared states
-- Registered as hosted service in `Program.cs`
+**Features:**
+- Rate limiting: 10 requests/minute per IP (configurable)
+- Input validation: JSON format validation and 10MB size limit
+- Health check endpoint: `/health` returns JSON status
+- Structured logging: JSON-formatted logs with slog
+- Graceful shutdown: Proper cleanup of connections and services
 
-**CORS Configuration:**
-- Allows localhost and Apollo Studio origins for development
+**Configuration:**
+- All settings via environment variables (`.env` file supported)
+- See `backend/.env.example` for all options
 
 ### Commit Conventions
 
