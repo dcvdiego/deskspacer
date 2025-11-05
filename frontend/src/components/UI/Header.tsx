@@ -175,7 +175,8 @@ const LockedListSelect = ({
   setLockedModels: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
   const { updateModel } = useModelStore();
-  const models = useModelStore.getState().models;
+  // Subscribe to models array to react to undo/redo changes
+  const models = useModelStore((state) => state.models);
   const previousLockedModels = useRef(lockedModels);
   const handleChange = (event: SelectChangeEvent<typeof lockedModels>) => {
     const {
@@ -400,10 +401,10 @@ export const Header: React.FC<HeaderProps> = ({
   const [open, setOpen] = useState(false);
 
   const { setModels, updateModel, undo, redo, canUndo, canRedo } = useModelStore();
-  const models = useModelStore.getState().models;
-  const model = useModelStore
-    .getState()
-    .models.find((m) => m.id === isSelected);
+
+  // Subscribe to models array to react to undo/redo changes
+  const models = useModelStore((state) => state.models);
+  const model = models.find((m) => m.id === isSelected);
 
   // Subscribe to store changes to reactively update button states
   const canUndoState = useModelStore((state) => state.canUndo());

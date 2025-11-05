@@ -40,7 +40,8 @@ import AddModal from './components/UI/modals/AddModal';
 function App() {
   const { deleteModel, setModels, clearHistory } = useModelStore();
 
-  const models = useModelStore.getState().models;
+  // Subscribe to models array to react to undo/redo changes
+  const models = useModelStore((state) => state.models);
   const [transformMode, setTransformMode] = useState('');
 
   const [isHovered, setIsHovered] = useState<string | null>(null);
@@ -324,9 +325,7 @@ function App() {
                         edgeStrength={100}
                       />
                     </EffectComposer>
-                    {useModelStore
-                      .getState()
-                      .models.map((modelName: ModelInCanvas) => {
+                    {models.map((modelName: ModelInCanvas) => {
                         const ModelComponent =
                           modelComponents[modelName.name].model;
                         return (

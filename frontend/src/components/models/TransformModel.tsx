@@ -29,6 +29,10 @@ const TransformModel = ({ ...props }) => {
     reset,
   } = props;
   const { updateModel, saveToHistory } = useModelStore();
+
+  // Subscribe to this specific model from the store to react to undo/redo
+  const model = useModelStore((state) => state.models.find((m) => m.id === name));
+
   const [initialized, setInitialized] = useState<boolean>(false);
   const [isRotating, setIsRotating] = useState<boolean>(false);
   const [savedPosition, setSavedPosition] = useState<THREE.Vector3>();
@@ -50,8 +54,6 @@ const TransformModel = ({ ...props }) => {
     // Don't save to history here - we save at drag start instead
     updateModel(isSelected, { position, rotation }, false);
   };
-
-  const model = useModelStore.getState().models.find((m) => m.id === name);
   const [minZ, setMinZ] = useState<number>(
     model?.minBoundsZ && model.minBoundsZ > -Infinity
       ? model.minBoundsZ
@@ -77,6 +79,7 @@ const TransformModel = ({ ...props }) => {
       ? model.minBoundsY
       : -Infinity
   );
+  // Initialize position/rotation on mount
   useEffect(() => {
     if (model && ModelRef.current && GroupRef.current && !initialized) {
       const savedPosition = model.position;
@@ -94,6 +97,43 @@ const TransformModel = ({ ...props }) => {
       setInitialized(true);
     }
   }, [ModelRef, model, initialized, GroupRef]);
+
+  // Sync 3D object with store changes (undo/redo), but not during drag
+  useEffect(() => {
+    if (!initialized || !model || !GroupRef.current || drag) return;
+
+    const currentPosition = GroupRef.current.position;
+    const currentQuaternion = GroupRef.current.quaternion;
+
+    // Check if store position differs from current 3D position
+    const positionChanged =
+      Math.abs(currentPosition.x - model.position.x) > 0.0001 ||
+      Math.abs(currentPosition.y - model.position.y) > 0.0001 ||
+      Math.abs(currentPosition.z - model.position.z) > 0.0001;
+
+    const rotationChanged =
+      Math.abs(currentQuaternion.x - model.rotation.x) > 0.0001 ||
+      Math.abs(currentQuaternion.y - model.rotation.y) > 0.0001 ||
+      Math.abs(currentQuaternion.z - model.rotation.z) > 0.0001 ||
+      Math.abs(currentQuaternion.w - model.rotation.w) > 0.0001;
+
+    if (positionChanged || rotationChanged) {
+      // Update 3D object to match store (from undo/redo)
+      GroupRef.current.position.set(
+        model.position.x,
+        model.position.y,
+        model.position.z
+      );
+      GroupRef.current.quaternion.set(
+        model.rotation.x,
+        model.rotation.y,
+        model.rotation.z,
+        model.rotation.w
+      );
+      GroupRef.current.updateMatrixWorld();
+      setSavedPosition(model.position);
+    }
+  }, [model, initialized, drag]);
   const { camera } = useThree();
   const boundsModel = new THREE.Box3();
   const [offset, setOffset] = useState<[number, number, number]>([0, 0, 0]);
