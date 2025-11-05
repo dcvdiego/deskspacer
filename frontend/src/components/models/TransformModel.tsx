@@ -161,18 +161,37 @@ const TransformModel = ({ ...props }) => {
 
     if (positionChanged || rotationChanged) {
       // Update 3D object to match store (from undo/redo)
-      // Since GroupRef is at scene root, world position = local position
-      GroupRef.current.position.set(
-        currentModel.position.x,
-        currentModel.position.y,
-        currentModel.position.z
-      );
-      GroupRef.current.quaternion.set(
-        currentModel.rotation.x,
-        currentModel.rotation.y,
-        currentModel.rotation.z,
-        currentModel.rotation.w
-      );
+      // Store contains WORLD coordinates, but we need to set LOCAL coordinates
+      // Convert world position to local position relative to parent
+      if (positionChanged && GroupRef.current.parent) {
+        const worldPosition = new THREE.Vector3(
+          currentModel.position.x,
+          currentModel.position.y,
+          currentModel.position.z
+        );
+        const localPosition = GroupRef.current.parent.worldToLocal(worldPosition.clone());
+        GroupRef.current.position.copy(localPosition);
+      }
+
+      if (rotationChanged && GroupRef.current.parent) {
+        // For rotation, we need to account for parent's world rotation
+        const worldQuaternion = new THREE.Quaternion(
+          currentModel.rotation.x,
+          currentModel.rotation.y,
+          currentModel.rotation.z,
+          currentModel.rotation.w
+        );
+
+        // Get parent's world quaternion and invert it
+        const parentWorldQuaternion = new THREE.Quaternion();
+        GroupRef.current.parent.getWorldQuaternion(parentWorldQuaternion);
+        const parentInverse = parentWorldQuaternion.clone().invert();
+
+        // Local rotation = parent_inverse * world_rotation
+        const localQuaternion = parentInverse.multiply(worldQuaternion);
+        GroupRef.current.quaternion.copy(localQuaternion);
+      }
+
       GroupRef.current.updateMatrixWorld();
       setSavedPosition(currentModel.position);
     }
