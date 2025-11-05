@@ -1,13 +1,34 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ModelInCanvas } from '../types/ModelTypes';
+import * as THREE from 'three';
 
 // Helper function to deep clone a model with proper Vector3 and Quaternion cloning
-const cloneModel = (model: ModelInCanvas): ModelInCanvas => ({
-  ...model,
-  position: model.position.clone(),
-  rotation: model.rotation.clone(),
-});
+// Handles both THREE.js objects and plain objects (from localStorage deserialization)
+const cloneModel = (model: ModelInCanvas): ModelInCanvas => {
+  // Check if position is a THREE.Vector3 or plain object from localStorage
+  const position =
+    model.position instanceof THREE.Vector3
+      ? model.position.clone()
+      : new THREE.Vector3(model.position.x, model.position.y, model.position.z);
+
+  // Check if rotation is a THREE.Quaternion or plain object from localStorage
+  const rotation =
+    model.rotation instanceof THREE.Quaternion
+      ? model.rotation.clone()
+      : new THREE.Quaternion(
+          model.rotation.x,
+          model.rotation.y,
+          model.rotation.z,
+          model.rotation.w
+        );
+
+  return {
+    ...model,
+    position,
+    rotation,
+  };
+};
 
 // Helper function to deep clone the entire models array
 const cloneModelsArray = (models: ModelInCanvas[]): ModelInCanvas[] =>
@@ -19,6 +40,7 @@ interface ModelStore {
   past: ModelInCanvas[][];
   future: ModelInCanvas[][];
   historyLimit: number;
+  historyVersion: number; // Increments on undo/redo to trigger component updates
 
   // Core model actions
   setModels: (models: ModelInCanvas[], saveHistory?: boolean) => void;
@@ -42,6 +64,7 @@ export const useModelStore = create<ModelStore>()(
       past: [],
       future: [],
       historyLimit: 50,
+      historyVersion: 0,
 
       // Save current state to history before making changes
       saveToHistory: () => {
@@ -58,26 +81,36 @@ export const useModelStore = create<ModelStore>()(
 
       // Undo: move current state to future, restore from past
       undo: () => {
-        const { models, past, future } = get();
+        const { models, past, future, historyVersion } = get();
         if (past.length === 0) return;
 
         const newPast = [...past];
         const previousState = newPast.pop()!;
         const newFuture = [cloneModelsArray(models), ...future];
 
-        set({ models: previousState, past: newPast, future: newFuture });
+        set({
+          models: previousState,
+          past: newPast,
+          future: newFuture,
+          historyVersion: historyVersion + 1, // Trigger component updates
+        });
       },
 
       // Redo: move current state to past, restore from future
       redo: () => {
-        const { models, past, future } = get();
+        const { models, past, future, historyVersion } = get();
         if (future.length === 0) return;
 
         const newFuture = [...future];
         const nextState = newFuture.shift()!;
         const newPast = [...past, cloneModelsArray(models)];
 
-        set({ models: nextState, past: newPast, future: newFuture });
+        set({
+          models: nextState,
+          past: newPast,
+          future: newFuture,
+          historyVersion: historyVersion + 1, // Trigger component updates
+        });
       },
 
       // Check if undo is available
@@ -87,7 +120,7 @@ export const useModelStore = create<ModelStore>()(
       canRedo: () => get().future.length > 0,
 
       // Clear history (useful when loading a new shared state)
-      clearHistory: () => set({ past: [], future: [] }),
+      clearHistory: () => set({ past: [], future: [], historyVersion: 0 }),
 
       // Set models (used for loading shared states, reset room)
       // saveHistory defaults to true, but can be disabled for initial loads

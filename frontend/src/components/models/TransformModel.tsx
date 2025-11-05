@@ -30,8 +30,11 @@ const TransformModel = ({ ...props }) => {
   } = props;
   const { updateModel, saveToHistory } = useModelStore();
 
-  // Subscribe to this specific model from the store to react to undo/redo
-  const model = useModelStore((state) => state.models.find((m) => m.id === name));
+  // Subscribe to historyVersion to detect undo/redo without causing constant re-renders
+  const historyVersion = useModelStore((state) => state.historyVersion);
+
+  // Get model snapshot (non-reactive) - prevents re-render conflicts during drag
+  const getModel = () => useModelStore.getState().models.find((m) => m.id === name);
 
   const [initialized, setInitialized] = useState<boolean>(false);
   const [isRotating, setIsRotating] = useState<boolean>(false);
@@ -54,6 +57,8 @@ const TransformModel = ({ ...props }) => {
     // Don't save to history here - we save at drag start instead
     updateModel(isSelected, { position, rotation }, false);
   };
+
+  const model = getModel();
   const [minZ, setMinZ] = useState<number>(
     model?.minBoundsZ && model.minBoundsZ > -Infinity
       ? model.minBoundsZ
@@ -79,12 +84,14 @@ const TransformModel = ({ ...props }) => {
       ? model.minBoundsY
       : -Infinity
   );
+
   // Initialize position/rotation on mount
   useEffect(() => {
-    if (model && ModelRef.current && GroupRef.current && !initialized) {
-      const savedPosition = model.position;
-      setSavedPosition(model.position);
-      const savedRotation = model.rotation;
+    const currentModel = getModel();
+    if (currentModel && ModelRef.current && GroupRef.current && !initialized) {
+      const savedPosition = currentModel.position;
+      setSavedPosition(currentModel.position);
+      const savedRotation = currentModel.rotation;
       GroupRef.current.position.set(
         savedPosition.x,
         savedPosition.y,
@@ -96,44 +103,50 @@ const TransformModel = ({ ...props }) => {
       GroupRef.current.updateMatrixWorld();
       setInitialized(true);
     }
-  }, [ModelRef, model, initialized, GroupRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialized]);
 
-  // Sync 3D object with store changes (undo/redo), but not during drag
+  // Sync 3D object with store changes when historyVersion changes (undo/redo)
+  // Only subscribes to historyVersion, not the entire model, to avoid re-render conflicts
   useEffect(() => {
-    if (!initialized || !model || !GroupRef.current || drag) return;
+    if (!initialized || !GroupRef.current || drag) return;
+
+    const currentModel = getModel();
+    if (!currentModel) return;
 
     const currentPosition = GroupRef.current.position;
     const currentQuaternion = GroupRef.current.quaternion;
 
     // Check if store position differs from current 3D position
     const positionChanged =
-      Math.abs(currentPosition.x - model.position.x) > 0.0001 ||
-      Math.abs(currentPosition.y - model.position.y) > 0.0001 ||
-      Math.abs(currentPosition.z - model.position.z) > 0.0001;
+      Math.abs(currentPosition.x - currentModel.position.x) > 0.0001 ||
+      Math.abs(currentPosition.y - currentModel.position.y) > 0.0001 ||
+      Math.abs(currentPosition.z - currentModel.position.z) > 0.0001;
 
     const rotationChanged =
-      Math.abs(currentQuaternion.x - model.rotation.x) > 0.0001 ||
-      Math.abs(currentQuaternion.y - model.rotation.y) > 0.0001 ||
-      Math.abs(currentQuaternion.z - model.rotation.z) > 0.0001 ||
-      Math.abs(currentQuaternion.w - model.rotation.w) > 0.0001;
+      Math.abs(currentQuaternion.x - currentModel.rotation.x) > 0.0001 ||
+      Math.abs(currentQuaternion.y - currentModel.rotation.y) > 0.0001 ||
+      Math.abs(currentQuaternion.z - currentModel.rotation.z) > 0.0001 ||
+      Math.abs(currentQuaternion.w - currentModel.rotation.w) > 0.0001;
 
     if (positionChanged || rotationChanged) {
       // Update 3D object to match store (from undo/redo)
       GroupRef.current.position.set(
-        model.position.x,
-        model.position.y,
-        model.position.z
+        currentModel.position.x,
+        currentModel.position.y,
+        currentModel.position.z
       );
       GroupRef.current.quaternion.set(
-        model.rotation.x,
-        model.rotation.y,
-        model.rotation.z,
-        model.rotation.w
+        currentModel.rotation.x,
+        currentModel.rotation.y,
+        currentModel.rotation.z,
+        currentModel.rotation.w
       );
       GroupRef.current.updateMatrixWorld();
-      setSavedPosition(model.position);
+      setSavedPosition(currentModel.position);
     }
-  }, [model, initialized, drag]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [historyVersion, initialized, drag]);
   const { camera } = useThree();
   const boundsModel = new THREE.Box3();
   const [offset, setOffset] = useState<[number, number, number]>([0, 0, 0]);
@@ -318,7 +331,7 @@ const TransformModel = ({ ...props }) => {
     // https://github.com/pmndrs/drei/discussions/1495
     // <DreiSelect multiple box onChange={(selected) => console.log(selected)}>
     <Select
-      enabled={(isHovered === name || isSelected === name) && !model?.locked}
+      enabled={(isHovered === name || isSelected === name) && !getModel()?.locked}
       name={name}
     >
       <group ref={GroupRef}>
@@ -345,15 +358,16 @@ const TransformModel = ({ ...props }) => {
             if (orbit.current) orbit.current.enabled = false;
 
             checkForCollision();
-            if (ModelRef.current && model) {
+            const currentModel = getModel();
+            if (ModelRef.current && currentModel) {
               ModelRef.current.getWorldPosition(objPosition);
               ModelRef.current.getWorldQuaternion(objQuaternion);
               const hasPositionChanged = !positionsAreEqual(
-                model?.position,
+                currentModel.position,
                 objPosition
               );
               const hasRotationChanged = !quaternionsAreEqual(
-                model?.rotation,
+                currentModel.rotation,
                 objQuaternion
               );
               //TODO: this makes it difficult to only check if rotation is occurring, maybe instead of quaternions we need euler
@@ -366,7 +380,7 @@ const TransformModel = ({ ...props }) => {
             updateModelPosition();
             if (orbit.current) orbit.current.enabled = true;
           }}
-          enabled={isSelected === name && !model?.locked}
+          enabled={isSelected === name && !getModel()?.locked}
           translationLimits={[
             savedPosition
               ? [minX - savedPosition.x, maxX - savedPosition.x]
@@ -385,8 +399,9 @@ const TransformModel = ({ ...props }) => {
             {...props}
             ref={ModelRef}
             onClick={(e) => {
+              const currentModel = getModel();
               setIsSelected(
-                isSelected === getObjectWithName(e.object) || model?.locked
+                isSelected === getObjectWithName(e.object) || currentModel?.locked
                   ? null
                   : getObjectWithName(e.object)
               );
@@ -396,8 +411,9 @@ const TransformModel = ({ ...props }) => {
             onPointerOut={() => setIsHovered(null)}
             onPointerDown={(e) => {
               if (!drag && isTouchDevice()) {
+                const currentModel = getModel();
                 setIsSelected(
-                  isSelected === getObjectWithName(e.object) || model?.locked
+                  isSelected === getObjectWithName(e.object) || currentModel?.locked
                     ? null
                     : getObjectWithName(e.object)
                 );
