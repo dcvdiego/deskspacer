@@ -40,6 +40,13 @@ const TransformModel = ({ ...props }) => {
   const [isRotating, setIsRotating] = useState<boolean>(false);
   const [savedPosition, setSavedPosition] = useState<THREE.Vector3>();
   const [drag, setDrag] = useState<boolean>(false);
+
+  // Use ref for drag state to avoid it triggering the sync effect
+  const dragRef = useRef<boolean>(false);
+  useEffect(() => {
+    dragRef.current = drag;
+  }, [drag]);
+
   const getObjectWithName = (object: any) => {
     if (object.parent === null) return null;
     if (object.name !== '') return object.name;
@@ -107,9 +114,9 @@ const TransformModel = ({ ...props }) => {
   }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
-  // Only subscribes to historyVersion, not the entire model, to avoid re-render conflicts
+  // Only subscribes to historyVersion, not drag, to avoid re-running after drag ends
   useEffect(() => {
-    if (!initialized || !GroupRef.current || drag) return;
+    if (!initialized || !GroupRef.current || dragRef.current) return;
 
     const currentModel = getModel();
     if (!currentModel) return;
@@ -146,7 +153,7 @@ const TransformModel = ({ ...props }) => {
       setSavedPosition(currentModel.position);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyVersion, initialized, drag]);
+  }, [historyVersion, initialized]);
   const { camera } = useThree();
   const boundsModel = new THREE.Box3();
   const [offset, setOffset] = useState<[number, number, number]>([0, 0, 0]);
