@@ -136,28 +136,23 @@ const TransformModel = ({ ...props }) => {
   }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
-  // Only subscribes to historyVersion, not drag, to avoid re-running after drag ends
+  // Trigger re-initialization by resetting the initialized flag
+  // This forces the initialization effect to run, which properly sets positions
   useEffect(() => {
-    if (!initialized || !ModelRef.current || !GroupRef.current || dragRef.current) return;
+    if (!initialized || dragRef.current) return;
 
-    const currentModel = getModel();
-    if (!currentModel) return;
+    // Reset ModelRef to clear drag offset
+    if (ModelRef.current) {
+      ModelRef.current.position.set(0, 0, 0);
+      ModelRef.current.quaternion.identity();
+    }
 
-    // ALWAYS reset ModelRef to origin (clears any drag offset)
-    ModelRef.current.position.set(0, 0, 0);
-    ModelRef.current.quaternion.identity();
-
-    // Set GroupRef to the stored world position/rotation
-    // Use .copy() to properly copy THREE.js objects (matches initialization pattern)
-    GroupRef.current.position.copy(currentModel.position);
-    GroupRef.current.quaternion.copy(currentModel.rotation);
-
-    // Update matrices to propagate changes
-    GroupRef.current.updateMatrixWorld();
-    setSavedPosition(currentModel.position);
+    // Force re-initialization by setting initialized = false
+    // This triggers the initialization effect which properly applies positions from store
+    setInitialized(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyVersion, initialized]);
+  }, [historyVersion]);
   const { camera } = useThree();
   const boundsModel = new THREE.Box3();
   const [offset, setOffset] = useState<[number, number, number]>([0, 0, 0]);
