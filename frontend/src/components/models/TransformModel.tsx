@@ -121,6 +121,12 @@ const TransformModel = ({ ...props }) => {
       const savedPosition = currentModel.position;
       setSavedPosition(currentModel.position);
       const savedRotation = currentModel.rotation;
+
+      // Explicitly reset ModelRef to ensure clean state
+      ModelRef.current.position.set(0, 0, 0);
+      ModelRef.current.quaternion.set(0, 0, 0, 1);
+
+      // Set GroupRef to the stored world position
       GroupRef.current.position.set(
         savedPosition.x,
         savedPosition.y,
