@@ -138,6 +138,7 @@ const TransformModel = ({ ...props }) => {
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
   // Copy initialization logic EXACTLY without manipulating initialized state
   useEffect(() => {
+    // Only run after initialization completes, not during drag, and not on mount
     if (!initialized || dragRef.current) return;
 
     const currentModel = getModel();
@@ -163,7 +164,7 @@ const TransformModel = ({ ...props }) => {
     setSavedPosition(currentModel.position);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyVersion]);
+  }, [historyVersion, initialized]);
   const { camera } = useThree();
   const boundsModel = new THREE.Box3();
   const [offset, setOffset] = useState<[number, number, number]>([0, 0, 0]);
