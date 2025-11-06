@@ -136,20 +136,31 @@ const TransformModel = ({ ...props }) => {
   }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
-  // Trigger re-initialization by resetting the initialized flag
-  // This forces the initialization effect to run, which properly sets positions
+  // Copy initialization logic EXACTLY without manipulating initialized state
   useEffect(() => {
     if (!initialized || dragRef.current) return;
 
-    // Reset ModelRef to clear drag offset
-    if (ModelRef.current) {
-      ModelRef.current.position.set(0, 0, 0);
-      ModelRef.current.quaternion.identity();
-    }
+    const currentModel = getModel();
+    if (!currentModel || !ModelRef.current || !GroupRef.current) return;
 
-    // Force re-initialization by setting initialized = false
-    // This triggers the initialization effect which properly applies positions from store
-    setInitialized(false);
+    // Reset ModelRef to clear any drag offset
+    ModelRef.current.position.set(0, 0, 0);
+    ModelRef.current.quaternion.identity();
+
+    // Apply positions EXACTLY like initialization does
+    const savedPosition = currentModel.position;
+    const savedRotation = currentModel.rotation;
+
+    GroupRef.current.position.set(
+      savedPosition.x,
+      savedPosition.y,
+      savedPosition.z
+    );
+    GroupRef.current.quaternion.fromArray(
+      savedRotation as unknown as number[]
+    );
+    GroupRef.current.updateMatrixWorld();
+    setSavedPosition(currentModel.position);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyVersion]);
