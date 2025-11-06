@@ -83,6 +83,10 @@ const TransformModel = ({ ...props }) => {
     const rotation = new THREE.Quaternion();
     ModelRef.current.getWorldPosition(position);
     ModelRef.current.getWorldQuaternion(rotation);
+    console.log('[DRAG_END]', name, 'Saving new position to store:', {
+      position: { x: position.x, y: position.y, z: position.z },
+      rotation: { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w }
+    });
     // Don't save to history here - we save at drag start instead
     updateModel(isSelected, { position, rotation }, false);
   };
@@ -122,6 +126,11 @@ const TransformModel = ({ ...props }) => {
       setSavedPosition(currentModel.position);
       const savedRotation = currentModel.rotation;
 
+      console.log('[INIT]', name, 'Setting positions:', {
+        storedPosition: { x: savedPosition.x, y: savedPosition.y, z: savedPosition.z },
+        storedRotation: { x: savedRotation.x, y: savedRotation.y, z: savedRotation.z, w: savedRotation.w }
+      });
+
       // Explicitly reset ModelRef to ensure clean state
       ModelRef.current.position.set(0, 0, 0);
       ModelRef.current.quaternion.set(0, 0, 0, 1);
@@ -136,6 +145,14 @@ const TransformModel = ({ ...props }) => {
         savedRotation as unknown as number[]
       );
       GroupRef.current.updateMatrixWorld(true);
+
+      // Log actual world position after initialization
+      const testWorldPos = new THREE.Vector3();
+      ModelRef.current.getWorldPosition(testWorldPos);
+      console.log('[INIT]', name, 'ModelRef world position after init:', {
+        x: testWorldPos.x, y: testWorldPos.y, z: testWorldPos.z
+      });
+
       setInitialized(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -155,6 +172,13 @@ const TransformModel = ({ ...props }) => {
     ModelRef.current.getWorldPosition(currentWorldPosition);
     ModelRef.current.getWorldQuaternion(currentWorldQuaternion);
 
+    console.log('[SYNC]', name, 'Comparing positions:', {
+      currentWorldPosition: { x: currentWorldPosition.x, y: currentWorldPosition.y, z: currentWorldPosition.z },
+      storedPosition: { x: currentModel.position.x, y: currentModel.position.y, z: currentModel.position.z },
+      currentWorldQuaternion: { x: currentWorldQuaternion.x, y: currentWorldQuaternion.y, z: currentWorldQuaternion.z, w: currentWorldQuaternion.w },
+      storedQuaternion: { x: currentModel.rotation.x, y: currentModel.rotation.y, z: currentModel.rotation.z, w: currentModel.rotation.w }
+    });
+
     // Use utility functions for proper comparison (handles floating point precision)
     const positionChanged = !positionsAreEqual(
       currentWorldPosition,
@@ -165,7 +189,14 @@ const TransformModel = ({ ...props }) => {
       currentModel.rotation
     );
 
+    console.log('[SYNC]', name, 'Change detection:', {
+      positionChanged,
+      rotationChanged
+    });
+
     if (positionChanged || rotationChanged) {
+      console.log('[SYNC]', name, 'Applying position update');
+
       // Restore world position by setting GroupRef and resetting ModelRef
       // This matches the initialization pattern (GroupRef = world pos, ModelRef = 0,0,0)
 
@@ -194,6 +225,8 @@ const TransformModel = ({ ...props }) => {
 
       GroupRef.current.updateMatrixWorld(true);
       setSavedPosition(currentModel.position);
+    } else {
+      console.log('[SYNC]', name, 'No change detected, skipping update');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyVersion, initialized]);
@@ -399,6 +432,13 @@ const TransformModel = ({ ...props }) => {
           activeAxes={[true, enableY, true]}
           onDragStart={() => {
             // Save to history before any changes are made
+            const currentModel = getModel();
+            if (currentModel) {
+              console.log('[DRAG_START]', name, 'Saving to history:', {
+                position: { x: currentModel.position.x, y: currentModel.position.y, z: currentModel.position.z },
+                rotation: { x: currentModel.rotation.x, y: currentModel.rotation.y, z: currentModel.rotation.z, w: currentModel.rotation.w }
+              });
+            }
             saveToHistory();
             setIsRotating(true);
             setDrag(true);
