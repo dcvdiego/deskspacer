@@ -162,15 +162,35 @@ const TransformModel = ({ ...props }) => {
   }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
-  // Only runs on actual undo/redo (historyVersion change), NOT on initialization
+  // Also ensures positions are applied after scene renders (on first render after init)
   useEffect(() => {
     if (!initialized || !ModelRef.current || !GroupRef.current || dragRef.current) return;
 
-    // Check if historyVersion actually changed (skip on first render after init)
+    const currentModel = getModel();
+    if (!currentModel) return;
+
+    // On first render after init, apply positions without comparing (scene just rendered)
     if (prevHistoryVersionRef.current === null) {
-      console.log('[SYNC]', name, 'First render after init, storing historyVersion:', historyVersion);
+      console.log('[SYNC]', name, 'First render after init, applying positions without comparing');
       prevHistoryVersionRef.current = historyVersion;
-      return; // Skip sync on initialization
+
+      // Apply positions directly (skip NaN comparison)
+      GroupRef.current.position.set(
+        currentModel.position.x,
+        currentModel.position.y,
+        currentModel.position.z
+      );
+      GroupRef.current.quaternion.set(
+        currentModel.rotation.x,
+        currentModel.rotation.y,
+        currentModel.rotation.z,
+        currentModel.rotation.w
+      );
+      ModelRef.current.position.set(0, 0, 0);
+      ModelRef.current.quaternion.set(0, 0, 0, 1);
+      GroupRef.current.updateMatrixWorld(true);
+      setSavedPosition(currentModel.position);
+      return;
     }
 
     if (prevHistoryVersionRef.current === historyVersion) {
@@ -180,9 +200,6 @@ const TransformModel = ({ ...props }) => {
 
     console.log('[SYNC]', name, 'historyVersion changed from', prevHistoryVersionRef.current, 'to', historyVersion);
     prevHistoryVersionRef.current = historyVersion;
-
-    const currentModel = getModel();
-    if (!currentModel) return;
 
     // Read WORLD position/quaternion from ModelRef (what we save during drag)
     const currentWorldPosition = new THREE.Vector3();
