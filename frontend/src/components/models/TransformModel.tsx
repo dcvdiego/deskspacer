@@ -69,6 +69,9 @@ const TransformModel = ({ ...props }) => {
     dragRef.current = drag;
   }, [drag]);
 
+  // Track previous historyVersion to detect actual changes (not just initialization)
+  const prevHistoryVersionRef = useRef<number | null>(null);
+
   const getObjectWithName = (object: any) => {
     if (object.parent === null) return null;
     if (object.name !== '') return object.name;
@@ -159,9 +162,24 @@ const TransformModel = ({ ...props }) => {
   }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
-  // Only subscribes to historyVersion, not drag, to avoid re-running after drag ends
+  // Only runs on actual undo/redo (historyVersion change), NOT on initialization
   useEffect(() => {
     if (!initialized || !ModelRef.current || !GroupRef.current || dragRef.current) return;
+
+    // Check if historyVersion actually changed (skip on first render after init)
+    if (prevHistoryVersionRef.current === null) {
+      console.log('[SYNC]', name, 'First render after init, storing historyVersion:', historyVersion);
+      prevHistoryVersionRef.current = historyVersion;
+      return; // Skip sync on initialization
+    }
+
+    if (prevHistoryVersionRef.current === historyVersion) {
+      console.log('[SYNC]', name, 'historyVersion unchanged, skipping');
+      return; // Skip if version hasn't changed
+    }
+
+    console.log('[SYNC]', name, 'historyVersion changed from', prevHistoryVersionRef.current, 'to', historyVersion);
+    prevHistoryVersionRef.current = historyVersion;
 
     const currentModel = getModel();
     if (!currentModel) return;
