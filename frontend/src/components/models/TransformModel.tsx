@@ -136,33 +136,59 @@ const TransformModel = ({ ...props }) => {
   }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
-  // Copy initialization logic EXACTLY without manipulating initialized state
+  // Only subscribes to historyVersion, not drag, to avoid re-running after drag ends
   useEffect(() => {
-    // Only run after initialization completes, not during drag, and not on mount
-    if (!initialized || dragRef.current) return;
+    if (!initialized || !ModelRef.current || !GroupRef.current || dragRef.current) return;
 
     const currentModel = getModel();
-    if (!currentModel || !ModelRef.current || !GroupRef.current) return;
+    if (!currentModel) return;
 
-    // Reset ModelRef to clear any drag offset
-    ModelRef.current.position.set(0, 0, 0);
-    ModelRef.current.quaternion.identity();
+    // Read WORLD position/quaternion from ModelRef (what we save during drag)
+    const currentWorldPosition = new THREE.Vector3();
+    const currentWorldQuaternion = new THREE.Quaternion();
+    ModelRef.current.getWorldPosition(currentWorldPosition);
+    ModelRef.current.getWorldQuaternion(currentWorldQuaternion);
 
-    // Apply positions EXACTLY like initialization does
-    const savedPosition = currentModel.position;
-    const savedRotation = currentModel.rotation;
-
-    GroupRef.current.position.set(
-      savedPosition.x,
-      savedPosition.y,
-      savedPosition.z
+    // Use utility functions for proper comparison (handles floating point precision)
+    const positionChanged = !positionsAreEqual(
+      currentWorldPosition,
+      currentModel.position
     );
-    GroupRef.current.quaternion.fromArray(
-      savedRotation as unknown as number[]
+    const rotationChanged = !quaternionsAreEqual(
+      currentWorldQuaternion,
+      currentModel.rotation
     );
-    GroupRef.current.updateMatrixWorld();
-    setSavedPosition(currentModel.position);
 
+    if (positionChanged || rotationChanged) {
+      // Restore world position by setting GroupRef and resetting ModelRef
+      // This matches the initialization pattern (GroupRef = world pos, ModelRef = 0,0,0)
+
+      if (positionChanged) {
+        // Set GroupRef to the world position
+        GroupRef.current.position.set(
+          currentModel.position.x,
+          currentModel.position.y,
+          currentModel.position.z
+        );
+        // Reset ModelRef to origin (relative to GroupRef)
+        ModelRef.current.position.set(0, 0, 0);
+      }
+
+      if (rotationChanged) {
+        // Set GroupRef to the world rotation
+        GroupRef.current.quaternion.set(
+          currentModel.rotation.x,
+          currentModel.rotation.y,
+          currentModel.rotation.z,
+          currentModel.rotation.w
+        );
+        // Reset ModelRef rotation to identity (relative to GroupRef)
+        ModelRef.current.quaternion.set(0, 0, 0, 1);
+      }
+
+      GroupRef.current.updateMatrixWorld(true);
+      setSavedPosition(currentModel.position);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyVersion, initialized]);
   const { camera } = useThree();
