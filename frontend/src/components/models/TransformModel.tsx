@@ -135,7 +135,7 @@ const TransformModel = ({ ...props }) => {
       GroupRef.current.quaternion.fromArray(
         savedRotation as unknown as number[]
       );
-      GroupRef.current.updateMatrixWorld();
+      GroupRef.current.updateMatrixWorld(true);
       setInitialized(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
