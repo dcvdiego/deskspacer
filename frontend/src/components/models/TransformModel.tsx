@@ -138,16 +138,16 @@ const TransformModel = ({ ...props }) => {
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
   // Only subscribes to historyVersion, not drag, to avoid re-running after drag ends
   useEffect(() => {
-    if (!initialized || !GroupRef.current || dragRef.current) return;
+    if (!initialized || !ModelRef.current || dragRef.current) return;
 
     const currentModel = getModel();
     if (!currentModel) return;
 
-    // Read WORLD position/quaternion (not local) to compare with store values
+    // Read WORLD position/quaternion from ModelRef (same as what we save during drag)
     const currentWorldPosition = new THREE.Vector3();
     const currentWorldQuaternion = new THREE.Quaternion();
-    GroupRef.current.getWorldPosition(currentWorldPosition);
-    GroupRef.current.getWorldQuaternion(currentWorldQuaternion);
+    ModelRef.current.getWorldPosition(currentWorldPosition);
+    ModelRef.current.getWorldQuaternion(currentWorldQuaternion);
 
     // Use utility functions for proper comparison (handles floating point precision)
     const positionChanged = !positionsAreEqual(
@@ -162,18 +162,18 @@ const TransformModel = ({ ...props }) => {
     if (positionChanged || rotationChanged) {
       // Update 3D object to match store (from undo/redo)
       // Store contains WORLD coordinates, but we need to set LOCAL coordinates
-      // Convert world position to local position relative to parent
-      if (positionChanged && GroupRef.current.parent) {
+      // Use ModelRef (same object we read from during drag) for consistency
+      if (positionChanged && ModelRef.current.parent) {
         const worldPosition = new THREE.Vector3(
           currentModel.position.x,
           currentModel.position.y,
           currentModel.position.z
         );
-        const localPosition = GroupRef.current.parent.worldToLocal(worldPosition.clone());
-        GroupRef.current.position.copy(localPosition);
+        const localPosition = ModelRef.current.parent.worldToLocal(worldPosition.clone());
+        ModelRef.current.position.copy(localPosition);
       }
 
-      if (rotationChanged && GroupRef.current.parent) {
+      if (rotationChanged && ModelRef.current.parent) {
         // For rotation, we need to account for parent's world rotation
         const worldQuaternion = new THREE.Quaternion(
           currentModel.rotation.x,
@@ -184,15 +184,15 @@ const TransformModel = ({ ...props }) => {
 
         // Get parent's world quaternion and invert it
         const parentWorldQuaternion = new THREE.Quaternion();
-        GroupRef.current.parent.getWorldQuaternion(parentWorldQuaternion);
+        ModelRef.current.parent.getWorldQuaternion(parentWorldQuaternion);
         const parentInverse = parentWorldQuaternion.clone().invert();
 
         // Local rotation = parent_inverse * world_rotation
         const localQuaternion = parentInverse.multiply(worldQuaternion);
-        GroupRef.current.quaternion.copy(localQuaternion);
+        ModelRef.current.quaternion.copy(localQuaternion);
       }
 
-      GroupRef.current.updateMatrixWorld();
+      ModelRef.current.updateMatrixWorld();
       setSavedPosition(currentModel.position);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
