@@ -199,70 +199,31 @@ const TransformModel = ({ ...props }) => {
     }
 
     console.log('[SYNC]', name, 'historyVersion changed from', prevHistoryVersionRef.current, 'to', historyVersion);
+    console.log('[SYNC]', name, 'Applying undo/redo position:', {
+      position: { x: currentModel.position.x, y: currentModel.position.y, z: currentModel.position.z },
+      rotation: { x: currentModel.rotation.x, y: currentModel.rotation.y, z: currentModel.rotation.z, w: currentModel.rotation.w }
+    });
     prevHistoryVersionRef.current = historyVersion;
 
-    // Read WORLD position/quaternion from ModelRef (what we save during drag)
-    const currentWorldPosition = new THREE.Vector3();
-    const currentWorldQuaternion = new THREE.Quaternion();
-    ModelRef.current.getWorldPosition(currentWorldPosition);
-    ModelRef.current.getWorldQuaternion(currentWorldQuaternion);
-
-    console.log('[SYNC]', name, 'Comparing positions:', {
-      currentWorldPosition: { x: currentWorldPosition.x, y: currentWorldPosition.y, z: currentWorldPosition.z },
-      storedPosition: { x: currentModel.position.x, y: currentModel.position.y, z: currentModel.position.z },
-      currentWorldQuaternion: { x: currentWorldQuaternion.x, y: currentWorldQuaternion.y, z: currentWorldQuaternion.z, w: currentWorldQuaternion.w },
-      storedQuaternion: { x: currentModel.rotation.x, y: currentModel.rotation.y, z: currentModel.rotation.z, w: currentModel.rotation.w }
-    });
-
-    // Use utility functions for proper comparison (handles floating point precision)
-    const positionChanged = !positionsAreEqual(
-      currentWorldPosition,
-      currentModel.position
+    // ALWAYS apply position on undo/redo without comparing
+    // getWorldPosition() returns stale values after our updates, causing wrong comparisons
+    GroupRef.current.position.set(
+      currentModel.position.x,
+      currentModel.position.y,
+      currentModel.position.z
     );
-    const rotationChanged = !quaternionsAreEqual(
-      currentWorldQuaternion,
-      currentModel.rotation
+    GroupRef.current.quaternion.set(
+      currentModel.rotation.x,
+      currentModel.rotation.y,
+      currentModel.rotation.z,
+      currentModel.rotation.w
     );
+    ModelRef.current.position.set(0, 0, 0);
+    ModelRef.current.quaternion.set(0, 0, 0, 1);
+    GroupRef.current.updateMatrixWorld(true);
+    setSavedPosition(currentModel.position);
 
-    console.log('[SYNC]', name, 'Change detection:', {
-      positionChanged,
-      rotationChanged
-    });
-
-    if (positionChanged || rotationChanged) {
-      console.log('[SYNC]', name, 'Applying position update');
-
-      // Restore world position by setting GroupRef and resetting ModelRef
-      // This matches the initialization pattern (GroupRef = world pos, ModelRef = 0,0,0)
-
-      if (positionChanged) {
-        // Set GroupRef to the world position
-        GroupRef.current.position.set(
-          currentModel.position.x,
-          currentModel.position.y,
-          currentModel.position.z
-        );
-        // Reset ModelRef to origin (relative to GroupRef)
-        ModelRef.current.position.set(0, 0, 0);
-      }
-
-      if (rotationChanged) {
-        // Set GroupRef to the world rotation
-        GroupRef.current.quaternion.set(
-          currentModel.rotation.x,
-          currentModel.rotation.y,
-          currentModel.rotation.z,
-          currentModel.rotation.w
-        );
-        // Reset ModelRef rotation to identity (relative to GroupRef)
-        ModelRef.current.quaternion.set(0, 0, 0, 1);
-      }
-
-      GroupRef.current.updateMatrixWorld(true);
-      setSavedPosition(currentModel.position);
-    } else {
-      console.log('[SYNC]', name, 'No change detected, skipping update');
-    }
+    console.log('[SYNC]', name, 'Position applied successfully');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyVersion, initialized]);
   const { camera } = useThree();
