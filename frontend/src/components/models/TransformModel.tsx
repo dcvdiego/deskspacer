@@ -143,26 +143,17 @@ const TransformModel = ({ ...props }) => {
     const currentModel = getModel();
     if (!currentModel) return;
 
-    // ALWAYS reset ModelRef to (0,0,0) and identity rotation when historyVersion changes
-    // This clears any drag offset, even if GroupRef is already at the target position
+    // ALWAYS reset ModelRef to origin (clears any drag offset)
     ModelRef.current.position.set(0, 0, 0);
-    ModelRef.current.quaternion.set(0, 0, 0, 1);
+    ModelRef.current.quaternion.identity();
 
     // Set GroupRef to the stored world position/rotation
-    GroupRef.current.position.set(
-      currentModel.position.x,
-      currentModel.position.y,
-      currentModel.position.z
-    );
-    GroupRef.current.quaternion.set(
-      currentModel.rotation.x,
-      currentModel.rotation.y,
-      currentModel.rotation.z,
-      currentModel.rotation.w
-    );
+    // Use .copy() to properly copy THREE.js objects (matches initialization pattern)
+    GroupRef.current.position.copy(currentModel.position);
+    GroupRef.current.quaternion.copy(currentModel.rotation);
 
-    // Force update all matrices (must be called AFTER setting positions)
-    GroupRef.current.updateMatrixWorld(true);
+    // Update matrices to propagate changes
+    GroupRef.current.updateMatrixWorld();
     setSavedPosition(currentModel.position);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
