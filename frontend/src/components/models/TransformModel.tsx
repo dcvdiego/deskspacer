@@ -81,7 +81,7 @@ const TransformModel = ({ ...props }) => {
   const ModelRef = useRef<THREE.Group<THREE.Object3DEventMap>>(null);
   const GroupRef = useRef<THREE.Group<THREE.Object3DEventMap>>(null);
   const updateModelPosition = () => {
-    if (!ModelRef.current) return;
+    if (!ModelRef.current || !GroupRef.current) return;
     const position = new THREE.Vector3();
     const rotation = new THREE.Quaternion();
     ModelRef.current.getWorldPosition(position);
@@ -92,6 +92,15 @@ const TransformModel = ({ ...props }) => {
     });
     // Don't save to history here - we save at drag start instead
     updateModel(isSelected, { position, rotation }, false);
+
+    // CRITICAL: Reset refs to maintain pattern (GroupRef = world pos, ModelRef = 0,0,0)
+    // This ensures undo/redo works correctly by keeping a consistent coordinate system
+    GroupRef.current.position.set(position.x, position.y, position.z);
+    GroupRef.current.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
+    ModelRef.current.position.set(0, 0, 0);
+    ModelRef.current.quaternion.set(0, 0, 0, 1);
+    GroupRef.current.updateMatrixWorld(true);
+    console.log('[DRAG_END]', name, 'Reset refs to maintain coordinate pattern');
   };
 
   const model = getModel();
