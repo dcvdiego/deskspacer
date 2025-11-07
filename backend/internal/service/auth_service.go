@@ -27,8 +27,8 @@ type JWTClaims struct {
 
 // AuthService handles authentication business logic
 type AuthService struct {
-	userRepo         *repository.UserRepository
-	tokenRepo        *repository.AuthTokenRepository
+	userRepo         repository.UserRepositoryInterface
+	tokenRepo        repository.AuthTokenRepositoryInterface
 	jwtSecret        []byte
 	accessExpiration  time.Duration
 	refreshExpiration time.Duration
@@ -36,8 +36,8 @@ type AuthService struct {
 
 // NewAuthService creates a new AuthService
 func NewAuthService(
-	userRepo *repository.UserRepository,
-	tokenRepo *repository.AuthTokenRepository,
+	userRepo repository.UserRepositoryInterface,
+	tokenRepo repository.AuthTokenRepositoryInterface,
 	jwtSecret string,
 	accessExpiration string,
 	refreshExpiration string,
