@@ -72,9 +72,6 @@ const TransformModel = ({ ...props }) => {
   // Track previous historyVersion to detect actual changes (not just initialization)
   const prevHistoryVersionRef = useRef<number | null>(null);
 
-  // Prevent cascading updates when resetting refs triggers onDragEnd again
-  const isUpdatingPositionRef = useRef<boolean>(false);
-
   const getObjectWithName = (object: any) => {
     if (object.parent === null) return null;
     if (object.name !== '') return object.name;
@@ -86,14 +83,6 @@ const TransformModel = ({ ...props }) => {
   const updateModelPosition = () => {
     if (!ModelRef.current || !GroupRef.current) return;
 
-    // Prevent cascading calls when our ref reset triggers onDragEnd again
-    if (isUpdatingPositionRef.current) {
-      console.log('[DRAG_END]', name, 'Skipping cascading update');
-      return;
-    }
-
-    isUpdatingPositionRef.current = true;
-
     const position = new THREE.Vector3();
     const rotation = new THREE.Quaternion();
     ModelRef.current.getWorldPosition(position);
@@ -104,20 +93,6 @@ const TransformModel = ({ ...props }) => {
     });
     // Don't save to history here - we save at drag start instead
     updateModel(isSelected, { position, rotation }, false);
-
-    // CRITICAL: Reset refs to maintain pattern (GroupRef = world pos, ModelRef = 0,0,0)
-    // This ensures undo/redo works correctly by keeping a consistent coordinate system
-    GroupRef.current.position.set(position.x, position.y, position.z);
-    GroupRef.current.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w);
-    ModelRef.current.position.set(0, 0, 0);
-    ModelRef.current.quaternion.set(0, 0, 0, 1);
-    GroupRef.current.updateMatrixWorld(true);
-    console.log('[DRAG_END]', name, 'Reset refs to maintain coordinate pattern');
-
-    // Reset flag after a short delay to allow the scene to settle
-    setTimeout(() => {
-      isUpdatingPositionRef.current = false;
-    }, 10);
   };
 
   const model = getModel();
