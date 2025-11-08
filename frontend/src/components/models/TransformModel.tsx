@@ -190,6 +190,13 @@ const TransformModel = ({ ...props }) => {
       GroupRef.current.updateMatrixWorld(true);
       setSavedPosition(currentModel.position);
 
+      // Verify the position was actually applied
+      const verifyPosition = new THREE.Vector3();
+      ModelRef.current.getWorldPosition(verifyPosition);
+      console.log('[SYNC]', name, 'After first render, ModelRef world position is:', {
+        x: verifyPosition.x, y: verifyPosition.y, z: verifyPosition.z
+      });
+
       console.log('[SYNC]', name, 'Positions applied, NOT resetting intermediate groups to preserve PivotControls rotation');
       return;
     }
