@@ -163,47 +163,21 @@ const TransformModel = ({ ...props }) => {
   }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
-  // Also ensures positions are applied after scene renders (on first render after init)
+  // ONLY runs on undo/redo, NOT on initialization
   useEffect(() => {
     if (!initialized || !ModelRef.current || !GroupRef.current || dragRef.current) return;
 
     const currentModel = getModel();
     if (!currentModel) return;
 
-    // On first render after init, re-apply positions (ensures they stick after scene renders)
-    // DON'T reset intermediate groups - that would clear PivotControls' intentional rotation
+    // Track historyVersion to detect actual undo/redo
     if (prevHistoryVersionRef.current === null) {
-      console.log('[SYNC]', name, 'First render after init, re-applying positions without resetting intermediate groups');
       prevHistoryVersionRef.current = historyVersion;
-
-      // Apply positions to ensure they stuck (initialization may have run before scene was ready)
-      GroupRef.current.position.set(
-        currentModel.position.x,
-        currentModel.position.y,
-        currentModel.position.z
-      );
-      GroupRef.current.quaternion.fromArray(
-        currentModel.rotation as unknown as number[]
-      );
-      ModelRef.current.position.set(0, 0, 0);
-      ModelRef.current.quaternion.set(0, 0, 0, 1);
-      GroupRef.current.updateMatrixWorld(true);
-      setSavedPosition(currentModel.position);
-
-      // Verify the position was actually applied
-      const verifyPosition = new THREE.Vector3();
-      ModelRef.current.getWorldPosition(verifyPosition);
-      console.log('[SYNC]', name, 'After first render, ModelRef world position is:', {
-        x: verifyPosition.x, y: verifyPosition.y, z: verifyPosition.z
-      });
-
-      console.log('[SYNC]', name, 'Positions applied, NOT resetting intermediate groups to preserve PivotControls rotation');
-      return;
+      return; // First time seeing historyVersion, just store it
     }
 
     if (prevHistoryVersionRef.current === historyVersion) {
-      console.log('[SYNC]', name, 'historyVersion unchanged, skipping');
-      return; // Skip if version hasn't changed
+      return; // No change, skip
     }
 
     console.log('[SYNC]', name, 'historyVersion changed from', prevHistoryVersionRef.current, 'to', historyVersion);
@@ -297,7 +271,7 @@ const TransformModel = ({ ...props }) => {
 
     console.log('[SYNC]', name, 'Position applied successfully');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyVersion, initialized]);
+  }, [historyVersion]); // ONLY historyVersion, NOT initialized - let init effect handle initialization
   const { camera } = useThree();
   const boundsModel = new THREE.Box3();
   const [offset, setOffset] = useState<[number, number, number]>([0, 0, 0]);
