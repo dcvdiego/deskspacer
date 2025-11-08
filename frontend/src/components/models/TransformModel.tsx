@@ -225,13 +225,27 @@ const TransformModel = ({ ...props }) => {
 
     // Reset all intermediate transforms between GroupRef and ModelRef
     // PivotControls creates wrapper groups that need to be reset to identity
+    console.log('[SYNC]', name, 'Traversing from ModelRef to GroupRef to reset intermediate groups');
     let current = ModelRef.current.parent;
+    let depth = 0;
     while (current && current !== GroupRef.current) {
+      console.log('[SYNC]', name, `Intermediate group at depth ${depth}:`, {
+        type: current.type,
+        name: current.name || '(unnamed)',
+        positionBefore: { x: current.position.x, y: current.position.y, z: current.position.z },
+        quaternionBefore: { x: current.quaternion.x, y: current.quaternion.y, z: current.quaternion.z, w: current.quaternion.w }
+      });
       current.position.set(0, 0, 0);
       current.quaternion.set(0, 0, 0, 1);
       current.scale.set(1, 1, 1);
+      console.log('[SYNC]', name, `After reset:`, {
+        positionAfter: { x: current.position.x, y: current.position.y, z: current.position.z },
+        quaternionAfter: { x: current.quaternion.x, y: current.quaternion.y, z: current.quaternion.z, w: current.quaternion.w }
+      });
       current = current.parent;
+      depth++;
     }
+    console.log('[SYNC]', name, `Found ${depth} intermediate groups`);
 
     // Reset ModelRef to origin
     ModelRef.current.position.set(0, 0, 0);
