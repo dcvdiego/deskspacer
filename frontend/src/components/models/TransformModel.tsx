@@ -170,11 +170,27 @@ const TransformModel = ({ ...props }) => {
     const currentModel = getModel();
     if (!currentModel) return;
 
-    // On first render after init, just store historyVersion (don't apply positions)
-    // The initialization effect already set positions correctly
+    // On first render after init, re-apply positions (ensures they stick after scene renders)
+    // DON'T reset intermediate groups - that would clear PivotControls' intentional rotation
     if (prevHistoryVersionRef.current === null) {
-      console.log('[SYNC]', name, 'First render after init, storing historyVersion');
+      console.log('[SYNC]', name, 'First render after init, re-applying positions without resetting intermediate groups');
       prevHistoryVersionRef.current = historyVersion;
+
+      // Apply positions to ensure they stuck (initialization may have run before scene was ready)
+      GroupRef.current.position.set(
+        currentModel.position.x,
+        currentModel.position.y,
+        currentModel.position.z
+      );
+      GroupRef.current.quaternion.fromArray(
+        currentModel.rotation as unknown as number[]
+      );
+      ModelRef.current.position.set(0, 0, 0);
+      ModelRef.current.quaternion.set(0, 0, 0, 1);
+      GroupRef.current.updateMatrixWorld(true);
+      setSavedPosition(currentModel.position);
+
+      console.log('[SYNC]', name, 'Positions applied, NOT resetting intermediate groups to preserve PivotControls rotation');
       return;
     }
 
