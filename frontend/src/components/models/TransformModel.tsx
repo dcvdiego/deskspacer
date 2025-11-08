@@ -207,7 +207,41 @@ const TransformModel = ({ ...props }) => {
     prevHistoryVersionRef.current = historyVersion;
 
     // ALWAYS apply position on undo/redo without comparing
-    // getWorldPosition() returns stale values after our updates, causing wrong comparisons
+    // PivotControls sits between GroupRef and ModelRef, so we can't just set GroupRef
+    // Instead, we need to convert the target world position to ModelRef's local space
+
+    if (!ModelRef.current.parent) {
+      console.error('[SYNC]', name, 'ModelRef has no parent, cannot apply undo/redo');
+      return;
+    }
+
+    // Convert target world position to local position relative to ModelRef's parent
+    const targetWorldPosition = new THREE.Vector3(
+      currentModel.position.x,
+      currentModel.position.y,
+      currentModel.position.z
+    );
+    const targetWorldRotation = new THREE.Quaternion(
+      currentModel.rotation.x,
+      currentModel.rotation.y,
+      currentModel.rotation.z,
+      currentModel.rotation.w
+    );
+
+    // Convert world position to local position (accounts for PivotControls' internal transform)
+    const targetLocalPosition = ModelRef.current.parent.worldToLocal(targetWorldPosition.clone());
+
+    // For rotation, we need to account for parent's world rotation
+    const parentWorldQuaternion = new THREE.Quaternion();
+    ModelRef.current.parent.getWorldQuaternion(parentWorldQuaternion);
+    const targetLocalRotation = targetWorldRotation.clone().premultiply(parentWorldQuaternion.clone().invert());
+
+    // Set ModelRef's local position and rotation
+    ModelRef.current.position.copy(targetLocalPosition);
+    ModelRef.current.quaternion.copy(targetLocalRotation);
+    ModelRef.current.updateMatrixWorld(true);
+
+    // Also update GroupRef for consistency
     GroupRef.current.position.set(
       currentModel.position.x,
       currentModel.position.y,
@@ -219,8 +253,6 @@ const TransformModel = ({ ...props }) => {
       currentModel.rotation.z,
       currentModel.rotation.w
     );
-    ModelRef.current.position.set(0, 0, 0);
-    ModelRef.current.quaternion.set(0, 0, 0, 1);
     GroupRef.current.updateMatrixWorld(true);
 
     // Verify the position was actually applied
