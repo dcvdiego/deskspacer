@@ -233,11 +233,23 @@ const TransformModel = ({ ...props }) => {
         type: current.type,
         name: current.name || '(unnamed)',
         positionBefore: { x: current.position.x, y: current.position.y, z: current.position.z },
-        quaternionBefore: { x: current.quaternion.x, y: current.quaternion.y, z: current.quaternion.z, w: current.quaternion.w }
+        quaternionBefore: { x: current.quaternion.x, y: current.quaternion.y, z: current.quaternion.z, w: current.quaternion.w },
+        matrixAutoUpdate: current.matrixAutoUpdate,
+        matrixWorldAutoUpdate: current.matrixWorldAutoUpdate
       });
+
+      // Reset position, rotation, scale
       current.position.set(0, 0, 0);
       current.quaternion.set(0, 0, 0, 1);
       current.scale.set(1, 1, 1);
+
+      // CRITICAL: Reset matrix to identity
+      // PivotControls sets the matrix directly, not position/rotation
+      current.matrix.identity();
+      current.matrixWorld.identity();
+      current.matrixAutoUpdate = true;
+      current.matrixWorldNeedsUpdate = true;
+
       console.log('[SYNC]', name, `After reset:`, {
         positionAfter: { x: current.position.x, y: current.position.y, z: current.position.z },
         quaternionAfter: { x: current.quaternion.x, y: current.quaternion.y, z: current.quaternion.z, w: current.quaternion.w }
