@@ -163,17 +163,35 @@ const TransformModel = ({ ...props }) => {
   }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
-  // ONLY runs on undo/redo, NOT on initialization
+  // Also ensures positions are applied after scene renders (on first render after init)
   useEffect(() => {
     if (!initialized || !ModelRef.current || !GroupRef.current || dragRef.current) return;
 
     const currentModel = getModel();
     if (!currentModel) return;
 
-    // Track historyVersion to detect actual undo/redo
+    // On first render after init, apply positions without comparing (scene just rendered)
     if (prevHistoryVersionRef.current === null) {
+      console.log('[SYNC]', name, 'First render after init, applying positions without comparing');
       prevHistoryVersionRef.current = historyVersion;
-      return; // First time seeing historyVersion, just store it
+
+      // Apply positions directly (skip NaN comparison)
+      GroupRef.current.position.set(
+        currentModel.position.x,
+        currentModel.position.y,
+        currentModel.position.z
+      );
+      GroupRef.current.quaternion.set(
+        currentModel.rotation.x,
+        currentModel.rotation.y,
+        currentModel.rotation.z,
+        currentModel.rotation.w
+      );
+      ModelRef.current.position.set(0, 0, 0);
+      ModelRef.current.quaternion.set(0, 0, 0, 1);
+      GroupRef.current.updateMatrixWorld(true);
+      setSavedPosition(currentModel.position);
+      return;
     }
 
     if (prevHistoryVersionRef.current === historyVersion) {
@@ -271,7 +289,7 @@ const TransformModel = ({ ...props }) => {
 
     console.log('[SYNC]', name, 'Position applied successfully');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historyVersion]); // ONLY historyVersion, NOT initialized - let init effect handle initialization
+  }, [historyVersion, initialized]); // Both dependencies - matching commit b0ca1d9 where undo/redo worked
   const { camera } = useThree();
   const boundsModel = new THREE.Box3();
   const [offset, setOffset] = useState<[number, number, number]>([0, 0, 0]);
