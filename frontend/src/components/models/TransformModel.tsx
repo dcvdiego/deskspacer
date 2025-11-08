@@ -222,6 +222,27 @@ const TransformModel = ({ ...props }) => {
     ModelRef.current.position.set(0, 0, 0);
     ModelRef.current.quaternion.set(0, 0, 0, 1);
     GroupRef.current.updateMatrixWorld(true);
+
+    // Verify the position was actually applied
+    const verifyPosition = new THREE.Vector3();
+    const verifyRotation = new THREE.Quaternion();
+    ModelRef.current.getWorldPosition(verifyPosition);
+    ModelRef.current.getWorldQuaternion(verifyRotation);
+    console.log('[SYNC]', name, 'After setting refs, ModelRef world position is:', {
+      position: { x: verifyPosition.x, y: verifyPosition.y, z: verifyPosition.z },
+      rotation: { x: verifyRotation.x, y: verifyRotation.y, z: verifyRotation.z, w: verifyRotation.w }
+    });
+    console.log('[SYNC]', name, 'GroupRef local position:', {
+      x: GroupRef.current.position.x,
+      y: GroupRef.current.position.y,
+      z: GroupRef.current.position.z
+    });
+    console.log('[SYNC]', name, 'ModelRef local position:', {
+      x: ModelRef.current.position.x,
+      y: ModelRef.current.position.y,
+      z: ModelRef.current.position.z
+    });
+
     setSavedPosition(currentModel.position);
 
     console.log('[SYNC]', name, 'Position applied successfully');
