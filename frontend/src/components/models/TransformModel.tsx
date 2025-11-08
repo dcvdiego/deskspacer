@@ -171,27 +171,23 @@ const TransformModel = ({ ...props }) => {
     if (!currentModel) return;
 
     // On first render after init, apply positions without comparing (scene just rendered)
+    // Match original initialization behavior: use .fromArray() and don't reset ModelRef
     if (prevHistoryVersionRef.current === null) {
       console.log('[SYNC]', name, 'First render after init, applying positions without comparing');
       prevHistoryVersionRef.current = historyVersion;
 
-      // Apply positions directly (skip NaN comparison)
+      // Apply positions using same method as original code (before undo/redo)
       GroupRef.current.position.set(
         currentModel.position.x,
         currentModel.position.y,
         currentModel.position.z
       );
-      GroupRef.current.quaternion.set(
-        currentModel.rotation.x,
-        currentModel.rotation.y,
-        currentModel.rotation.z,
-        currentModel.rotation.w
+      GroupRef.current.quaternion.fromArray(
+        currentModel.rotation as unknown as number[]
       );
-      ModelRef.current.position.set(0, 0, 0);
-      ModelRef.current.quaternion.set(0, 0, 0, 1);
       GroupRef.current.updateMatrixWorld(true);
       setSavedPosition(currentModel.position);
-      return;
+      return; // Don't reset ModelRef on first render - preserve original behavior
     }
 
     if (prevHistoryVersionRef.current === historyVersion) {
@@ -215,11 +211,8 @@ const TransformModel = ({ ...props }) => {
       currentModel.position.y,
       currentModel.position.z
     );
-    GroupRef.current.quaternion.set(
-      currentModel.rotation.x,
-      currentModel.rotation.y,
-      currentModel.rotation.z,
-      currentModel.rotation.w
+    GroupRef.current.quaternion.fromArray(
+      currentModel.rotation as unknown as number[]
     );
 
     // Reset all intermediate transforms between GroupRef and ModelRef
