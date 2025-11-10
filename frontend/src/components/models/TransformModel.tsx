@@ -124,13 +124,22 @@ const TransformModel = ({ ...props }) => {
 
   // Initialize position/rotation on mount
   useEffect(() => {
-    if (model && ModelRef.current && GroupRef.current && !initialized) {
-      const savedPosition = model.position;
-      setSavedPosition(model.position);
-      const savedRotation = model.rotation;
+    const currentModel = getModel();
+    if (currentModel && ModelRef.current && GroupRef.current && !initialized) {
+      const savedPosition = currentModel.position;
+      setSavedPosition(currentModel.position);
+      const savedRotation = currentModel.rotation;
 
-      // Match original initialization behavior exactly (before undo/redo)
-      // Set GroupRef position and rotation, don't touch ModelRef
+      console.log('[INIT]', name, 'Setting positions:', {
+        storedPosition: { x: savedPosition.x, y: savedPosition.y, z: savedPosition.z },
+        storedRotation: { x: savedRotation.x, y: savedRotation.y, z: savedRotation.z, w: savedRotation.w }
+      });
+
+      // Explicitly reset ModelRef to ensure clean state
+      ModelRef.current.position.set(0, 0, 0);
+      ModelRef.current.quaternion.set(0, 0, 0, 1);
+
+      // Set GroupRef to the stored world position
       GroupRef.current.position.set(
         savedPosition.x,
         savedPosition.y,
@@ -139,10 +148,19 @@ const TransformModel = ({ ...props }) => {
       GroupRef.current.quaternion.fromArray(
         savedRotation as unknown as number[]
       );
-      GroupRef.current.updateMatrixWorld();
+      GroupRef.current.updateMatrixWorld(true);
+
+      // Log actual world position after initialization
+      const testWorldPos = new THREE.Vector3();
+      ModelRef.current.getWorldPosition(testWorldPos);
+      console.log('[INIT]', name, 'ModelRef world position after init:', {
+        x: testWorldPos.x, y: testWorldPos.y, z: testWorldPos.z
+      });
+
       setInitialized(true);
     }
-  }, [ModelRef, model, initialized, GroupRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialized]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
   // Also ensures positions are applied after scene renders (on first render after init)
@@ -153,27 +171,32 @@ const TransformModel = ({ ...props }) => {
     if (!currentModel) return;
 
     // On first render after init, apply positions without comparing (scene just rendered)
-    // Match original initialization behavior: use .fromArray() and don't reset ModelRef
     if (prevHistoryVersionRef.current === null) {
       console.log('[SYNC]', name, 'First render after init, applying positions without comparing');
       prevHistoryVersionRef.current = historyVersion;
 
-      // Apply positions using same method as original code (before undo/redo)
+      // Apply positions directly (skip NaN comparison)
       GroupRef.current.position.set(
         currentModel.position.x,
         currentModel.position.y,
         currentModel.position.z
       );
-      GroupRef.current.quaternion.fromArray(
-        currentModel.rotation as unknown as number[]
+      GroupRef.current.quaternion.set(
+        currentModel.rotation.x,
+        currentModel.rotation.y,
+        currentModel.rotation.z,
+        currentModel.rotation.w
       );
+      ModelRef.current.position.set(0, 0, 0);
+      ModelRef.current.quaternion.set(0, 0, 0, 1);
       GroupRef.current.updateMatrixWorld(true);
       setSavedPosition(currentModel.position);
-      return; // Don't reset ModelRef on first render - preserve original behavior
+      return;
     }
 
     if (prevHistoryVersionRef.current === historyVersion) {
-      return; // No change, skip
+      console.log('[SYNC]', name, 'historyVersion unchanged, skipping');
+      return; // Skip if version hasn't changed
     }
 
     console.log('[SYNC]', name, 'historyVersion changed from', prevHistoryVersionRef.current, 'to', historyVersion);
@@ -193,8 +216,11 @@ const TransformModel = ({ ...props }) => {
       currentModel.position.y,
       currentModel.position.z
     );
-    GroupRef.current.quaternion.fromArray(
-      currentModel.rotation as unknown as number[]
+    GroupRef.current.quaternion.set(
+      currentModel.rotation.x,
+      currentModel.rotation.y,
+      currentModel.rotation.z,
+      currentModel.rotation.w
     );
 
     // Reset all intermediate transforms between GroupRef and ModelRef
