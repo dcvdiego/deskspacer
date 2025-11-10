@@ -124,11 +124,10 @@ const TransformModel = ({ ...props }) => {
 
   // Initialize position/rotation on mount
   useEffect(() => {
-    const currentModel = getModel();
-    if (currentModel && ModelRef.current && GroupRef.current && !initialized) {
-      const savedPosition = currentModel.position;
-      setSavedPosition(currentModel.position);
-      const savedRotation = currentModel.rotation;
+    if (model && ModelRef.current && GroupRef.current && !initialized) {
+      const savedPosition = model.position;
+      setSavedPosition(model.position);
+      const savedRotation = model.rotation;
 
       // Match original initialization behavior exactly (before undo/redo)
       // Set GroupRef position and rotation, don't touch ModelRef
@@ -143,8 +142,7 @@ const TransformModel = ({ ...props }) => {
       GroupRef.current.updateMatrixWorld();
       setInitialized(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialized]);
+  }, [ModelRef, model, initialized, GroupRef]);
 
   // Sync 3D object with store changes when historyVersion changes (undo/redo)
   // Also ensures positions are applied after scene renders (on first render after init)
