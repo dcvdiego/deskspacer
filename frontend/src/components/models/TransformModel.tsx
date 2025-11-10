@@ -130,16 +130,8 @@ const TransformModel = ({ ...props }) => {
       setSavedPosition(currentModel.position);
       const savedRotation = currentModel.rotation;
 
-      console.log('[INIT]', name, 'Setting positions:', {
-        storedPosition: { x: savedPosition.x, y: savedPosition.y, z: savedPosition.z },
-        storedRotation: { x: savedRotation.x, y: savedRotation.y, z: savedRotation.z, w: savedRotation.w }
-      });
-
-      // Explicitly reset ModelRef to ensure clean state
-      ModelRef.current.position.set(0, 0, 0);
-      ModelRef.current.quaternion.set(0, 0, 0, 1);
-
-      // Set GroupRef to the stored world position
+      // Match original initialization behavior exactly (before undo/redo)
+      // Set GroupRef position and rotation, don't touch ModelRef
       GroupRef.current.position.set(
         savedPosition.x,
         savedPosition.y,
@@ -148,15 +140,7 @@ const TransformModel = ({ ...props }) => {
       GroupRef.current.quaternion.fromArray(
         savedRotation as unknown as number[]
       );
-      GroupRef.current.updateMatrixWorld(true);
-
-      // Log actual world position after initialization
-      const testWorldPos = new THREE.Vector3();
-      ModelRef.current.getWorldPosition(testWorldPos);
-      console.log('[INIT]', name, 'ModelRef world position after init:', {
-        x: testWorldPos.x, y: testWorldPos.y, z: testWorldPos.z
-      });
-
+      GroupRef.current.updateMatrixWorld();
       setInitialized(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
