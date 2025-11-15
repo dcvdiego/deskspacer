@@ -92,6 +92,9 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 	// Build custom GLB type
 	customGLBType := BuildCustomGLBType(uuidType, timeType)
 
+	// Build checkout session type
+	checkoutSessionType := BuildCheckoutSessionType()
+
 	// SharedState type (kept for backward compatibility)
 	sharedStateType := graphql.NewObject(graphql.ObjectConfig{
 		Name:        "SharedState",
@@ -323,6 +326,12 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 	// Build and merge custom GLB mutations
 	customGLBMutations := BuildCustomGLBMutations(resolver, uuidType, customGLBType)
 	for key, field := range customGLBMutations {
+		mutationFields[key] = field
+	}
+
+	// Build and merge payment mutations
+	paymentMutations := BuildPaymentMutations(resolver, checkoutSessionType)
+	for key, field := range paymentMutations {
 		mutationFields[key] = field
 	}
 

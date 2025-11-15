@@ -115,8 +115,26 @@ func main() {
 		slog.Warn("Using mock storage service (no R2 credentials configured)")
 	}
 
+	// Initialize Stripe Service
+	var stripeService service.StripeService
+	if cfg.StripeSecretKey != "" && cfg.StripeWebhookSecret != "" && cfg.StripePriceID != "" {
+		// Use real Stripe service
+		stripeService = service.NewRealStripeService(
+			cfg.StripeSecretKey,
+			cfg.StripeWebhookSecret,
+			cfg.StripePriceID,
+			cfg.StripeSuccessURL,
+			cfg.StripeCancelURL,
+		)
+		slog.Info("Stripe service initialized", "price_id", cfg.StripePriceID)
+	} else {
+		// Use mock Stripe service for development/testing
+		stripeService = service.NewMockStripeService()
+		slog.Warn("Using mock Stripe service (no Stripe credentials configured)")
+	}
+
 	// Initialize GraphQL resolver and schema
-	resolver := graph.NewResolver(repo, userRepo, authTokenRepo, userStateRepo, customGLBRepo, authService, emailService, storageService, cfg)
+	resolver := graph.NewResolver(repo, userRepo, authTokenRepo, userStateRepo, customGLBRepo, authService, emailService, storageService, stripeService, cfg)
 	schema, err := graph.NewSchema(resolver)
 	if err != nil {
 		slog.Error("Failed to create GraphQL schema", "error", err)
@@ -150,6 +168,10 @@ func main() {
 
 	// GraphQL endpoint with optional auth
 	r.With(middleware.OptionalAuth(authService)).Handle("/graphql", graphqlHandler)
+
+	// Stripe webhook endpoint (no auth, Stripe signature verification)
+	webhookHandler := middleware.NewStripeWebhookHandler(stripeService, userRepo)
+	r.Post("/webhooks/stripe", webhookHandler.HandleWebhook)
 
 	// Start background cleanup service
 	cleanupService := service.NewCleanupService(repo, cfg.CleanupIntervalHours)

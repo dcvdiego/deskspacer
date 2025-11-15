@@ -22,6 +22,7 @@ type Resolver struct {
 	authService    *service.AuthService
 	emailService   service.EmailService
 	storageService service.StorageService
+	stripeService  service.StripeService
 
 	// Utilities
 	validator *validator.Validate
@@ -38,6 +39,7 @@ func NewResolver(
 	authService *service.AuthService,
 	emailService service.EmailService,
 	storageService service.StorageService,
+	stripeService service.StripeService,
 	cfg *config.Config,
 ) *Resolver {
 	return &Resolver{
@@ -49,6 +51,7 @@ func NewResolver(
 		authService:    authService,
 		emailService:   emailService,
 		storageService: storageService,
+		stripeService:  stripeService,
 		validator:      validator.New(),
 		config:         cfg,
 	}

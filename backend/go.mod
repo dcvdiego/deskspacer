@@ -13,6 +13,7 @@ require (
 	github.com/graphql-go/handler v0.2.4
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/joho/godotenv v1.5.1
+	github.com/stripe/stripe-go/v81 v81.3.0
 	golang.org/x/crypto v0.43.0
 	golang.org/x/time v0.14.0
 )

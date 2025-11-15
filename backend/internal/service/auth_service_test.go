@@ -88,6 +88,18 @@ func (m *MockUserRepository) ActivatePremium(ctx context.Context, userID uuid.UU
 	return models.ErrUserNotFound
 }
 
+func (m *MockUserRepository) UpdatePremiumStatus(ctx context.Context, userID uuid.UUID, isPremium bool) error {
+	if user, exists := m.users[userID]; exists {
+		user.IsPremium = isPremium
+		if isPremium {
+			now := time.Now()
+			user.PremiumActivatedAt = &now
+		}
+		return nil
+	}
+	return models.ErrUserNotFound
+}
+
 func (m *MockUserRepository) UpdatePassword(ctx context.Context, userID uuid.UUID, passwordHash string) error {
 	if user, exists := m.users[userID]; exists {
 		user.PasswordHash = passwordHash

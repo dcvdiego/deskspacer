@@ -18,6 +18,7 @@ type UserRepositoryInterface interface {
 	Update(ctx context.Context, user *models.User) error
 	VerifyEmail(ctx context.Context, userID uuid.UUID) error
 	ActivatePremium(ctx context.Context, userID uuid.UUID) error
+	UpdatePremiumStatus(ctx context.Context, userID uuid.UUID, isPremium bool) error
 	UpdatePassword(ctx context.Context, userID uuid.UUID, passwordHash string) error
 	Delete(ctx context.Context, userID uuid.UUID) error
 	GetStateCount(ctx context.Context, userID uuid.UUID) (int, error)

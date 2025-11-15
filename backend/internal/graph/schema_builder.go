@@ -338,3 +338,31 @@ func BuildCustomGLBMutations(resolver *Resolver, uuidType *graphql.Scalar, custo
 		},
 	}
 }
+// BuildCheckoutSessionType builds the CheckoutSession GraphQL type
+func BuildCheckoutSessionType() *graphql.Object {
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name:        "CheckoutSession",
+		Description: "Stripe checkout session for premium subscription",
+		Fields: graphql.Fields{
+			"sessionID": &graphql.Field{
+				Type:        graphql.NewNonNull(graphql.String),
+				Description: "Stripe checkout session ID",
+			},
+			"url": &graphql.Field{
+				Type:        graphql.NewNonNull(graphql.String),
+				Description: "Stripe checkout URL to redirect user to",
+			},
+		},
+	})
+}
+
+// BuildPaymentMutations builds payment-related mutations
+func BuildPaymentMutations(resolver *Resolver, checkoutSessionType *graphql.Object) graphql.Fields {
+	return graphql.Fields{
+		"createCheckoutSession": &graphql.Field{
+			Type:        graphql.NewNonNull(checkoutSessionType),
+			Description: "Create a Stripe checkout session for premium subscription",
+			Resolve:     resolver.CreateCheckoutSession,
+		},
+	}
+}

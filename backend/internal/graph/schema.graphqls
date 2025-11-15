@@ -217,6 +217,25 @@ type CustomGLB {
 }
 
 # ====================
+# Payment Types
+# ====================
+
+"""
+CheckoutSession represents a Stripe checkout session for premium subscription
+"""
+type CheckoutSession {
+  """
+  Stripe checkout session ID
+  """
+  sessionID: String!
+
+  """
+  Stripe checkout URL to redirect user to
+  """
+  url: String!
+}
+
+# ====================
 # Query Operations
 # ====================
 
@@ -361,5 +380,13 @@ type Mutation {
   Requires: Authentication, must own the GLB
   """
   deleteCustomGLB(id: UUID!): Boolean!
+
+  # Payment mutations
+  """
+  Create a Stripe checkout session for premium subscription
+  Requires: Authentication
+  Returns: CheckoutSession with Stripe URL to redirect to
+  """
+  createCheckoutSession: CheckoutSession!
 }
 

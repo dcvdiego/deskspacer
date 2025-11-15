@@ -225,6 +225,27 @@ func (r *UserRepository) ActivatePremium(ctx context.Context, userID uuid.UUID) 
 	return nil
 }
 
+// UpdatePremiumStatus updates a user's premium status (can activate or deactivate)
+func (r *UserRepository) UpdatePremiumStatus(ctx context.Context, userID uuid.UUID, isPremium bool) error {
+	query := `
+		UPDATE users
+		SET is_premium = $2, updated_at = NOW()
+		WHERE id = $1
+	`
+	_, err := r.db.Exec(ctx, query, userID, isPremium)
+	if err != nil {
+		slog.Error("Failed to update premium status", "error", err, "userID", userID, "isPremium", isPremium)
+		return err
+	}
+
+	statusStr := "deactivated"
+	if isPremium {
+		statusStr = "activated"
+	}
+	slog.Info("Premium status updated", "userID", userID, "status", statusStr)
+	return nil
+}
+
 // UpdatePassword updates a user's password hash
 func (r *UserRepository) UpdatePassword(ctx context.Context, userID uuid.UUID, passwordHash string) error {
 	query := `UPDATE users SET password_hash = $2, updated_at = NOW() WHERE id = $1`
