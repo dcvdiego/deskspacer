@@ -38,9 +38,10 @@ import AddModal from './components/UI/modals/AddModal';
 // import Logo from '../public/logo.svg?react';
 
 function App() {
-  const { deleteModel } = useModelStore();
+  const { deleteModel, setModels, clearHistory } = useModelStore();
 
-  const models = useModelStore.getState().models;
+  // Subscribe to models array to react to undo/redo changes
+  const models = useModelStore((state) => state.models);
   const [transformMode, setTransformMode] = useState('');
 
   const [isHovered, setIsHovered] = useState<string | null>(null);
@@ -131,16 +132,16 @@ function App() {
     if (queryStateLoading) return;
     if (queryStateError) return;
     if (queryStateData) {
-      useModelStore.setState({
-        models: JSON.parse(queryStateData.statesById[0].stateData),
-      });
+      // Load shared state without saving to history and clear existing history
+      setModels(JSON.parse(queryStateData.statesById[0].stateData), false);
+      clearHistory();
       history.replaceState(
         '',
         document.title,
         window.location.pathname + window.location.search
       );
     }
-  }, [queryStateData, queryStateLoading, queryStateError, queryStateCalled]);
+  }, [queryStateData, queryStateLoading, queryStateError, queryStateCalled, setModels, clearHistory]);
 
   const handleShare = () => {
     addState({
@@ -173,7 +174,6 @@ function App() {
   //   };
   //   reader.readAsArrayBuffer(file);
   // }, []);
-
   const handleExport = () => {
     // TODO: selfhost streamsaver https://github.com/jimmywarting/StreamSaver.js/issues/183
     setExportLoading(true);
@@ -192,9 +192,7 @@ function App() {
           });
           const readableStream = fileToSave.stream();
           if (window.WritableStream && readableStream.pipeTo) {
-            return readableStream
-              .pipeTo(fileStream)
-              .then(() => console.log('done writing'));
+            return readableStream.pipeTo(fileStream);
           }
 
           // Write (pipe) manually
@@ -213,7 +211,7 @@ function App() {
           pump();
           setExportLoading(false);
         },
-        () => console.log('error'),
+        () => {},
         { binary: true }
       );
     }
@@ -324,9 +322,7 @@ function App() {
                         edgeStrength={100}
                       />
                     </EffectComposer>
-                    {useModelStore
-                      .getState()
-                      .models.map((modelName: ModelInCanvas) => {
+                    {models.map((modelName: ModelInCanvas) => {
                         const ModelComponent =
                           modelComponents[modelName.name].model;
                         return (

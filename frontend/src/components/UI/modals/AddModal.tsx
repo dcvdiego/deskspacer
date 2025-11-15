@@ -76,7 +76,7 @@ const AddModal = ({
       return a.title.localeCompare(b.title);
     }
   });
-  const handleAddModel = async (modelName: string) => {
+  const handleAddModel = (modelName: string) => {
     const newId = `${modelName}__${
       useModelStore
         .getState()
@@ -98,12 +98,6 @@ const AddModal = ({
       )?.position;
     // difference between starting position and existingDeskPosition
     const offsetPosition = new THREE.Vector3();
-    // const existingDeskRotation = useModelStore
-    //   .getState()
-    //   .models.find(
-    //     (model: ModelInCanvas) =>
-    //       modelComponents[model.name]?.category === 'desks'
-    //   )?.rotation;
     const initRotation = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(0, modelComponents[modelName].initRotationY, 0)
     );
@@ -145,13 +139,13 @@ const AddModal = ({
       maxBoundsY: Infinity,
       locked: false,
     });
-    await useModelStore.persist.rehydrate();
+
     if (addCalled) addReset();
     setSelectedModel(null);
     setSelectedCategory(null);
     setIsAddObjectModalOpen(false);
   };
-  const handleSwapModel = async (modelName: string) => {
+  const handleSwapModel = (modelName: string) => {
     // TODO: utilize handleAdd logic inside of this, maybe add a are u sure u want to swap models from different categories
     if (!isSelected) return;
 
@@ -177,7 +171,6 @@ const AddModal = ({
       locked: false,
     });
 
-    await useModelStore.persist.rehydrate();
     if (addCalled) addReset();
     setSelectedModel(null);
     setSelectedCategory(null);
