@@ -152,8 +152,11 @@ const TransformModel = ({ ...props }) => {
         savedPosition.y,
         savedPosition.z
       );
-      GroupRef.current.quaternion.fromArray(
-        savedRotation as unknown as number[]
+      GroupRef.current.quaternion.set(
+        savedRotation.x,
+        savedRotation.y,
+        savedRotation.z,
+        savedRotation.w
       );
       GroupRef.current.updateMatrixWorld(true);
 

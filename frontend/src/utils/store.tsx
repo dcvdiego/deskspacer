@@ -128,7 +128,19 @@ export const useModelStore = create<ModelStore>()(
         if (saveHistory && get().models.length > 0) {
           get().saveToHistory();
         }
-        set({ models });
+
+        // Convert THREE.js objects to plain objects for reliable serialization
+        const serializableModels = models.map((model) => ({
+          ...model,
+          position: model.position instanceof THREE.Vector3
+            ? { x: model.position.x, y: model.position.y, z: model.position.z }
+            : model.position,
+          rotation: model.rotation instanceof THREE.Quaternion
+            ? { x: model.rotation.x, y: model.rotation.y, z: model.rotation.z, w: model.rotation.w }
+            : model.rotation,
+        }));
+
+        set({ models: serializableModels });
       },
 
       // Add a model (always saves to history)
@@ -140,9 +152,25 @@ export const useModelStore = create<ModelStore>()(
           w: model.rotation.w,
           isQuaternion: model.rotation instanceof THREE.Quaternion
         });
+
+        // Convert THREE.js objects to plain objects for reliable serialization
+        const serializableModel: ModelInCanvas = {
+          ...model,
+          position: model.position instanceof THREE.Vector3
+            ? { x: model.position.x, y: model.position.y, z: model.position.z }
+            : model.position,
+          rotation: model.rotation instanceof THREE.Quaternion
+            ? { x: model.rotation.x, y: model.rotation.y, z: model.rotation.z, w: model.rotation.w }
+            : model.rotation,
+        };
+
+        console.log('[STORE.addModel]', model.name, 'Serialized rotation:', {
+          rotation: serializableModel.rotation
+        });
+
         get().saveToHistory();
         set((state: { models: ModelInCanvas[] }) => ({
-          models: [...state.models, model],
+          models: [...state.models, serializableModel],
         }));
         console.log('[STORE.addModel]', model.name, 'After set, checking store:', {
           rotation: useModelStore.getState().models.find(m => m.id === model.id)?.rotation
@@ -156,9 +184,28 @@ export const useModelStore = create<ModelStore>()(
         if (saveHistory) {
           get().saveToHistory();
         }
+
+        // Convert THREE.js objects to plain objects for reliable serialization
+        const serializableUpdate: Partial<ModelInCanvas> = { ...model };
+        if (model.position && model.position instanceof THREE.Vector3) {
+          serializableUpdate.position = {
+            x: model.position.x,
+            y: model.position.y,
+            z: model.position.z,
+          };
+        }
+        if (model.rotation && model.rotation instanceof THREE.Quaternion) {
+          serializableUpdate.rotation = {
+            x: model.rotation.x,
+            y: model.rotation.y,
+            z: model.rotation.z,
+            w: model.rotation.w,
+          };
+        }
+
         set((state: ModelStore) => ({
           models: state.models.map((m) =>
-            m.id === id ? { ...m, ...model } : m
+            m.id === id ? { ...m, ...serializableUpdate } : m
           ),
         }));
       },
