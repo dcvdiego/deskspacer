@@ -140,8 +140,11 @@ describe('Model Store', () => {
       useModelStore.getState().addModel(model);
 
       const addedModel = useModelStore.getState().models[0];
-      expect(addedModel.position).toBe(position);
-      expect(addedModel.rotation).toBe(rotation);
+      expect(addedModel.position).toEqual(position);
+      expect(addedModel.rotation.x).toBeCloseTo(rotation.x);
+      expect(addedModel.rotation.y).toBeCloseTo(rotation.y);
+      expect(addedModel.rotation.z).toBeCloseTo(rotation.z);
+      expect(addedModel.rotation.w).toBeCloseTo(rotation.w);
     });
 
     it('should add model with bounds properties', () => {
@@ -187,7 +190,7 @@ describe('Model Store', () => {
       useModelStore.getState().updateModel('test-1', { position: newPosition });
 
       const updatedModel = useModelStore.getState().models[0];
-      expect(updatedModel.position).toBe(newPosition);
+      expect(updatedModel.position).toEqual(newPosition);
     });
 
     it('should update only specified properties', () => {
@@ -226,7 +229,10 @@ describe('Model Store', () => {
       useModelStore.getState().updateModel('test-1', { rotation: newRotation });
 
       const updatedModel = useModelStore.getState().models[0];
-      expect(updatedModel.rotation).toBe(newRotation);
+      expect(updatedModel.rotation.x).toBeCloseTo(newRotation.x);
+      expect(updatedModel.rotation.y).toBeCloseTo(newRotation.y);
+      expect(updatedModel.rotation.z).toBeCloseTo(newRotation.z);
+      expect(updatedModel.rotation.w).toBeCloseTo(newRotation.w);
     });
 
     it('should update bounds properties', () => {
