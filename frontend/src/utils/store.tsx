@@ -133,10 +133,20 @@ export const useModelStore = create<ModelStore>()(
 
       // Add a model (always saves to history)
       addModel: (model: ModelInCanvas) => {
+        console.log('[STORE.addModel]', model.name, 'Received rotation:', {
+          x: model.rotation.x,
+          y: model.rotation.y,
+          z: model.rotation.z,
+          w: model.rotation.w,
+          isQuaternion: model.rotation instanceof THREE.Quaternion
+        });
         get().saveToHistory();
         set((state: { models: ModelInCanvas[] }) => ({
           models: [...state.models, model],
         }));
+        console.log('[STORE.addModel]', model.name, 'After set, checking store:', {
+          rotation: useModelStore.getState().models.find(m => m.id === model.id)?.rotation
+        });
       },
 
       // Update a model
