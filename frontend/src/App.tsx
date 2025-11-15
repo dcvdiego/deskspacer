@@ -339,7 +339,7 @@ function App() {
               <Canvas
                 frameloop="demand"
                 camera={{
-                  fov: settings.camera.fov,
+                  fov: 50,
                   position: [165, 138, 230],
                 }}
                 style={{
@@ -365,12 +365,6 @@ function App() {
                   />
                 )}
                 <ambientLight />
-                {settings.grid.enabled && (
-                  <gridHelper
-                    args={[settings.grid.size, settings.grid.divisions]}
-                    position={[0, 0, 0]}
-                  />
-                )}
                 <CollisionBounds
                   minBoundsZRef={minBoundsZRef}
                   maxBoundsZRef={maxBoundsZRef}

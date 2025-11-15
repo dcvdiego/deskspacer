@@ -63,7 +63,6 @@ export interface AppSettings {
 
   // Camera settings
   camera: {
-    fov: number; // Field of view (40-80)
     moveSpeed: number; // OrbitControls speed multiplier
     invertControls: boolean;
     maxDistance: number;
@@ -101,7 +100,6 @@ export const defaultSettings: AppSettings = {
     autoAdjustPerformance: true,
   },
   camera: {
-    fov: 50,
     moveSpeed: 1,
     invertControls: false,
     maxDistance: 400,

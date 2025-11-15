@@ -13,6 +13,7 @@ import {
   Divider,
   Tabs,
   Tab,
+  Tooltip,
 } from '@mui/material';
 import { useState } from 'react';
 import { StyledModal } from '../../../styles/Modal.styles';
@@ -56,6 +57,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
+  };
+
+  const handleApply = () => {
+    updateSettings(localSettings);
   };
 
   const handleSave = () => {
@@ -130,7 +135,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
         >
           <Tab label="Performance" />
           <Tab label="Camera" />
-          <Tab label="Grid & Snap" />
+          <Tooltip title="Coming Soon" placement="top">
+            <span>
+              <Tab label="Grid & Snap" disabled />
+            </span>
+          </Tooltip>
           <Tab label="Theme" />
           <Tab label="Export" />
         </Tabs>
@@ -209,28 +218,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
         {/* Camera Settings */}
         <TabPanel value={currentTab} index={1}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <Box>
-              <Typography gutterBottom>
-                Field of View (FOV): {localSettings.camera.fov}°
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                Lower values zoom in, higher values zoom out
-              </Typography>
-              <Slider
-                value={localSettings.camera.fov}
-                onChange={(_e, value) =>
-                  updateLocalSettings({
-                    camera: { ...localSettings.camera, fov: value as number },
-                  })
-                }
-                min={40}
-                max={80}
-                step={5}
-                marks
-                valueLabelDisplay="auto"
-              />
-            </Box>
-
             <Box>
               <Typography gutterBottom>
                 Movement Speed: {localSettings.camera.moveSpeed}x
@@ -537,8 +524,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
           <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleApply} variant="outlined">
+            Apply
+          </Button>
           <Button onClick={handleSave} variant="contained">
-            Save Settings
+            Save
           </Button>
         </Box>
       </StyledModal>
