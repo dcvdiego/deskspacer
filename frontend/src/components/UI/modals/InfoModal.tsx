@@ -8,6 +8,7 @@ import {
 import { ContentCopy } from '@mui/icons-material';
 import { Spacer } from '../Spacer';
 import { StyledModal } from '../../../styles/Modal.styles';
+import SettingsModal from './SettingsModal';
 
 interface InfoModalProps {
   modalType: 'tutorial' | 'share' | 'settings' | null;
@@ -25,6 +26,11 @@ const InfoModal: React.FC<InfoModalProps> = ({
   onClose,
   shareData,
 }) => {
+  // Settings modal is now separate, handle it differently
+  if (modalType === 'settings') {
+    return <SettingsModal open={true} onClose={onClose} />;
+  }
+
   if (!modalType) return null;
 
   const renderContent = () => {
@@ -101,14 +107,6 @@ const InfoModal: React.FC<InfoModalProps> = ({
           </>
         );
       }
-      case 'settings':
-        return (
-          <>
-            <div>Settings</div>
-            <div>These are the settings</div>
-            <Button onClick={onClose}>Close</Button>
-          </>
-        );
       default:
         return null;
     }
