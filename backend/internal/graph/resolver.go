@@ -12,14 +12,16 @@ type Resolver struct {
 	// Existing repositories
 	repo *repository.SharedStateRepository
 
-	// New auth repositories
+	// Auth repositories
 	userRepo      repository.UserRepositoryInterface
 	authTokenRepo repository.AuthTokenRepositoryInterface
 	userStateRepo *repository.UserStateRepository
+	customGLBRepo *repository.CustomGLBRepository
 
 	// Services
-	authService  *service.AuthService
-	emailService service.EmailService
+	authService    *service.AuthService
+	emailService   service.EmailService
+	storageService service.StorageService
 
 	// Utilities
 	validator *validator.Validate
@@ -32,18 +34,22 @@ func NewResolver(
 	userRepo repository.UserRepositoryInterface,
 	authTokenRepo repository.AuthTokenRepositoryInterface,
 	userStateRepo *repository.UserStateRepository,
+	customGLBRepo *repository.CustomGLBRepository,
 	authService *service.AuthService,
 	emailService service.EmailService,
+	storageService service.StorageService,
 	cfg *config.Config,
 ) *Resolver {
 	return &Resolver{
-		repo:          repo,
-		userRepo:      userRepo,
-		authTokenRepo: authTokenRepo,
-		userStateRepo: userStateRepo,
-		authService:   authService,
-		emailService:  emailService,
-		validator:     validator.New(),
-		config:        cfg,
+		repo:           repo,
+		userRepo:       userRepo,
+		authTokenRepo:  authTokenRepo,
+		userStateRepo:  userStateRepo,
+		customGLBRepo:  customGLBRepo,
+		authService:    authService,
+		emailService:   emailService,
+		storageService: storageService,
+		validator:      validator.New(),
+		config:         cfg,
 	}
 }

@@ -65,6 +65,7 @@ func main() {
 	userRepo := repository.NewUserRepository(db.Pool)
 	authTokenRepo := repository.NewAuthTokenRepository(db.Pool)
 	userStateRepo := repository.NewUserStateRepository(db.Pool)
+	customGLBRepo := repository.NewCustomGLBRepository(db.Pool)
 
 	// Initialize AuthService
 	authService, err := service.NewAuthService(
@@ -92,8 +93,30 @@ func main() {
 		slog.Warn("Using mock email service (no RESEND_API_KEY configured)")
 	}
 
+	// Initialize Storage Service
+	var storageService service.StorageService
+	if cfg.R2AccessKeyID != "" && cfg.R2SecretAccessKey != "" && cfg.R2BucketName != "" {
+		// Use real Cloudflare R2 storage service
+		storageService, err = service.NewR2StorageService(
+			cfg.R2AccessKeyID,
+			cfg.R2SecretAccessKey,
+			cfg.R2Endpoint,
+			cfg.R2BucketName,
+			cfg.R2PublicURL,
+		)
+		if err != nil {
+			slog.Error("Failed to create R2 storage service", "error", err)
+			os.Exit(1)
+		}
+		slog.Info("R2 storage service initialized", "bucket", cfg.R2BucketName)
+	} else {
+		// Use mock storage service for development/testing
+		storageService = service.NewMockStorageService()
+		slog.Warn("Using mock storage service (no R2 credentials configured)")
+	}
+
 	// Initialize GraphQL resolver and schema
-	resolver := graph.NewResolver(repo, userRepo, authTokenRepo, userStateRepo, authService, emailService, cfg)
+	resolver := graph.NewResolver(repo, userRepo, authTokenRepo, userStateRepo, customGLBRepo, authService, emailService, storageService, cfg)
 	schema, err := graph.NewSchema(resolver)
 	if err != nil {
 		slog.Error("Failed to create GraphQL schema", "error", err)

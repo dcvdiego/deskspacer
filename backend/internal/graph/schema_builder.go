@@ -246,3 +246,95 @@ func BuildAuthMutations(resolver *Resolver, authPayloadType *graphql.Object) gra
 		},
 	}
 }
+
+// BuildCustomGLBType builds the CustomGLB GraphQL type
+func BuildCustomGLBType(uuidType, timeType *graphql.Scalar) *graphql.Object {
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name:        "CustomGLB",
+		Description: "CustomGLB represents a user-uploaded custom 3D model file",
+		Fields: graphql.Fields{
+			"id": &graphql.Field{
+				Type:        graphql.NewNonNull(uuidType),
+				Description: "Unique identifier for the custom GLB",
+			},
+			"userID": &graphql.Field{
+				Type:        graphql.NewNonNull(uuidType),
+				Description: "ID of the user who uploaded this GLB",
+			},
+			"filename": &graphql.Field{
+				Type:        graphql.NewNonNull(graphql.String),
+				Description: "Filename in storage (unique, generated)",
+			},
+			"originalFilename": &graphql.Field{
+				Type:        graphql.NewNonNull(graphql.String),
+				Description: "Original filename as uploaded by user",
+			},
+			"fileSize": &graphql.Field{
+				Type:        graphql.NewNonNull(graphql.Int),
+				Description: "File size in bytes",
+			},
+			"storageURL": &graphql.Field{
+				Type:        graphql.NewNonNull(graphql.String),
+				Description: "Public URL to access the file",
+			},
+			"createdAt": &graphql.Field{
+				Type:        graphql.NewNonNull(timeType),
+				Description: "Upload timestamp",
+			},
+		},
+	})
+}
+
+// BuildCustomGLBQueries builds custom GLB query fields
+func BuildCustomGLBQueries(resolver *Resolver, uuidType *graphql.Scalar, customGLBType *graphql.Object) graphql.Fields {
+	return graphql.Fields{
+		"myCustomGLBs": &graphql.Field{
+			Type:        graphql.NewNonNull(graphql.NewList(graphql.NewNonNull(customGLBType))),
+			Description: "Get all custom GLBs uploaded by the authenticated user (requires premium)",
+			Resolve:     resolver.MyCustomGLBs,
+		},
+		"customGLB": &graphql.Field{
+			Type:        customGLBType,
+			Description: "Get a specific custom GLB by ID",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(uuidType),
+					Description: "GLB ID",
+				},
+			},
+			Resolve: resolver.CustomGLB,
+		},
+	}
+}
+
+// BuildCustomGLBMutations builds custom GLB mutation fields
+func BuildCustomGLBMutations(resolver *Resolver, uuidType *graphql.Scalar, customGLBType *graphql.Object) graphql.Fields {
+	return graphql.Fields{
+		"uploadCustomGLB": &graphql.Field{
+			Type:        graphql.NewNonNull(customGLBType),
+			Description: "Upload a custom GLB file (requires premium)",
+			Args: graphql.FieldConfigArgument{
+				"filename": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Original filename",
+				},
+				"fileData": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Base64-encoded file data",
+				},
+			},
+			Resolve: resolver.UploadCustomGLB,
+		},
+		"deleteCustomGLB": &graphql.Field{
+			Type:        graphql.NewNonNull(graphql.Boolean),
+			Description: "Delete a custom GLB file",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(uuidType),
+					Description: "GLB ID to delete",
+				},
+			},
+			Resolve: resolver.DeleteCustomGLB,
+		},
+	}
+}

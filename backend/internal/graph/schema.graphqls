@@ -176,6 +176,46 @@ type UserState {
   updatedAt: Time!
 }
 
+"""
+CustomGLB represents a user-uploaded custom 3D model file
+"""
+type CustomGLB {
+  """
+  Unique identifier for the custom GLB
+  """
+  id: UUID!
+
+  """
+  ID of the user who uploaded this GLB
+  """
+  userID: UUID!
+
+  """
+  Filename in storage (unique, generated)
+  """
+  filename: String!
+
+  """
+  Original filename as uploaded by user
+  """
+  originalFilename: String!
+
+  """
+  File size in bytes
+  """
+  fileSize: Int!
+
+  """
+  Public URL to access the file
+  """
+  storageURL: String!
+
+  """
+  Upload timestamp
+  """
+  createdAt: Time!
+}
+
 # ====================
 # Query Operations
 # ====================
@@ -223,6 +263,19 @@ type Query {
   Get a public state by its public token
   """
   publicState(token: UUID!): UserState
+
+  # Custom GLB queries
+  """
+  Get all custom GLBs uploaded by the authenticated user
+  Requires: Authentication, Premium membership
+  """
+  myCustomGLBs: [CustomGLB!]!
+
+  """
+  Get a specific custom GLB by ID
+  Requires: Authentication, must own the GLB
+  """
+  customGLB(id: UUID!): CustomGLB
 }
 
 # ====================
@@ -294,5 +347,19 @@ type Mutation {
   Requires: Authentication, must own the state
   """
   deleteState(id: UUID!): Boolean!
+
+  # Custom GLB mutations
+  """
+  Upload a custom GLB file
+  Requires: Authentication, Premium membership
+  Returns: CustomGLB with storage URL
+  """
+  uploadCustomGLB(filename: String!, fileData: String!): CustomGLB!
+
+  """
+  Delete a custom GLB file
+  Requires: Authentication, must own the GLB
+  """
+  deleteCustomGLB(id: UUID!): Boolean!
 }
 

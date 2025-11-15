@@ -89,6 +89,9 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 	// Build auth types
 	userType, authPayloadType, _, _ := BuildAuthTypes(uuidType, timeType)
 
+	// Build custom GLB type
+	customGLBType := BuildCustomGLBType(uuidType, timeType)
+
 	// SharedState type (kept for backward compatibility)
 	sharedStateType := graphql.NewObject(graphql.ObjectConfig{
 		Name:        "SharedState",
@@ -191,6 +194,12 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 
 	// Merge auth queries into query fields
 	for key, field := range authQueries {
+		queryFields[key] = field
+	}
+
+	// Build and merge custom GLB queries
+	customGLBQueries := BuildCustomGLBQueries(resolver, uuidType, customGLBType)
+	for key, field := range customGLBQueries {
 		queryFields[key] = field
 	}
 
@@ -308,6 +317,12 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 
 	// Merge auth mutations into mutation fields
 	for key, field := range authMutations {
+		mutationFields[key] = field
+	}
+
+	// Build and merge custom GLB mutations
+	customGLBMutations := BuildCustomGLBMutations(resolver, uuidType, customGLBType)
+	for key, field := range customGLBMutations {
 		mutationFields[key] = field
 	}
 
