@@ -10,12 +10,6 @@ const meta: Meta = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [
-    withThreeJsCanvas({
-      cameraPosition: [50, 30, 50],
-      cameraFov: 50,
-    }),
-  ],
 };
 
 export default meta;
@@ -23,6 +17,12 @@ type Story = StoryObj;
 
 export const Mouse: Story = {
   render: () => <MouseV3 />,
+  decorators: [
+    withThreeJsCanvas({
+      cameraPosition: [50, 30, 50],
+      cameraFov: 50,
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -34,6 +34,12 @@ export const Mouse: Story = {
 
 export const Keyboard: Story = {
   render: () => <Keyboard60Grey />,
+  decorators: [
+    withThreeJsCanvas({
+      cameraPosition: [50, 30, 50],
+      cameraFov: 50,
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -68,6 +74,12 @@ export const MultipleModels: Story = {
       <MouseV3 position={[10, 0, 0]} />
     </group>
   ),
+  decorators: [
+    withThreeJsCanvas({
+      cameraPosition: [50, 30, 50],
+      cameraFov: 50,
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -97,6 +109,12 @@ export const InteractiveModel: Story = {
       </group>
     );
   },
+  decorators: [
+    withThreeJsCanvas({
+      cameraPosition: [50, 30, 50],
+      cameraFov: 50,
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -133,6 +151,12 @@ export const HighlightedModel: Story = {
       </group>
     );
   },
+  decorators: [
+    withThreeJsCanvas({
+      cameraPosition: [50, 30, 50],
+      cameraFov: 50,
+    }),
+  ],
   parameters: {
     docs: {
       description: {
@@ -155,6 +179,12 @@ export const LockedModel: Story = {
       </group>
     );
   },
+  decorators: [
+    withThreeJsCanvas({
+      cameraPosition: [50, 30, 50],
+      cameraFov: 50,
+    }),
+  ],
   parameters: {
     docs: {
       description: {
