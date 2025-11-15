@@ -29,6 +29,9 @@ const TransformModel = ({ ...props }) => {
   } = props;
   const { updateModel, saveToHistory } = useModelStore();
 
+  // Subscribe to settings for snap-to-grid
+  const settings = useModelStore((state) => state.settings);
+
   // Subscribe to historyVersion to detect undo/redo without causing constant re-renders
   const historyVersion = useModelStore((state) => state.historyVersion);
 
@@ -82,6 +85,21 @@ const TransformModel = ({ ...props }) => {
   const [oldPosition, setOldPosition] = useState<any>();
   const ModelRef = useRef<THREE.Group<THREE.Object3DEventMap>>(null);
   const GroupRef = useRef<THREE.Group<THREE.Object3DEventMap>>(null);
+
+  // Snap position to grid if enabled
+  const snapToGrid = (position: THREE.Vector3): THREE.Vector3 => {
+    if (!settings.grid.snapEnabled) {
+      return position;
+    }
+
+    const snapSize = settings.grid.snapSize;
+    return new THREE.Vector3(
+      Math.round(position.x / snapSize) * snapSize,
+      Math.round(position.y / snapSize) * snapSize,
+      Math.round(position.z / snapSize) * snapSize
+    );
+  };
+
   const updateModelPosition = () => {
     if (!ModelRef.current || !GroupRef.current) return;
 
@@ -98,8 +116,18 @@ const TransformModel = ({ ...props }) => {
       return;
     }
 
+    // Apply snap-to-grid if enabled
+    const snappedPosition = snapToGrid(position);
+
+    // Update the visual position to match the snapped position
+    if (settings.grid.snapEnabled) {
+      GroupRef.current.position.copy(snappedPosition);
+      ModelRef.current.position.set(0, 0, 0);
+      GroupRef.current.updateMatrixWorld(true);
+    }
+
     // Don't save to history here - we save at drag start instead
-    updateModel(isSelected, { position, rotation }, false);
+    updateModel(isSelected, { position: snappedPosition, rotation }, false);
   };
 
   const model = getModel();
