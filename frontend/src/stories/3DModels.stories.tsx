@@ -3,8 +3,6 @@ import { withThreeJsCanvas } from '../../.storybook/decorators/ThreeJsDecorator'
 import MouseV3 from '../components/models/mice/MouseV3';
 import Keyboard60Grey from '../components/models/keyboards/60_keyboards/Keyboard60Grey';
 import Monitor169327Stand from '../components/models/displays/16_9_monitors/Monitor169327Stand';
-import { Selection, EffectComposer, Outline } from '@react-three/postprocessing';
-import { Select } from '@react-three/postprocessing';
 import { useState } from 'react';
 
 const meta: Meta = {
@@ -25,10 +23,24 @@ type Story = StoryObj;
 
 export const Mouse: Story = {
   render: () => <MouseV3 />,
+  parameters: {
+    docs: {
+      description: {
+        story: 'A 3D mouse model. You can rotate the view using the mouse.',
+      },
+    },
+  },
 };
 
 export const Keyboard: Story = {
   render: () => <Keyboard60Grey />,
+  parameters: {
+    docs: {
+      description: {
+        story: 'A 60% keyboard model in grey color scheme.',
+      },
+    },
+  },
 };
 
 export const Monitor: Story = {
@@ -39,6 +51,13 @@ export const Monitor: Story = {
       cameraFov: 50,
     }),
   ],
+  parameters: {
+    docs: {
+      description: {
+        story: 'A 27-inch 16:9 monitor with stand.',
+      },
+    },
+  },
 };
 
 export const MultipleModels: Story = {
@@ -49,87 +68,66 @@ export const MultipleModels: Story = {
       <MouseV3 position={[10, 0, 0]} />
     </group>
   ),
-};
-
-export const ModelWithSelection: Story = {
-  render: () => {
-    const [selected, setSelected] = useState(false);
-
-    return (
-      <Selection>
-        <EffectComposer multisampling={0} autoClear={false}>
-          <Outline
-            visibleEdgeColor={0xffffff}
-            hiddenEdgeColor={0xffffff}
-            blur
-            width={1000}
-            edgeStrength={100}
-          />
-        </EffectComposer>
-        <Select enabled={selected}>
-          <group onClick={() => setSelected(!selected)}>
-            <MouseV3 />
-          </group>
-        </Select>
-      </Selection>
-    );
-  },
   parameters: {
     docs: {
       description: {
-        story: 'Click on the model to toggle selection outline effect',
+        story: 'Multiple models positioned in the same scene.',
       },
     },
   },
 };
 
-export const HoveredState: Story = {
+export const InteractiveModel: Story = {
+  render: () => {
+    const [scale, setScale] = useState(1);
+
+    return (
+      <group
+        onClick={() => setScale(scale === 1 ? 1.2 : 1)}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={() => {
+          document.body.style.cursor = 'default';
+        }}
+        scale={[scale, scale, scale]}
+      >
+        <MouseV3 />
+      </group>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Click on the model to toggle scale. This demonstrates interactive 3D models.',
+      },
+    },
+  },
+};
+
+export const HighlightedModel: Story = {
   render: () => {
     const [hovered, setHovered] = useState(false);
 
     return (
-      <Selection>
-        <EffectComposer multisampling={0} autoClear={false}>
-          <Outline
-            visibleEdgeColor={hovered ? 0x00ff00 : 0xffffff}
-            hiddenEdgeColor={hovered ? 0x00ff00 : 0xffffff}
-            blur
-            width={1000}
-            edgeStrength={100}
-          />
-        </EffectComposer>
-        <Select enabled={hovered}>
-          <group
-            onPointerOver={() => setHovered(true)}
-            onPointerOut={() => setHovered(false)}
-          >
-            <Keyboard60Grey />
-          </group>
-        </Select>
-      </Selection>
-    );
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Hover over the keyboard to see the green outline effect (simulating hover state)',
-      },
-    },
-  },
-};
-
-export const LockedModel: Story = {
-  render: () => {
-    const [locked] = useState(true);
-
-    return (
-      <group>
-        <MouseV3 />
-        {locked && (
-          <mesh position={[0, 5, 0]}>
-            <boxGeometry args={[2, 2, 2]} />
-            <meshStandardMaterial color="red" opacity={0.3} transparent />
+      <group
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          setHovered(true);
+        }}
+        onPointerOut={() => setHovered(false)}
+      >
+        <Keyboard60Grey />
+        {hovered && (
+          <mesh position={[0, 10, 0]} scale={1.1}>
+            <boxGeometry args={[30, 5, 15]} />
+            <meshStandardMaterial
+              color="lightblue"
+              opacity={0.2}
+              transparent
+              wireframe
+            />
           </mesh>
         )}
       </group>
@@ -139,7 +137,29 @@ export const LockedModel: Story = {
     docs: {
       description: {
         story:
-          'A locked model visualization (represented by red transparent box overlay)',
+          'Hover over the keyboard to see a highlight wireframe (simulating hover state).',
+      },
+    },
+  },
+};
+
+export const LockedModel: Story = {
+  render: () => {
+    return (
+      <group>
+        <MouseV3 />
+        <mesh position={[0, 5, 0]}>
+          <boxGeometry args={[2, 2, 2]} />
+          <meshStandardMaterial color="red" opacity={0.3} transparent />
+        </mesh>
+      </group>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A locked model visualization (represented by red transparent box overlay).',
       },
     },
   },
@@ -162,7 +182,7 @@ export const DeskSetup: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example of a complete desk setup with monitor, keyboard, and mouse',
+        story: 'Example of a complete desk setup with monitor, keyboard, and mouse.',
       },
     },
   },

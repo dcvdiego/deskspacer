@@ -8,6 +8,16 @@ const meta: Meta<typeof InfoModal> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    modalType: {
+      control: 'select',
+      options: ['tutorial', 'share', 'settings'],
+      description: 'Type of modal to display',
+    },
+    onClose: {
+      action: 'closed',
+    },
+  },
 };
 
 export default meta;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import type { DecoratorFunction } from '@storybook/types';
@@ -29,7 +29,9 @@ export const CanvasWrapper: React.FC<CanvasWrapperProps> = ({
       >
         {lights && <ambientLight intensity={0.5} />}
         {lights && <directionalLight position={[10, 10, 5]} intensity={1} />}
-        {children}
+        <Suspense fallback={null}>
+          {children}
+        </Suspense>
         {controls && <OrbitControls />}
       </Canvas>
     </div>
