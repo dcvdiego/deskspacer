@@ -22,6 +22,9 @@ import {
   Toolbar,
   Tooltip,
   Typography,
+  Button,
+  Menu,
+  Avatar,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
@@ -46,11 +49,21 @@ import {
   Redo,
   Lock,
   LockOpen,
+  AccountCircle,
+  Logout,
+  Dashboard,
+  WorkspacePremium,
 } from '@mui/icons-material';
 import { useEffect, useRef, useState } from 'react';
 import { OrbitControls } from 'three-stdlib';
 import { useModelStore } from '../../utils/store';
 import { darkTheme } from '../../styles/theme.styles';
+import { useAuth } from '../../context/AuthContext';
+import LoginModal from './modals/LoginModal';
+import SignupModal from './modals/SignupModal';
+import UserDashboardModal from './modals/UserDashboardModal';
+import PremiumUpgradeModal from './modals/PremiumUpgradeModal';
+import CustomGLBUploadModal from './modals/CustomGLBUploadModal';
 
 const drawerWidth = 240;
 
@@ -400,6 +413,15 @@ export const Header: React.FC<HeaderProps> = ({
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
+  // Auth state and modals
+  const { isAuthenticated, user, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
+  const [dashboardModalOpen, setDashboardModalOpen] = useState(false);
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [glbUploadModalOpen, setGlbUploadModalOpen] = useState(false);
+
   const { setModels, updateModel, undo, redo, canUndo, canRedo } = useModelStore();
 
   // Subscribe to models array to react to undo/redo changes
@@ -420,6 +442,33 @@ export const Header: React.FC<HeaderProps> = ({
   };
   const handleTransformChange = (event: SelectChangeEvent) =>
     setTransformMode(event.target.value);
+
+  // Auth handlers
+  const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    handleUserMenuClose();
+    await logout();
+  };
+
+  const handleOpenDashboard = () => {
+    handleUserMenuClose();
+    setDashboardModalOpen(true);
+  };
+
+  const handleOpenPremiumUpgrade = () => {
+    setPremiumModalOpen(true);
+  };
+
+  const handleOpenGLBUpload = () => {
+    setGlbUploadModalOpen(true);
+  };
 
   // Keyboard shortcuts for undo/redo
   useEffect(() => {
@@ -533,6 +582,85 @@ export const Header: React.FC<HeaderProps> = ({
                 <Help />
               </IconButton>
             </Tooltip>
+
+            {/* Auth UI */}
+            {!isAuthenticated ? (
+              <>
+                <Button
+                  color="inherit"
+                  onClick={() => setLoginModalOpen(true)}
+                  sx={{ ml: 1 }}
+                >
+                  Login
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  onClick={() => setSignupModalOpen(true)}
+                  sx={{ ml: 1 }}
+                >
+                  Sign Up
+                </Button>
+              </>
+            ) : (
+              <>
+                {user?.isPremium && (
+                  <Chip
+                    icon={<WorkspacePremium />}
+                    label="Premium"
+                    color="primary"
+                    size="small"
+                    sx={{ ml: 1 }}
+                  />
+                )}
+                <Tooltip title="Account" arrow>
+                  <IconButton onClick={handleUserMenuOpen} sx={{ ml: 1 }}>
+                    <AccountCircle />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleUserMenuClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                >
+                  <MenuItem disabled>
+                    <Typography variant="body2" color="text.secondary">
+                      {user?.email}
+                    </Typography>
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleOpenDashboard}>
+                    <ListItemIcon>
+                      <Dashboard fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Dashboard</ListItemText>
+                  </MenuItem>
+                  {!user?.isPremium && (
+                    <MenuItem onClick={handleOpenPremiumUpgrade}>
+                      <ListItemIcon>
+                        <WorkspacePremium fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText>Upgrade to Premium</ListItemText>
+                    </MenuItem>
+                  )}
+                  <Divider />
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <Logout fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Logout</ListItemText>
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
@@ -614,6 +742,32 @@ export const Header: React.FC<HeaderProps> = ({
           </ListItem>
         </List>
       </Drawer>
+
+      {/* Auth Modals */}
+      <LoginModal
+        open={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+        onSwitchToSignup={() => setSignupModalOpen(true)}
+      />
+      <SignupModal
+        open={signupModalOpen}
+        onClose={() => setSignupModalOpen(false)}
+        onSwitchToLogin={() => setLoginModalOpen(true)}
+      />
+      <UserDashboardModal
+        open={dashboardModalOpen}
+        onClose={() => setDashboardModalOpen(false)}
+        onOpenPremiumUpgrade={handleOpenPremiumUpgrade}
+        onOpenGLBUpload={handleOpenGLBUpload}
+      />
+      <PremiumUpgradeModal
+        open={premiumModalOpen}
+        onClose={() => setPremiumModalOpen(false)}
+      />
+      <CustomGLBUploadModal
+        open={glbUploadModalOpen}
+        onClose={() => setGlbUploadModalOpen(false)}
+      />
     </>
   );
 };
