@@ -47,7 +47,7 @@ import {
   Lock,
   LockOpen,
 } from '@mui/icons-material';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { OrbitControls } from 'three-stdlib';
 import { useModelStore } from '../../utils/store';
 import { darkTheme } from '../../styles/theme.styles';
@@ -175,7 +175,8 @@ const LockedListSelect = ({
   setLockedModels: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
   const { updateModel } = useModelStore();
-  const models = useModelStore.getState().models;
+  // Subscribe to models array to react to undo/redo changes
+  const models = useModelStore((state) => state.models);
   const previousLockedModels = useRef(lockedModels);
   const handleChange = (event: SelectChangeEvent<typeof lockedModels>) => {
     const {
@@ -399,11 +400,16 @@ export const Header: React.FC<HeaderProps> = ({
   const theme = useTheme();
   const [open, setOpen] = useState(false);
 
-  const { setModels, updateModel } = useModelStore();
-  const models = useModelStore.getState().models;
-  const model = useModelStore
-    .getState()
-    .models.find((m) => m.id === isSelected);
+  const { setModels, updateModel, undo, redo, canUndo, canRedo } = useModelStore();
+
+  // Subscribe to models array to react to undo/redo changes
+  const models = useModelStore((state) => state.models);
+  const model = models.find((m) => m.id === isSelected);
+
+  // Subscribe to store changes to reactively update button states
+  const canUndoState = useModelStore((state) => state.canUndo());
+  const canRedoState = useModelStore((state) => state.canRedo());
+
   const handleToggleCamera = () => setDisableCamera(!disableCamera);
   const handleToggleYAxis = () => setEnableY(!enableY);
   const handleToggleLock = () => {
@@ -414,6 +420,41 @@ export const Header: React.FC<HeaderProps> = ({
   };
   const handleTransformChange = (event: SelectChangeEvent) =>
     setTransformMode(event.target.value);
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if user is typing in an input field
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const ctrlOrCmd = isMac ? event.metaKey : event.ctrlKey;
+
+      // Undo: Ctrl/Cmd + Z (without Shift)
+      if (ctrlOrCmd && event.key === 'z' && !event.shiftKey) {
+        event.preventDefault();
+        if (canUndo()) {
+          undo();
+        }
+      }
+      // Redo: Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y
+      else if (
+        (ctrlOrCmd && event.shiftKey && event.key === 'z') ||
+        (ctrlOrCmd && event.key === 'y')
+      ) {
+        event.preventDefault();
+        if (canRedo()) {
+          redo();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo, canUndo, canRedo]);
 
   return (
     <>
@@ -453,16 +494,16 @@ export const Header: React.FC<HeaderProps> = ({
             {isSelected && model && (
               <LockToggle isLocked={model.locked} onToggle={handleToggleLock} />
             )}
-            <Tooltip title={'Undo (soon)'} arrow>
+            <Tooltip title={canUndoState ? 'Undo (Ctrl+Z)' : 'Nothing to undo'} arrow>
               <span>
-                <IconButton disabled>
+                <IconButton disabled={!canUndoState} onClick={() => undo()}>
                   <Undo />
                 </IconButton>
               </span>
             </Tooltip>
-            <Tooltip title={'Redo (soon)'} arrow>
+            <Tooltip title={canRedoState ? 'Redo (Ctrl+Shift+Z)' : 'Nothing to redo'} arrow>
               <span>
-                <IconButton disabled>
+                <IconButton disabled={!canRedoState} onClick={() => redo()}>
                   <Redo />
                 </IconButton>
               </span>
@@ -529,7 +570,7 @@ export const Header: React.FC<HeaderProps> = ({
             <ListToggleButton
               open={open}
               disabled
-              onClick={() => console.log('toggleRoom')}
+              onClick={() => {}}
               icon={<LocationOn />}
               text="Change room"
             />
