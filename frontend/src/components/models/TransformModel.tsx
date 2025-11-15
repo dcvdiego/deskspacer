@@ -45,14 +45,17 @@ const TransformModel = ({ ...props }) => {
         ? model.position
         : new THREE.Vector3(model.position.x, model.position.y, model.position.z);
 
+    // THREE.Quaternion stores values as _x, _y, _z, _w internally
+    // When serialized to localStorage and deserialized, we get plain objects with those underscore properties
+    // Check for both public properties (x, y, z, w) and private properties (_x, _y, _z, _w)
     const rotation =
       model.rotation instanceof THREE.Quaternion
         ? model.rotation
         : new THREE.Quaternion(
-            model.rotation.x,
-            model.rotation.y,
-            model.rotation.z,
-            model.rotation.w
+            model.rotation.x ?? (model.rotation as any)._x,
+            model.rotation.y ?? (model.rotation as any)._y,
+            model.rotation.z ?? (model.rotation as any)._z,
+            model.rotation.w ?? (model.rotation as any)._w
           );
 
     return { ...model, position, rotation };
