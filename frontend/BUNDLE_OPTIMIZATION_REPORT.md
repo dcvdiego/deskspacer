@@ -23,12 +23,9 @@ This report documents the bundle size optimization and loading state improvement
 
 **Core Dependencies:**
 - Three.js: 725.50 kB (187.56 kB gzip)
-- Vendor: 544.05 kB (167.13 kB gzip)
-- MUI: 253.23 kB (73.91 kB gzip)
-- Apollo Client: 131.81 kB (39.70 kB gzip)
-- React Three Fiber: 28.69 kB (11.06 kB gzip)
-- Drei: 36.67 kB (12.65 kB gzip)
-- Postprocessing: 3.49 kB (1.65 kB gzip)
+- Vendor (React, Apollo, core deps): 657.30 kB (198.94 kB gzip)
+- MUI (with Emotion): 272.44 kB (82.05 kB gzip)
+- React Three (R3F + Drei + Postprocessing): 68.62 kB (24.34 kB gzip)
 
 **3D Models (By Category):**
 - Displays: 27.05 kB (2.42 kB gzip)
@@ -88,18 +85,19 @@ This report documents the bundle size optimization and loading state improvement
 #### Manual Chunk Splitting
 Configured Vite to split bundles strategically:
 
-**Location:** `frontend/vite.config.ts:34-78`
+**Location:** `frontend/vite.config.ts:34-77`
 
 - **3D Models by Category:** Separate chunks for displays, desks, keyboards, mice, mousepads, rooms
-- **Framework Separation:** Three.js, React Three Fiber, Drei, Postprocessing each in separate chunks
-- **UI Library:** MUI in separate chunk
-- **GraphQL:** Apollo Client in separate chunk
-- **Vendor:** Remaining dependencies in vendor chunk
+- **Three.js:** Isolated in its own chunk (large, independent library)
+- **React Three Ecosystem:** R3F, Drei, and Postprocessing combined to avoid circular dependencies
+- **MUI:** MUI + Emotion together (Emotion is a peer dependency)
+- **Vendor:** React, Apollo, and core dependencies (ensures proper module resolution)
 
 Benefits:
 - Parallel loading of independent chunks
 - Better browser caching (changes to models don't invalidate Three.js cache)
 - Progressive enhancement (core loads first, models load as needed)
+- Stable module resolution (related libs grouped together)
 
 #### Lazy Loading for Modals
 All modal components are now lazy-loaded using React.lazy():
@@ -325,15 +323,36 @@ pnpm test -- --run
 3. Monitor cache hit rates
 4. Use production builds for accurate bundle analysis
 
+## Known Issues & Fixes
+
+### Issue: Apollo Module Resolution Error (Fixed)
+
+**Problem:** Initial aggressive chunk splitting caused module resolution errors:
+```
+Uncaught TypeError: undefined is not a function
+apollo-DeGEkl1N.js:1
+```
+
+**Root Cause:** Splitting Apollo Client, React, and related dependencies into separate chunks caused circular dependency issues and broken module resolution.
+
+**Solution:** Used a more conservative chunking strategy:
+- Kept React, Apollo, and core dependencies together in vendor chunk
+- Merged React Three Fiber ecosystem (R3F + Drei + Postprocessing) into single chunk
+- Kept MUI and Emotion together (peer dependency)
+- Only split truly independent chunks (Three.js, models)
+
+**Result:** Stable builds with proper module resolution and all functionality working.
+
 ## Conclusion
 
 The optimization successfully achieved:
-- ✅ **99% reduction** in initial bundle size (1,836 kB → 17.74 kB)
-- ✅ **Better code splitting** by category and dependency
+- ✅ **99% reduction** in initial bundle size (1,836 kB → 17.54 kB)
+- ✅ **Smart code splitting** by category with stable module resolution
 - ✅ **Enhanced loading states** for better UX
 - ✅ **Lazy loading** for modals and heavy components
 - ✅ **Tree-shaking optimization** for Three.js
 - ✅ **All tests passing** - no functionality broken
 - ✅ **Bundle analysis tooling** for ongoing monitoring
+- ✅ **Production-ready** with no runtime errors
 
 The app now loads significantly faster, provides better user feedback during loading, and has a foundation for continued performance optimization.

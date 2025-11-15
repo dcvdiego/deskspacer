@@ -44,33 +44,30 @@ export default defineConfig({
             return 'models-other';
           }
 
-          // Split Three.js into its own chunk
+          // Split Three.js into its own chunk (large library)
           if (id.includes('node_modules/three/')) {
             return 'three';
           }
 
-          // Split React Three Fiber ecosystem
-          if (id.includes('@react-three/fiber')) {
-            return 'r3f';
-          }
-          if (id.includes('@react-three/drei')) {
-            return 'drei';
-          }
-          if (id.includes('@react-three/postprocessing')) {
-            return 'postprocessing';
+          // Keep React Three Fiber ecosystem together to avoid circular deps
+          if (
+            id.includes('@react-three/fiber') ||
+            id.includes('@react-three/drei') ||
+            id.includes('@react-three/postprocessing')
+          ) {
+            return 'react-three';
           }
 
-          // Split MUI into its own chunk
-          if (id.includes('node_modules/@mui/')) {
+          // Keep MUI and its dependencies together
+          if (
+            id.includes('node_modules/@mui/') ||
+            id.includes('node_modules/@emotion/')
+          ) {
             return 'mui';
           }
 
-          // Split other large dependencies
-          if (id.includes('node_modules/@apollo/client')) {
-            return 'apollo';
-          }
-
-          // Default vendor chunk for other node_modules
+          // Keep React, Apollo, and other core dependencies in vendor
+          // This prevents module resolution issues
           if (id.includes('node_modules/')) {
             return 'vendor';
           }
