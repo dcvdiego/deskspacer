@@ -35,6 +35,8 @@ import { darkTheme } from './styles/theme.styles';
 import CollisionBounds from './components/models/utils/CollisionBounds';
 import InfoModal from './components/UI/modals/InfoModal';
 import AddModal from './components/UI/modals/AddModal';
+import HelpModal from './components/UI/modals/HelpModal';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 // import Logo from '../public/logo.svg?react';
 
 function App() {
@@ -61,6 +63,8 @@ function App() {
       ? models.filter((model) => model.locked === true).map((model) => model.id)
       : []
   );
+  const [showHelp, setShowHelp] = useState<boolean>(false);
+  const [hideUI, setHideUI] = useState<boolean>(false);
   const [
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     exportLoading,
@@ -94,6 +98,20 @@ function App() {
   const maxBoundsXRef = useRef<THREE.Mesh>(null);
   const minBoundsYRef = useRef<THREE.Mesh>(null);
 
+  // Centralized keyboard shortcuts
+  useKeyboardShortcuts({
+    isSelected,
+    deleteModel: (id: string) => {
+      deleteModel(id);
+      if (addCalled) addReset();
+      setIsSelected(null);
+    },
+    setTransformMode,
+    setIsAddObjectModalOpen,
+    setShowHelp,
+    setHideUI,
+  });
+
   useEffect(() => {
     if (!isSelected) return;
     const handleModelDelete = () => {
@@ -105,15 +123,6 @@ function App() {
       handleModelDelete();
       setManualRemove(false);
     }
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Backspace' && isSelected) handleModelDelete();
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
   }, [isSelected, manualRemove, deleteModel, addCalled, addReset]);
 
   const fragmentIdentifier = window.location.hash.substring(1);
@@ -248,27 +257,29 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex' }}>
-        <Header
-          transformMode={transformMode}
-          setTransformMode={setTransformMode}
-          disableCamera={disableCamera}
-          setDisableCamera={setDisableCamera}
-          enableY={enableY}
-          setEnableY={setEnableY}
-          setContentModal={setContentModal}
-          isSelected={isSelected}
-          setManualRemove={setManualRemove}
-          setIsAddObjectModalOpen={setIsAddObjectModalOpen}
-          handleShare={handleShare}
-          called={addCalled}
-          handleExport={handleExport}
-          orbitRef={orbitRef}
-          lockedModels={lockedModels}
-          setLockedModels={setLockedModels}
-          // handleImport={handleImport}
-        />
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <DrawerHeader />
+        {!hideUI && (
+          <Header
+            transformMode={transformMode}
+            setTransformMode={setTransformMode}
+            disableCamera={disableCamera}
+            setDisableCamera={setDisableCamera}
+            enableY={enableY}
+            setEnableY={setEnableY}
+            setContentModal={setContentModal}
+            isSelected={isSelected}
+            setManualRemove={setManualRemove}
+            setIsAddObjectModalOpen={setIsAddObjectModalOpen}
+            handleShare={handleShare}
+            called={addCalled}
+            handleExport={handleExport}
+            orbitRef={orbitRef}
+            lockedModels={lockedModels}
+            setLockedModels={setLockedModels}
+            // handleImport={handleImport}
+          />
+        )}
+        <Box component="main" sx={{ flexGrow: 1, p: hideUI ? 0 : 3 }}>
+          {!hideUI && <DrawerHeader />}
           <AddModal
             addCalled={addCalled}
             addReset={addReset}
@@ -282,6 +293,7 @@ function App() {
             onClose={() => setContentModal(null)}
             shareData={infoModalShareData}
           />
+          <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
           <Container style={{ paddingTop: 0 }}>
             <Suspense>
               <Canvas

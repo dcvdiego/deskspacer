@@ -421,40 +421,7 @@ export const Header: React.FC<HeaderProps> = ({
   const handleTransformChange = (event: SelectChangeEvent) =>
     setTransformMode(event.target.value);
 
-  // Keyboard shortcuts for undo/redo
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Check if user is typing in an input field
-      const target = event.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-        return;
-      }
-
-      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-      const ctrlOrCmd = isMac ? event.metaKey : event.ctrlKey;
-
-      // Undo: Ctrl/Cmd + Z (without Shift)
-      if (ctrlOrCmd && event.key === 'z' && !event.shiftKey) {
-        event.preventDefault();
-        if (canUndo()) {
-          undo();
-        }
-      }
-      // Redo: Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y
-      else if (
-        (ctrlOrCmd && event.shiftKey && event.key === 'z') ||
-        (ctrlOrCmd && event.key === 'y')
-      ) {
-        event.preventDefault();
-        if (canRedo()) {
-          redo();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, canUndo, canRedo]);
+  // Note: Keyboard shortcuts are now centralized in useKeyboardShortcuts hook in App.tsx
 
   return (
     <>
