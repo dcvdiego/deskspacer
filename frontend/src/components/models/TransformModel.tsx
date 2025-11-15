@@ -232,11 +232,9 @@ const TransformModel = ({ ...props }) => {
     });
     prevHistoryVersionRef.current = historyVersion;
 
-    // ALWAYS apply position on undo/redo without comparing
-    // PivotControls creates internal transform groups between GroupRef and ModelRef
-    // We need to: 1) Set GroupRef to target position, 2) Reset all intermediate groups, 3) Reset ModelRef
-
-    // Set GroupRef to the target world position
+    // Set GroupRef to the target position/rotation
+    // PivotControls remounts on historyVersion change (via key prop), so intermediate
+    // groups are fresh and don't need manual reset
     GroupRef.current.position.set(
       currentModel.position.x,
       currentModel.position.y,
@@ -248,69 +246,7 @@ const TransformModel = ({ ...props }) => {
       currentModel.rotation.z,
       currentModel.rotation.w
     );
-
-    // Reset all intermediate transforms between GroupRef and ModelRef
-    // PivotControls creates wrapper groups that need to be reset to identity
-    console.log('[SYNC]', name, 'Traversing from ModelRef to GroupRef to reset intermediate groups');
-    let current = ModelRef.current.parent;
-    let depth = 0;
-    while (current && current !== GroupRef.current) {
-      console.log('[SYNC]', name, `Intermediate group at depth ${depth}:`, {
-        type: current.type,
-        name: current.name || '(unnamed)',
-        positionBefore: { x: current.position.x, y: current.position.y, z: current.position.z },
-        quaternionBefore: { x: current.quaternion.x, y: current.quaternion.y, z: current.quaternion.z, w: current.quaternion.w },
-        matrixAutoUpdate: current.matrixAutoUpdate,
-        matrixWorldAutoUpdate: current.matrixWorldAutoUpdate
-      });
-
-      // Reset position, rotation, scale
-      current.position.set(0, 0, 0);
-      current.quaternion.set(0, 0, 0, 1);
-      current.scale.set(1, 1, 1);
-
-      // CRITICAL: Reset matrix to identity
-      // PivotControls sets the matrix directly, not position/rotation
-      current.matrix.identity();
-      current.matrixWorld.identity();
-      current.matrixAutoUpdate = true;
-      current.matrixWorldNeedsUpdate = true;
-
-      console.log('[SYNC]', name, `After reset:`, {
-        positionAfter: { x: current.position.x, y: current.position.y, z: current.position.z },
-        quaternionAfter: { x: current.quaternion.x, y: current.quaternion.y, z: current.quaternion.z, w: current.quaternion.w }
-      });
-      current = current.parent;
-      depth++;
-    }
-    console.log('[SYNC]', name, `Found ${depth} intermediate groups`);
-
-    // Reset ModelRef to origin
-    ModelRef.current.position.set(0, 0, 0);
-    ModelRef.current.quaternion.set(0, 0, 0, 1);
-
-    // Update matrices
     GroupRef.current.updateMatrixWorld(true);
-
-    // Verify the position was actually applied
-    const verifyPosition = new THREE.Vector3();
-    const verifyRotation = new THREE.Quaternion();
-    ModelRef.current.getWorldPosition(verifyPosition);
-    ModelRef.current.getWorldQuaternion(verifyRotation);
-    console.log('[SYNC]', name, 'After setting refs, ModelRef world position is:', {
-      position: { x: verifyPosition.x, y: verifyPosition.y, z: verifyPosition.z },
-      rotation: { x: verifyRotation.x, y: verifyRotation.y, z: verifyRotation.z, w: verifyRotation.w }
-    });
-    console.log('[SYNC]', name, 'GroupRef local position:', {
-      x: GroupRef.current.position.x,
-      y: GroupRef.current.position.y,
-      z: GroupRef.current.position.z
-    });
-    console.log('[SYNC]', name, 'ModelRef local position:', {
-      x: ModelRef.current.position.x,
-      y: ModelRef.current.position.y,
-      z: ModelRef.current.position.z
-    });
 
     setSavedPosition(currentModel.position);
 
