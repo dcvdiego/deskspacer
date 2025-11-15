@@ -3,6 +3,119 @@
 scalar Time
 scalar UUID
 
+# ====================
+# Authentication Types
+# ====================
+
+"""
+User represents a registered user account
+"""
+type User {
+  """
+  Unique user identifier
+  """
+  id: UUID!
+
+  """
+  User's email address
+  """
+  email: String!
+
+  """
+  User's username
+  """
+  username: String!
+
+  """
+  Whether the user's email has been verified
+  """
+  emailVerified: Boolean!
+
+  """
+  Whether the user has premium membership
+  """
+  isPremium: Boolean!
+
+  """
+  Number of saved states (if queried)
+  """
+  stateCount: Int
+
+  """
+  Number of custom GLBs uploaded (if queried)
+  """
+  glbCount: Int
+
+  """
+  Storage used in bytes (if queried)
+  """
+  storageUsed: Int
+
+  """
+  Account creation timestamp
+  """
+  createdAt: Time!
+}
+
+"""
+AuthPayload returned after successful authentication
+"""
+type AuthPayload {
+  """
+  The authenticated user
+  """
+  user: User!
+
+  """
+  Short-lived access token (15 minutes)
+  """
+  accessToken: String!
+
+  """
+  Long-lived refresh token (7 days)
+  """
+  refreshToken: String!
+}
+
+"""
+Input for user registration
+"""
+input RegisterInput {
+  """
+  User's email address
+  """
+  email: String!
+
+  """
+  Desired username (3-20 characters, alphanumeric + underscore)
+  """
+  username: String!
+
+  """
+  Password (min 8 chars, must include uppercase, lowercase, number, special char)
+  """
+  password: String!
+}
+
+"""
+Input for user login
+"""
+input LoginInput {
+  """
+  User's email address
+  """
+  email: String!
+
+  """
+  User's password
+  """
+  password: String!
+}
+
+# ====================
+# State Types (Updated)
+# ====================
+
 """
 SharedState represents a saved desk setup state
 """
@@ -24,9 +137,71 @@ type SharedState {
 }
 
 """
+UserState represents a user's saved canvas state
+"""
+type UserState {
+  """
+  Unique identifier for the state
+  """
+  id: UUID!
+
+  """
+  User-friendly name for the state
+  """
+  name: String
+
+  """
+  JSON-serialized canvas state data
+  """
+  stateData: String!
+
+  """
+  Whether this state is publicly accessible
+  """
+  isPublic: Boolean!
+
+  """
+  Public sharing token (if public)
+  """
+  publicToken: UUID
+
+  """
+  State creation timestamp
+  """
+  createdAt: Time!
+
+  """
+  Last update timestamp
+  """
+  updatedAt: Time!
+}
+
+# ====================
+# Query Operations
+# ====================
+
+"""
 Query operations
 """
 type Query {
+  # Authentication queries
+  """
+  Get the currently authenticated user
+  Requires: Authentication
+  """
+  me: User
+
+  """
+  Check if an email is available for registration
+  """
+  checkEmailAvailable(email: String!): Boolean!
+
+  """
+  Check if a username is available for registration
+  """
+  checkUsernameAvailable(username: String!): Boolean!
+
+  # State queries (existing, kept for compatibility)
   """
   Get all non-expired shared states
   """
@@ -36,14 +211,88 @@ type Query {
   Get a specific shared state by ID (returns array for API compatibility)
   """
   statesById(id: UUID!): [SharedState!]!
+
+  # User state queries
+  """
+  Get all states owned by the authenticated user
+  Requires: Authentication
+  """
+  myStates: [UserState!]!
+
+  """
+  Get a public state by its public token
+  """
+  publicState(token: UUID!): UserState
 }
+
+# ====================
+# Mutation Operations
+# ====================
 
 """
 Mutation operations
 """
 type Mutation {
+  # Authentication mutations
+  """
+  Register a new user account
+  Returns: User and authentication tokens
+  """
+  register(input: RegisterInput!): AuthPayload!
+
+  """
+  Authenticate a user with email and password
+  Returns: User and authentication tokens
+  """
+  login(input: LoginInput!): AuthPayload!
+
+  """
+  Refresh an expired access token using a refresh token
+  Returns: New access token and user data
+  """
+  refreshToken(refreshToken: String!): AuthPayload!
+
+  """
+  Request a password reset email
+  Returns: Success boolean
+  """
+  requestPasswordReset(email: String!): Boolean!
+
+  """
+  Reset password using a reset token
+  Returns: Success boolean
+  """
+  resetPassword(token: String!, newPassword: String!): Boolean!
+
+  """
+  Verify email address using verification token
+  Returns: Success boolean
+  """
+  verifyEmail(token: String!): Boolean!
+
+  # State mutations (existing, kept for compatibility)
   """
   Create a new shared state with automatic expiration
   """
   addState(sharedState: String!): SharedState!
+
+  # User state mutations
+  """
+  Save a new canvas state for the authenticated user
+  Requires: Authentication
+  """
+  saveState(name: String!, stateData: String!, isPublic: Boolean): UserState!
+
+  """
+  Update an existing user state
+  Requires: Authentication, must own the state
+  """
+  updateState(id: UUID!, name: String, stateData: String, isPublic: Boolean): UserState!
+
+  """
+  Delete a user state
+  Requires: Authentication, must own the state
+  """
+  deleteState(id: UUID!): Boolean!
 }
+

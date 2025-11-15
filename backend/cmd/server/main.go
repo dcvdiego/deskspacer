@@ -60,11 +60,28 @@ func main() {
 	}
 	slog.Info("Database migrations completed")
 
-	// Initialize repository
+	// Initialize repositories
 	repo := repository.NewSharedStateRepository(db.Pool)
+	userRepo := repository.NewUserRepository(db.Pool)
+	authTokenRepo := repository.NewAuthTokenRepository(db.Pool)
+	userStateRepo := repository.NewUserStateRepository(db.Pool)
+
+	// Initialize AuthService
+	authService, err := service.NewAuthService(
+		userRepo,
+		authTokenRepo,
+		cfg.JWTSecret,
+		cfg.JWTAccessExpiration,
+		cfg.JWTRefreshExpiration,
+	)
+	if err != nil {
+		slog.Error("Failed to create auth service", "error", err)
+		os.Exit(1)
+	}
+	slog.Info("Auth service initialized")
 
 	// Initialize GraphQL resolver and schema
-	resolver := graph.NewResolver(repo, cfg)
+	resolver := graph.NewResolver(repo, userRepo, authTokenRepo, userStateRepo, authService, cfg)
 	schema, err := graph.NewSchema(resolver)
 	if err != nil {
 		slog.Error("Failed to create GraphQL schema", "error", err)
@@ -96,8 +113,8 @@ func main() {
 	// Health check endpoint
 	r.Get("/health", middleware.NewHealthHandler(db))
 
-	// GraphQL endpoint
-	r.Handle("/graphql", graphqlHandler)
+	// GraphQL endpoint with optional auth
+	r.With(middleware.OptionalAuth(authService)).Handle("/graphql", graphqlHandler)
 
 	// Start background cleanup service
 	cleanupService := service.NewCleanupService(repo, cfg.CleanupIntervalHours)
