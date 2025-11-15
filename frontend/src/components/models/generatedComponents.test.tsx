@@ -3,7 +3,13 @@ import * as generatedComponents from './modelComponentsMapping';
 
 import { GLTFStructureLoader } from 'gltfjsx';
 import fs from 'fs/promises';
+
 describe('Generated Components', () => {
+  it('should have modelComponents exported', () => {
+    expect(generatedComponents.modelComponents).toBeDefined();
+    expect(typeof generatedComponents.modelComponents).toBe('object');
+  });
+
   // TODO: Once GLTFJSX undergoes massive PR change I can implement this: https://github.com/rosskevin/gltfjsx/blob/main/test/load/loadGLTF.test.ts
   //   Object.entries(generatedComponents.modelComponents).forEach(
   //     ([name, config]) => {
