@@ -29,6 +29,7 @@ describe('HelpModal', () => {
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Editing')).toBeInTheDocument();
     expect(screen.getByText('Transform (when model selected)')).toBeInTheDocument();
+    expect(screen.getByText('Camera Controls')).toBeInTheDocument();
   });
 
   it('should display all general shortcuts', () => {
@@ -53,6 +54,14 @@ describe('HelpModal', () => {
     render(<HelpModal open={true} onClose={mockOnClose} />);
 
     KEYBOARD_SHORTCUTS.transform.forEach((shortcut) => {
+      expect(screen.getByText(shortcut.description)).toBeInTheDocument();
+    });
+  });
+
+  it('should display all camera shortcuts', () => {
+    render(<HelpModal open={true} onClose={mockOnClose} />);
+
+    KEYBOARD_SHORTCUTS.camera.forEach((shortcut) => {
       expect(screen.getByText(shortcut.description)).toBeInTheDocument();
     });
   });

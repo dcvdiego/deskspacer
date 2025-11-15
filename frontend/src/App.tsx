@@ -101,6 +101,7 @@ function App() {
   // Centralized keyboard shortcuts
   useKeyboardShortcuts({
     isSelected,
+    setIsSelected,
     deleteModel: (id: string) => {
       deleteModel(id);
       if (addCalled) addReset();
@@ -110,6 +111,13 @@ function App() {
     setIsAddObjectModalOpen,
     setShowHelp,
     setHideUI,
+    setDisableCamera,
+    disableCamera,
+    setEnableY,
+    enableY,
+    resetCamera: () => {
+      orbitRef.current?.reset();
+    },
   });
 
   useEffect(() => {

@@ -11,6 +11,10 @@ describe('useKeyboardShortcuts', () => {
   let mockSetIsAddObjectModalOpen: ReturnType<typeof vi.fn>;
   let mockSetShowHelp: ReturnType<typeof vi.fn>;
   let mockSetHideUI: ReturnType<typeof vi.fn>;
+  let mockSetIsSelected: ReturnType<typeof vi.fn>;
+  let mockSetDisableCamera: ReturnType<typeof vi.fn>;
+  let mockSetEnableY: ReturnType<typeof vi.fn>;
+  let mockResetCamera: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     // Clear the store before each test
@@ -27,17 +31,31 @@ describe('useKeyboardShortcuts', () => {
     mockSetIsAddObjectModalOpen = vi.fn();
     mockSetShowHelp = vi.fn();
     mockSetHideUI = vi.fn();
+    mockSetIsSelected = vi.fn();
+    mockSetDisableCamera = vi.fn();
+    mockSetEnableY = vi.fn();
+    mockResetCamera = vi.fn();
   });
 
-  const setupHook = (isSelected: string | null = null) => {
+  const setupHook = (
+    isSelected: string | null = null,
+    disableCamera = false,
+    enableY = false
+  ) => {
     return renderHook(() =>
       useKeyboardShortcuts({
         isSelected,
+        setIsSelected: mockSetIsSelected,
         deleteModel: mockDeleteModel,
         setTransformMode: mockSetTransformMode,
         setIsAddObjectModalOpen: mockSetIsAddObjectModalOpen,
         setShowHelp: mockSetShowHelp,
         setHideUI: mockSetHideUI,
+        setDisableCamera: mockSetDisableCamera,
+        disableCamera,
+        setEnableY: mockSetEnableY,
+        enableY,
+        resetCamera: mockResetCamera,
       })
     );
   };
@@ -210,15 +228,6 @@ describe('useKeyboardShortcuts', () => {
       expect(mockSetTransformMode).toHaveBeenCalledWith('scale');
     });
 
-    it('should clear transform mode on Escape key when model is selected', () => {
-      setupHook('test-model-1');
-
-      const event = createKeyboardEvent('Escape');
-      window.dispatchEvent(event);
-
-      expect(mockSetTransformMode).toHaveBeenCalledWith('');
-    });
-
     it('should work with uppercase keys', () => {
       setupHook('test-model-1');
 
@@ -240,6 +249,27 @@ describe('useKeyboardShortcuts', () => {
       window.dispatchEvent(createKeyboardEvent('s'));
 
       expect(mockSetTransformMode).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Escape key', () => {
+    it('should clear selection on Escape when model is selected', () => {
+      setupHook('test-model-1');
+
+      const event = createKeyboardEvent('Escape');
+      window.dispatchEvent(event);
+
+      expect(mockSetIsSelected).toHaveBeenCalledWith(null);
+      expect(mockSetTransformMode).toHaveBeenCalledWith('');
+    });
+
+    it('should close help modal on Escape', () => {
+      setupHook();
+
+      const event = createKeyboardEvent('Escape');
+      window.dispatchEvent(event);
+
+      expect(mockSetShowHelp).toHaveBeenCalledWith(false);
     });
   });
 
@@ -293,15 +323,6 @@ describe('useKeyboardShortcuts', () => {
       expect(mockSetShowHelp).toHaveBeenCalledWith(true);
     });
 
-    it('should close help on Escape key', () => {
-      setupHook();
-
-      const event = createKeyboardEvent('Escape');
-      window.dispatchEvent(event);
-
-      expect(mockSetShowHelp).toHaveBeenCalledWith(false);
-    });
-
     it('should show help on Shift+/', () => {
       setupHook();
 
@@ -309,6 +330,53 @@ describe('useKeyboardShortcuts', () => {
       window.dispatchEvent(event);
 
       expect(mockSetShowHelp).toHaveBeenCalledWith(true);
+    });
+  });
+
+  describe('Camera controls', () => {
+    it('should toggle camera on C key', () => {
+      setupHook(null, false, false);
+
+      const event = createKeyboardEvent('c');
+      window.dispatchEvent(event);
+
+      expect(mockSetDisableCamera).toHaveBeenCalledWith(true);
+    });
+
+    it('should work with uppercase C', () => {
+      setupHook(null, true, false);
+
+      const event = createKeyboardEvent('C');
+      window.dispatchEvent(event);
+
+      expect(mockSetDisableCamera).toHaveBeenCalledWith(false);
+    });
+
+    it('should toggle Y-axis on Y key', () => {
+      setupHook(null, false, false);
+
+      const event = createKeyboardEvent('y');
+      window.dispatchEvent(event);
+
+      expect(mockSetEnableY).toHaveBeenCalledWith(true);
+    });
+
+    it('should work with uppercase Y', () => {
+      setupHook(null, false, true);
+
+      const event = createKeyboardEvent('Y');
+      window.dispatchEvent(event);
+
+      expect(mockSetEnableY).toHaveBeenCalledWith(false);
+    });
+
+    it('should reset camera on Home key', () => {
+      setupHook();
+
+      const event = createKeyboardEvent('Home');
+      window.dispatchEvent(event);
+
+      expect(mockResetCamera).toHaveBeenCalled();
     });
   });
 

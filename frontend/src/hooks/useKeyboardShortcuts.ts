@@ -3,11 +3,17 @@ import { useModelStore } from '../utils/store';
 
 export interface KeyboardShortcutsConfig {
   isSelected: string | null;
+  setIsSelected: (id: string | null) => void;
   deleteModel: (id: string) => void;
   setTransformMode: (mode: string) => void;
   setIsAddObjectModalOpen: (open: boolean) => void;
   setShowHelp: (show: boolean) => void;
   setHideUI: (hide: boolean) => void;
+  setDisableCamera: (disable: boolean) => void;
+  disableCamera: boolean;
+  setEnableY: (enable: boolean) => void;
+  enableY: boolean;
+  resetCamera: () => void;
 }
 
 /**
@@ -17,11 +23,17 @@ export interface KeyboardShortcutsConfig {
 export const useKeyboardShortcuts = (config: KeyboardShortcutsConfig) => {
   const {
     isSelected,
+    setIsSelected,
     deleteModel,
     setTransformMode,
     setIsAddObjectModalOpen,
     setShowHelp,
     setHideUI,
+    setDisableCamera,
+    disableCamera,
+    setEnableY,
+    enableY,
+    resetCamera,
   } = config;
 
   const { undo, redo, canUndo, canRedo } = useModelStore();
@@ -69,6 +81,17 @@ export const useKeyboardShortcuts = (config: KeyboardShortcutsConfig) => {
         return;
       }
 
+      // Escape = Clear selection and transform mode
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        if (isSelected) {
+          setIsSelected(null);
+          setTransformMode('');
+        }
+        setShowHelp(false);
+        return;
+      }
+
       // Transform modes (only when model is selected)
       if (isSelected) {
         // G = Move (translate)
@@ -91,13 +114,6 @@ export const useKeyboardShortcuts = (config: KeyboardShortcutsConfig) => {
           setTransformMode('scale');
           return;
         }
-
-        // Escape = Clear transform mode
-        if (event.key === 'Escape') {
-          event.preventDefault();
-          setTransformMode('');
-          return;
-        }
       }
 
       // Add model: A key
@@ -114,17 +130,31 @@ export const useKeyboardShortcuts = (config: KeyboardShortcutsConfig) => {
         return;
       }
 
+      // Toggle Camera: C key
+      if (event.key === 'c' || event.key === 'C') {
+        event.preventDefault();
+        setDisableCamera(!disableCamera);
+        return;
+      }
+
+      // Toggle Y-axis: Y key
+      if (event.key === 'y' || event.key === 'Y') {
+        event.preventDefault();
+        setEnableY(!enableY);
+        return;
+      }
+
+      // Reset Camera: Home key
+      if (event.key === 'Home') {
+        event.preventDefault();
+        resetCamera();
+        return;
+      }
+
       // Help overlay: ? key (Shift + /)
       if (event.key === '?' || (event.shiftKey && event.key === '/')) {
         event.preventDefault();
         setShowHelp(true);
-        return;
-      }
-
-      // Close help: Escape key
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        setShowHelp(false);
         return;
       }
     };
@@ -136,11 +166,17 @@ export const useKeyboardShortcuts = (config: KeyboardShortcutsConfig) => {
     };
   }, [
     isSelected,
+    setIsSelected,
     deleteModel,
     setTransformMode,
     setIsAddObjectModalOpen,
     setShowHelp,
     setHideUI,
+    setDisableCamera,
+    disableCamera,
+    setEnableY,
+    enableY,
+    resetCamera,
     undo,
     redo,
     canUndo,
@@ -173,6 +209,10 @@ export const KEYBOARD_SHORTCUTS = {
     { keys: ['G'], description: 'Move (translate) selected model' },
     { keys: ['R'], description: 'Rotate selected model' },
     { keys: ['S'], description: 'Scale selected model' },
-    { keys: ['Escape'], description: 'Clear transform mode' },
+  ],
+  camera: [
+    { keys: ['C'], description: 'Toggle camera controls' },
+    { keys: ['Y'], description: 'Toggle Y-axis movement' },
+    { keys: ['Home'], description: 'Reset camera to default view' },
   ],
 };

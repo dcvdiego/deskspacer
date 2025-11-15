@@ -271,7 +271,7 @@ const CameraToggle = ({
   onToggle: () => void;
 }) => {
   return (
-    <Tooltip title={!disabled ? 'Disable Camera' : 'Enable Camera'} arrow>
+    <Tooltip title={!disabled ? 'Disable Camera (C)' : 'Enable Camera (C)'} arrow>
       <ToggleButton
         value="Camera Toggle"
         selected={disabled}
@@ -291,7 +291,7 @@ const YAxisToggle = ({
   onToggle: () => void;
 }) => {
   return (
-    <Tooltip title={!enabled ? 'Enable Y-Axis' : 'Disable Y-Axis'} arrow>
+    <Tooltip title={!enabled ? 'Enable Y-Axis (Y)' : 'Disable Y-Axis (Y)'} arrow>
       <ToggleButton
         value="Y-axis Toggle"
         selected={enabled}
@@ -480,7 +480,7 @@ export const Header: React.FC<HeaderProps> = ({
               onToggle={handleToggleCamera}
             />
             <YAxisToggle enabled={enableY} onToggle={handleToggleYAxis} />
-            <Tooltip title={'Reset Camera'} arrow>
+            <Tooltip title={'Reset Camera (Home)'} arrow>
               <IconButton
                 onClick={() => {
                   orbitRef.current?.reset();

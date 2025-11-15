@@ -127,12 +127,27 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
         </Box>
 
         {/* Transform Section */}
-        <Box sx={{ mb: 1 }}>
+        <Box sx={{ mb: 3 }}>
           <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
             Transform (when model selected)
           </Typography>
           <Divider sx={{ mb: 2 }} />
           {KEYBOARD_SHORTCUTS.transform.map((shortcut, index) => (
+            <KeyboardShortcutRow
+              key={index}
+              keys={shortcut.keys}
+              description={shortcut.description}
+            />
+          ))}
+        </Box>
+
+        {/* Camera Section */}
+        <Box sx={{ mb: 1 }}>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+            Camera Controls
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          {KEYBOARD_SHORTCUTS.camera.map((shortcut, index) => (
             <KeyboardShortcutRow
               key={index}
               keys={shortcut.keys}
