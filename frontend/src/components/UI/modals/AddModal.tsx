@@ -152,6 +152,20 @@ const AddModal = ({
       maxBoundsY: Infinity,
       locked: false,
     });
+
+    // Check what's in localStorage after adding
+    setTimeout(() => {
+      const stored = localStorage.getItem('model-storage');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const addedModel = parsed.state?.models?.find((m: any) => m.id === newId);
+        console.log('[ADD_MODAL] LocalStorage check after add:', {
+          modelId: newId,
+          rotation: addedModel?.rotation
+        });
+      }
+    }, 100);
+
     if (addCalled) addReset();
     setSelectedModel(null);
     setSelectedCategory(null);

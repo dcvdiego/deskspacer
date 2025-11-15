@@ -96,8 +96,17 @@ const TransformModel = ({ ...props }) => {
     rotation.copy(GroupRef.current.quaternion);
     console.log('[DRAG_END]', name, 'Saving new position to store:', {
       position: { x: position.x, y: position.y, z: position.z },
-      rotation: { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w }
+      rotation: { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w },
+      initialized: initialized
     });
+
+    // DON'T save position before initialization completes
+    // GroupRef starts with identity quaternion and needs initialization first
+    if (!initialized) {
+      console.warn('[DRAG_END]', name, 'Skipping save - not initialized yet!');
+      return;
+    }
+
     // Don't save to history here - we save at drag start instead
     updateModel(isSelected, { position, rotation }, false);
   };
@@ -159,6 +168,14 @@ const TransformModel = ({ ...props }) => {
         savedRotation.w
       );
       GroupRef.current.updateMatrixWorld(true);
+
+      // Verify GroupRef quaternion was set correctly
+      console.log('[INIT]', name, 'GroupRef quaternion after set:', {
+        x: GroupRef.current.quaternion.x,
+        y: GroupRef.current.quaternion.y,
+        z: GroupRef.current.quaternion.z,
+        w: GroupRef.current.quaternion.w
+      });
 
       // Log actual world position after initialization
       const testWorldPos = new THREE.Vector3();

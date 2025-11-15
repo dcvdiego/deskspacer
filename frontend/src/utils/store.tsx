@@ -181,6 +181,8 @@ export const useModelStore = create<ModelStore>()(
       // saveHistory defaults to true, but can be disabled for intermediate updates
       // (e.g., during collision detection, bounds updates)
       updateModel: (id: string, model: Partial<ModelInCanvas>, saveHistory = true) => {
+        const targetModel = get().models.find(m => m.id === id);
+
         if (saveHistory) {
           get().saveToHistory();
         }
@@ -201,6 +203,15 @@ export const useModelStore = create<ModelStore>()(
             z: model.rotation.z,
             w: model.rotation.w,
           };
+        }
+
+        // Log rotation updates to track when rotation gets corrupted
+        if (serializableUpdate.rotation && targetModel) {
+          console.log('[STORE.updateModel]', targetModel.name, 'Rotation update:', {
+            from: targetModel.rotation,
+            to: serializableUpdate.rotation,
+            stackTrace: new Error().stack
+          });
         }
 
         set((state: ModelStore) => ({
