@@ -271,7 +271,7 @@ const CameraToggle = ({
   onToggle: () => void;
 }) => {
   return (
-    <Tooltip title={!disabled ? 'Disable Camera' : 'Enable Camera'} arrow>
+    <Tooltip title={!disabled ? 'Disable Camera (C)' : 'Enable Camera (C)'} arrow>
       <ToggleButton
         value="Camera Toggle"
         selected={disabled}
@@ -291,7 +291,7 @@ const YAxisToggle = ({
   onToggle: () => void;
 }) => {
   return (
-    <Tooltip title={!enabled ? 'Enable Y-Axis' : 'Disable Y-Axis'} arrow>
+    <Tooltip title={!enabled ? 'Enable Y-Axis (Y)' : 'Disable Y-Axis (Y)'} arrow>
       <ToggleButton
         value="Y-axis Toggle"
         selected={enabled}
@@ -421,40 +421,7 @@ export const Header: React.FC<HeaderProps> = ({
   const handleTransformChange = (event: SelectChangeEvent) =>
     setTransformMode(event.target.value);
 
-  // Keyboard shortcuts for undo/redo
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Check if user is typing in an input field
-      const target = event.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-        return;
-      }
-
-      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-      const ctrlOrCmd = isMac ? event.metaKey : event.ctrlKey;
-
-      // Undo: Ctrl/Cmd + Z (without Shift)
-      if (ctrlOrCmd && event.key === 'z' && !event.shiftKey) {
-        event.preventDefault();
-        if (canUndo()) {
-          undo();
-        }
-      }
-      // Redo: Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y
-      else if (
-        (ctrlOrCmd && event.shiftKey && event.key === 'z') ||
-        (ctrlOrCmd && event.key === 'y')
-      ) {
-        event.preventDefault();
-        if (canRedo()) {
-          redo();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo, canUndo, canRedo]);
+  // Note: Keyboard shortcuts are now centralized in useKeyboardShortcuts hook in App.tsx
 
   return (
     <>
@@ -513,7 +480,7 @@ export const Header: React.FC<HeaderProps> = ({
               onToggle={handleToggleCamera}
             />
             <YAxisToggle enabled={enableY} onToggle={handleToggleYAxis} />
-            <Tooltip title={'Reset Camera'} arrow>
+            <Tooltip title={'Reset Camera (Home)'} arrow>
               <IconButton
                 onClick={() => {
                   orbitRef.current?.reset();
