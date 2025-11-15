@@ -89,6 +89,26 @@ func (r *Resolver) Register(params graphql.ResolveParams) (interface{}, error) {
 		}
 	}
 
+	// Generate email verification token
+	verificationToken, err := models.NewEmailVerificationToken(user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate verification token: %v", err)
+	}
+
+	// Save verification token to database
+	err = r.authTokenRepo.CreateEmailVerificationToken(params.Context, verificationToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to save verification token: %v", err)
+	}
+
+	// Send verification email
+	err = r.emailService.SendVerificationEmail(params.Context, user.Email, user.Username, verificationToken.Token)
+	if err != nil {
+		// Log error but don't fail registration
+		// User can request another verification email
+		fmt.Printf("Failed to send verification email: %v\n", err)
+	}
+
 	// Get additional user stats
 	stateCount, _ := r.userRepo.GetStateCount(params.Context, user.ID)
 	glbCount, _ := r.userRepo.GetGLBCount(params.Context, user.ID)
@@ -232,6 +252,13 @@ func (r *Resolver) VerifyEmail(params graphql.ResolveParams) (interface{}, error
 	// Delete the used token
 	_ = r.authTokenRepo.DeleteEmailVerificationToken(params.Context, token)
 
+	// Get user details for welcome email
+	user, err := r.userRepo.GetByID(params.Context, verificationToken.UserID)
+	if err == nil {
+		// Send welcome email (don't fail if this fails)
+		_ = r.emailService.SendWelcomeEmail(params.Context, user.Email, user.Username)
+	}
+
 	return true, nil
 }
 
@@ -263,8 +290,12 @@ func (r *Resolver) RequestPasswordReset(params graphql.ResolveParams) (interface
 		return false, err
 	}
 
-	// TODO: Send password reset email (Phase 4 - Email Service)
-	// For now, just return success
+	// Send password reset email
+	err = r.emailService.SendPasswordResetEmail(params.Context, user.Email, user.Username, resetToken.Token)
+	if err != nil {
+		// Log error but still return true for security (don't reveal if email exists)
+		fmt.Printf("Failed to send password reset email: %v\n", err)
+	}
 
 	return true, nil
 }

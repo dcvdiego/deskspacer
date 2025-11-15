@@ -18,7 +18,8 @@ type Resolver struct {
 	userStateRepo *repository.UserStateRepository
 
 	// Services
-	authService *service.AuthService
+	authService  *service.AuthService
+	emailService service.EmailService
 
 	// Utilities
 	validator *validator.Validate
@@ -32,6 +33,7 @@ func NewResolver(
 	authTokenRepo repository.AuthTokenRepositoryInterface,
 	userStateRepo *repository.UserStateRepository,
 	authService *service.AuthService,
+	emailService service.EmailService,
 	cfg *config.Config,
 ) *Resolver {
 	return &Resolver{
@@ -40,6 +42,7 @@ func NewResolver(
 		authTokenRepo: authTokenRepo,
 		userStateRepo: userStateRepo,
 		authService:   authService,
+		emailService:  emailService,
 		validator:     validator.New(),
 		config:        cfg,
 	}

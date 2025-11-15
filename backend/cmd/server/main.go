@@ -80,8 +80,20 @@ func main() {
 	}
 	slog.Info("Auth service initialized")
 
+	// Initialize Email Service
+	var emailService service.EmailService
+	if cfg.ResendAPIKey != "" {
+		// Use real Resend email service
+		emailService = service.NewResendEmailService(cfg.ResendAPIKey, cfg.EmailFrom, cfg.FrontendURL)
+		slog.Info("Resend email service initialized", "from", cfg.EmailFrom)
+	} else {
+		// Use mock email service for development/testing
+		emailService = service.NewMockEmailService()
+		slog.Warn("Using mock email service (no RESEND_API_KEY configured)")
+	}
+
 	// Initialize GraphQL resolver and schema
-	resolver := graph.NewResolver(repo, userRepo, authTokenRepo, userStateRepo, authService, cfg)
+	resolver := graph.NewResolver(repo, userRepo, authTokenRepo, userStateRepo, authService, emailService, cfg)
 	schema, err := graph.NewSchema(resolver)
 	if err != nil {
 		slog.Error("Failed to create GraphQL schema", "error", err)
