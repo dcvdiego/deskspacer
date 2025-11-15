@@ -4,10 +4,14 @@ import {
   Button,
   TextField,
   IconButton,
+  CircularProgress,
+  Box,
+  Alert,
 } from '@mui/material';
-import { ContentCopy } from '@mui/icons-material';
+import { ContentCopy, CheckCircle } from '@mui/icons-material';
 import { Spacer } from '../Spacer';
 import { StyledModal } from '../../../styles/Modal.styles';
+import { useState } from 'react';
 
 interface InfoModalProps {
   modalType: 'tutorial' | 'share' | 'settings' | null;
@@ -25,7 +29,17 @@ const InfoModal: React.FC<InfoModalProps> = ({
   onClose,
   shareData,
 }) => {
+  const [copied, setCopied] = useState(false);
+
   if (!modalType) return null;
+
+  const handleCopy = () => {
+    if (shareData?.url) {
+      navigator.clipboard.writeText(shareData.url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const renderContent = () => {
     switch (modalType) {
@@ -61,44 +75,65 @@ const InfoModal: React.FC<InfoModalProps> = ({
           </>
         );
       case 'share': {
+        if (shareData?.loading) {
+          return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, p: 3 }}>
+              <CircularProgress />
+              <Typography>Generating shareable link...</Typography>
+            </Box>
+          );
+        }
+
+        if (shareData?.error) {
+          return (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Alert severity="error">
+                Failed to generate shareable link. Please try again.
+              </Alert>
+              <Button onClick={onClose} variant="contained">
+                Close
+              </Button>
+            </Box>
+          );
+        }
+
         return (
-          <>
-            <div>Here is the link, it expires in 15 days:</div>
-            <div>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography variant="body1">
+              Here is the link, it expires in 15 days:
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField
                 disabled
                 id="outlined-disabled"
-                value={
-                  shareData?.loading
-                    ? 'Loading'
-                    : shareData?.error
-                      ? 'An error has occurred'
-                      : shareData?.url ?? ''
-                }
+                value={shareData?.url ?? ''}
                 slotProps={{
                   htmlInput: {
-                    size: shareData?.loading
-                      ? undefined
-                      : shareData?.url
-                        ? shareData?.url?.split('#')[1].length + 14
-                        : undefined,
+                    size: shareData?.url
+                      ? shareData.url.split('#')[1].length + 14
+                      : undefined,
                     readOnly: true,
                   },
                 }}
+                fullWidth
               />
               <IconButton
-                onClick={() =>
-                  shareData?.url &&
-                  navigator.clipboard.writeText(shareData?.url)
-                }
+                onClick={handleCopy}
+                color={copied ? 'success' : 'default'}
+                disabled={!shareData?.url}
               >
-                <ContentCopy />
+                {copied ? <CheckCircle /> : <ContentCopy />}
               </IconButton>
-            </div>
-            <Button onClick={onClose} sx={{ marginTop: 2 }}>
+            </Box>
+            {copied && (
+              <Alert severity="success" sx={{ mt: 1 }}>
+                Link copied to clipboard!
+              </Alert>
+            )}
+            <Button onClick={onClose} variant="contained" sx={{ marginTop: 1 }}>
               Close
             </Button>
-          </>
+          </Box>
         );
       }
       case 'settings':

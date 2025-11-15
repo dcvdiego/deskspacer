@@ -2,11 +2,12 @@
 import { Canvas } from '@react-three/fiber';
 
 import DefaultRoom from './components/models/rooms/DefaultRoom';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 
 import { Container } from './styles/global.styles';
 import { ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { CircularProgress, Typography } from '@mui/material';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import {
@@ -19,7 +20,7 @@ import { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import { DrawerHeader, Header } from './components/UI/Header';
 import { modelComponents } from './components/models/modelComponentsMapping';
 import TransformModel from './components/models/TransformModel';
-import * as THREE from 'three';
+import { Box3, Mesh } from 'three';
 import * as streamsaver from 'streamsaver';
 import { useModelStore } from './utils/store';
 import { ModelInCanvas } from './types/ModelTypes';
@@ -33,11 +34,13 @@ import {
 } from 'three/examples/jsm/Addons.js';
 import { darkTheme } from './styles/theme.styles';
 import CollisionBounds from './components/models/utils/CollisionBounds';
-import InfoModal from './components/UI/modals/InfoModal';
-import AddModal from './components/UI/modals/AddModal';
-import HelpModal from './components/UI/modals/HelpModal';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 // import Logo from '../public/logo.svg?react';
+
+// Lazy load modals for better code splitting
+const InfoModal = lazy(() => import('./components/UI/modals/InfoModal'));
+const AddModal = lazy(() => import('./components/UI/modals/AddModal'));
+const HelpModal = lazy(() => import('./components/UI/modals/HelpModal'));
 
 function App() {
   const { deleteModel, setModels, clearHistory } = useModelStore();
@@ -92,11 +95,11 @@ function App() {
   ] = useMutation(ADD_STATE_QUERY);
   const orbitRef = useRef<OrbitControlsType>(null);
   const sceneRef = useRef(null);
-  const minBoundsZRef = useRef<THREE.Mesh>(null);
-  const maxBoundsZRef = useRef<THREE.Mesh>(null);
-  const minBoundsXRef = useRef<THREE.Mesh>(null);
-  const maxBoundsXRef = useRef<THREE.Mesh>(null);
-  const minBoundsYRef = useRef<THREE.Mesh>(null);
+  const minBoundsZRef = useRef<Mesh>(null);
+  const maxBoundsZRef = useRef<Mesh>(null);
+  const minBoundsXRef = useRef<Mesh>(null);
+  const maxBoundsXRef = useRef<Mesh>(null);
+  const minBoundsYRef = useRef<Mesh>(null);
 
   // Centralized keyboard shortcuts
   useKeyboardShortcuts({
@@ -235,11 +238,11 @@ function App() {
     setExportLoading(false);
   };
 
-  const minBoundsZ = new THREE.Box3();
-  const maxBoundsZ = new THREE.Box3();
-  const minBoundsX = new THREE.Box3();
-  const maxBoundsX = new THREE.Box3();
-  const minBoundsY = new THREE.Box3();
+  const minBoundsZ = new Box3();
+  const maxBoundsZ = new Box3();
+  const minBoundsX = new Box3();
+  const maxBoundsX = new Box3();
+  const minBoundsY = new Box3();
   if (minBoundsZRef.current) minBoundsZ.setFromObject(minBoundsZRef.current);
 
   if (minBoundsXRef.current) minBoundsX.setFromObject(minBoundsXRef.current);
@@ -288,22 +291,47 @@ function App() {
         )}
         <Box component="main" sx={{ flexGrow: 1, p: hideUI ? 0 : 3 }}>
           {!hideUI && <DrawerHeader />}
-          <AddModal
-            addCalled={addCalled}
-            addReset={addReset}
-            isAddObjectModalOpen={isAddObjectModalOpen}
-            setIsAddObjectModalOpen={setIsAddObjectModalOpen}
-            isSelected={isSelected}
-            setIsSelected={setIsSelected}
-          />
-          <InfoModal
-            modalType={contentModal}
-            onClose={() => setContentModal(null)}
-            shareData={infoModalShareData}
-          />
-          <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
+          <Suspense fallback={null}>
+            <AddModal
+              addCalled={addCalled}
+              addReset={addReset}
+              isAddObjectModalOpen={isAddObjectModalOpen}
+              setIsAddObjectModalOpen={setIsAddObjectModalOpen}
+              isSelected={isSelected}
+              setIsSelected={setIsSelected}
+            />
+          </Suspense>
+          <Suspense fallback={null}>
+            <InfoModal
+              modalType={contentModal}
+              onClose={() => setContentModal(null)}
+              shareData={infoModalShareData}
+            />
+          </Suspense>
+          <Suspense fallback={null}>
+            <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
+          </Suspense>
           <Container style={{ paddingTop: 0 }}>
-            <Suspense>
+            <Suspense
+              fallback={
+                <Box
+                  sx={{
+                    height: '100vh',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                  }}
+                >
+                  <CircularProgress size={60} />
+                  <Typography variant="h6" sx={{ mt: 2 }}>
+                    Loading 3D Environment...
+                  </Typography>
+                </Box>
+              }
+            >
               <Canvas
                 frameloop="demand"
                 camera={{
