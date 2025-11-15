@@ -507,6 +507,7 @@ const TransformModel = ({ ...props }) => {
     >
       <group ref={GroupRef}>
         <PivotControls
+          key={`pivot-${name}-${historyVersion}`} // Force remount on undo/redo to reset internal state
           depthTest={false}
           // TODO: offset should match initial position somehow
           scale={150}
