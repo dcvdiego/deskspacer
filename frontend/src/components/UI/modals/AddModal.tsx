@@ -104,9 +104,16 @@ const AddModal = ({
     //     (model: ModelInCanvas) =>
     //       modelComponents[model.name]?.category === 'desks'
     //   )?.rotation;
+    console.log('[ADD_MODAL]', modelName, 'initRotationY:', modelComponents[modelName].initRotationY);
     const initRotation = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(0, modelComponents[modelName].initRotationY, 0)
     );
+    console.log('[ADD_MODAL]', modelName, 'initRotation:', {
+      x: initRotation.x,
+      y: initRotation.y,
+      z: initRotation.z,
+      w: initRotation.w
+    });
     if (existingDeskName && existingDeskPosition)
       offsetPosition.subVectors(
         existingDeskPosition,
