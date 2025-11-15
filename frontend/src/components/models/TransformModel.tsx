@@ -88,12 +88,11 @@ const TransformModel = ({ ...props }) => {
 
     const position = new THREE.Vector3();
     const rotation = new THREE.Quaternion();
-    // Get world position from ModelRef
+    // Get world position and rotation from ModelRef
+    // This captures the actual transform including any rotation applied by PivotControls
     ModelRef.current.getWorldPosition(position);
-    // Get LOCAL rotation from GroupRef (not world rotation from ModelRef)
-    // ModelRef's world rotation includes PivotControls' 90° offset
-    // We only want to store GroupRef's rotation, not the combined rotation
-    rotation.copy(GroupRef.current.quaternion);
+    ModelRef.current.getWorldQuaternion(rotation);
+
     console.log('[DRAG_END]', name, 'Saving new position to store:', {
       position: { x: position.x, y: position.y, z: position.z },
       rotation: { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w },
