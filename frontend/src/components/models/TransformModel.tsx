@@ -1,6 +1,5 @@
 import { PivotControls } from '@react-three/drei';
 import { Select } from '@react-three/postprocessing';
-// import { Select as DreiSelect } from '@react-three/drei';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useModelStore } from '../../utils/store';
@@ -93,16 +92,9 @@ const TransformModel = ({ ...props }) => {
     ModelRef.current.getWorldPosition(position);
     ModelRef.current.getWorldQuaternion(rotation);
 
-    console.log('[DRAG_END]', name, 'Saving new position to store:', {
-      position: { x: position.x, y: position.y, z: position.z },
-      rotation: { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w },
-      initialized: initialized
-    });
-
     // DON'T save position before initialization completes
     // GroupRef starts with identity quaternion and needs initialization first
     if (!initialized) {
-      console.warn('[DRAG_END]', name, 'Skipping save - not initialized yet!');
       return;
     }
 
@@ -145,16 +137,10 @@ const TransformModel = ({ ...props }) => {
       setSavedPosition(currentModel.position);
       const savedRotation = currentModel.rotation;
 
-      console.log('[INIT]', name, 'Setting positions:', {
-        storedPosition: { x: savedPosition.x, y: savedPosition.y, z: savedPosition.z },
-        storedRotation: { x: savedRotation.x, y: savedRotation.y, z: savedRotation.z, w: savedRotation.w }
-      });
-
       // Explicitly reset ModelRef to ensure clean state
       ModelRef.current.position.set(0, 0, 0);
       ModelRef.current.quaternion.set(0, 0, 0, 1);
 
-      // Set GroupRef to the stored world position
       GroupRef.current.position.set(
         savedPosition.x,
         savedPosition.y,
@@ -167,21 +153,6 @@ const TransformModel = ({ ...props }) => {
         savedRotation.w
       );
       GroupRef.current.updateMatrixWorld(true);
-
-      // Verify GroupRef quaternion was set correctly
-      console.log('[INIT]', name, 'GroupRef quaternion after set:', {
-        x: GroupRef.current.quaternion.x,
-        y: GroupRef.current.quaternion.y,
-        z: GroupRef.current.quaternion.z,
-        w: GroupRef.current.quaternion.w
-      });
-
-      // Log actual world position after initialization
-      const testWorldPos = new THREE.Vector3();
-      ModelRef.current.getWorldPosition(testWorldPos);
-      console.log('[INIT]', name, 'ModelRef world position after init:', {
-        x: testWorldPos.x, y: testWorldPos.y, z: testWorldPos.z
-      });
 
       setInitialized(true);
     }
@@ -198,7 +169,6 @@ const TransformModel = ({ ...props }) => {
 
     // On first render after init, apply positions without comparing (scene just rendered)
     if (prevHistoryVersionRef.current === null) {
-      console.log('[SYNC]', name, 'First render after init, applying positions without comparing');
       prevHistoryVersionRef.current = historyVersion;
 
       // Apply positions directly (skip NaN comparison)
@@ -221,15 +191,9 @@ const TransformModel = ({ ...props }) => {
     }
 
     if (prevHistoryVersionRef.current === historyVersion) {
-      console.log('[SYNC]', name, 'historyVersion unchanged, skipping');
-      return; // Skip if version hasn't changed
+      return;
     }
 
-    console.log('[SYNC]', name, 'historyVersion changed from', prevHistoryVersionRef.current, 'to', historyVersion);
-    console.log('[SYNC]', name, 'Applying undo/redo position:', {
-      position: { x: currentModel.position.x, y: currentModel.position.y, z: currentModel.position.z },
-      rotation: { x: currentModel.rotation.x, y: currentModel.rotation.y, z: currentModel.rotation.z, w: currentModel.rotation.w }
-    });
     prevHistoryVersionRef.current = historyVersion;
 
     // Set GroupRef to the target position/rotation
@@ -249,8 +213,6 @@ const TransformModel = ({ ...props }) => {
     GroupRef.current.updateMatrixWorld(true);
 
     setSavedPosition(currentModel.position);
-
-    console.log('[SYNC]', name, 'Position applied successfully');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyVersion, initialized]); // Both dependencies - matching commit b0ca1d9 where undo/redo worked
   const { camera } = useThree();
@@ -455,14 +417,6 @@ const TransformModel = ({ ...props }) => {
           disableAxes={!['', 'translate'].includes(transformMode)}
           activeAxes={[true, enableY, true]}
           onDragStart={() => {
-            // Save to history before any changes are made
-            const currentModel = getModel();
-            if (currentModel) {
-              console.log('[DRAG_START]', name, 'Saving to history:', {
-                position: { x: currentModel.position.x, y: currentModel.position.y, z: currentModel.position.z },
-                rotation: { x: currentModel.rotation.x, y: currentModel.rotation.y, z: currentModel.rotation.z, w: currentModel.rotation.w }
-              });
-            }
             saveToHistory();
             setIsRotating(true);
             setDrag(true);

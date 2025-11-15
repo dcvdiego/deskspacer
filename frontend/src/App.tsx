@@ -156,24 +156,6 @@ function App() {
   };
 
   const exporter = new GLTFExporter();
-  // TODO: old import logic needs to be updated
-  // const gltfLoader = new GLTFLoader();
-  // const dracoloader = new DRACOLoader();
-  // dracoloader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-  // gltfLoader.setDRACOLoader(dracoloader);
-  // const handleImport = useCallback((file: Blob) => {
-  //   const reader = new FileReader();
-  //   reader.onabort = () => console.error('file reading was aborted');
-  //   reader.onerror = () => console.error('file reading has failed');
-  //   reader.onload = async () => {
-  //     const buffer = reader.result;
-  //     const result = await new Promise((resolve, reject) =>
-  //       gltfLoader.parse(buffer!, '', resolve, reject)
-  //     );
-  //     setImportedFile(result);
-  //   };
-  //   reader.readAsArrayBuffer(file);
-  // }, []);
 
   const handleExport = () => {
     // TODO: selfhost streamsaver https://github.com/jimmywarting/StreamSaver.js/issues/183
@@ -193,9 +175,7 @@ function App() {
           });
           const readableStream = fileToSave.stream();
           if (window.WritableStream && readableStream.pipeTo) {
-            return readableStream
-              .pipeTo(fileStream)
-              .then(() => console.log('done writing'));
+            return readableStream.pipeTo(fileStream);
           }
 
           // Write (pipe) manually
@@ -214,7 +194,7 @@ function App() {
           pump();
           setExportLoading(false);
         },
-        () => console.log('error'),
+        () => {},
         { binary: true }
       );
     }

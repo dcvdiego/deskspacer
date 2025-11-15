@@ -171,14 +171,6 @@ export const useModelStore = create<ModelStore>()(
 
       // Add a model (always saves to history)
       addModel: (model: ModelInCanvas) => {
-        console.log('[STORE.addModel]', model.name, 'Received rotation:', {
-          x: model.rotation.x,
-          y: model.rotation.y,
-          z: model.rotation.z,
-          w: model.rotation.w,
-          isQuaternion: model.rotation instanceof THREE.Quaternion
-        });
-
         // Convert THREE.js objects to plain objects for reliable serialization
         const serializableModel: ModelInCanvas = {
           ...model,
@@ -190,25 +182,16 @@ export const useModelStore = create<ModelStore>()(
             : model.rotation,
         };
 
-        console.log('[STORE.addModel]', model.name, 'Serialized rotation:', {
-          rotation: serializableModel.rotation
-        });
-
         get().saveToHistory();
         set((state: { models: ModelInCanvas[] }) => ({
           models: [...state.models, serializableModel],
         }));
-        console.log('[STORE.addModel]', model.name, 'After set, checking store:', {
-          rotation: useModelStore.getState().models.find(m => m.id === model.id)?.rotation
-        });
       },
 
       // Update a model
       // saveHistory defaults to true, but can be disabled for intermediate updates
       // (e.g., during collision detection, bounds updates)
       updateModel: (id: string, model: Partial<ModelInCanvas>, saveHistory = true) => {
-        const targetModel = get().models.find(m => m.id === id);
-
         if (saveHistory) {
           get().saveToHistory();
         }
@@ -229,15 +212,6 @@ export const useModelStore = create<ModelStore>()(
             z: model.rotation.z,
             w: model.rotation.w,
           };
-        }
-
-        // Log rotation updates to track when rotation gets corrupted
-        if (serializableUpdate.rotation && targetModel) {
-          console.log('[STORE.updateModel]', targetModel.name, 'Rotation update:', {
-            from: targetModel.rotation,
-            to: serializableUpdate.rotation,
-            stackTrace: new Error().stack
-          });
         }
 
         set((state: ModelStore) => ({

@@ -98,22 +98,9 @@ const AddModal = ({
       )?.position;
     // difference between starting position and existingDeskPosition
     const offsetPosition = new THREE.Vector3();
-    // const existingDeskRotation = useModelStore
-    //   .getState()
-    //   .models.find(
-    //     (model: ModelInCanvas) =>
-    //       modelComponents[model.name]?.category === 'desks'
-    //   )?.rotation;
-    console.log('[ADD_MODAL]', modelName, 'initRotationY:', modelComponents[modelName].initRotationY);
     const initRotation = new THREE.Quaternion().setFromEuler(
       new THREE.Euler(0, modelComponents[modelName].initRotationY, 0)
     );
-    console.log('[ADD_MODAL]', modelName, 'initRotation:', {
-      x: initRotation.x,
-      y: initRotation.y,
-      z: initRotation.z,
-      w: initRotation.w
-    });
     if (existingDeskName && existingDeskPosition)
       offsetPosition.subVectors(
         existingDeskPosition,
@@ -152,19 +139,6 @@ const AddModal = ({
       maxBoundsY: Infinity,
       locked: false,
     });
-
-    // Check what's in localStorage after adding
-    setTimeout(() => {
-      const stored = localStorage.getItem('model-storage');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const addedModel = parsed.state?.models?.find((m: any) => m.id === newId);
-        console.log('[ADD_MODAL] LocalStorage check after add:', {
-          modelId: newId,
-          rotation: addedModel?.rotation
-        });
-      }
-    }, 100);
 
     if (addCalled) addReset();
     setSelectedModel(null);

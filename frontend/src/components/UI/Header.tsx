@@ -570,7 +570,7 @@ export const Header: React.FC<HeaderProps> = ({
             <ListToggleButton
               open={open}
               disabled
-              onClick={() => console.log('toggleRoom')}
+              onClick={() => {}}
               icon={<LocationOn />}
               text="Change room"
             />
