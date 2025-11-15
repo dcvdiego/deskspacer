@@ -30,9 +30,27 @@ const cloneModel = (model: ModelInCanvas): ModelInCanvas => {
   };
 };
 
+// Helper function to serialize a model to plain objects for localStorage
+// Converts THREE.js objects to serializable plain objects
+const serializeModel = (model: ModelInCanvas): ModelInCanvas => {
+  return {
+    ...model,
+    position: model.position instanceof THREE.Vector3
+      ? { x: model.position.x, y: model.position.y, z: model.position.z }
+      : model.position,
+    rotation: model.rotation instanceof THREE.Quaternion
+      ? { x: model.rotation.x, y: model.rotation.y, z: model.rotation.z, w: model.rotation.w }
+      : model.rotation,
+  };
+};
+
 // Helper function to deep clone the entire models array
 const cloneModelsArray = (models: ModelInCanvas[]): ModelInCanvas[] =>
   models.map(cloneModel);
+
+// Helper function to serialize the entire models array
+const serializeModelsArray = (models: ModelInCanvas[]): ModelInCanvas[] =>
+  models.map(serializeModel);
 
 interface ModelStore {
   models: ModelInCanvas[];
@@ -88,8 +106,12 @@ export const useModelStore = create<ModelStore>()(
         const previousState = newPast.pop()!;
         const newFuture = [cloneModelsArray(models), ...future];
 
+        // CRITICAL: Serialize THREE.js objects to plain objects before setting to store
+        // This ensures proper localStorage serialization by Zustand persist middleware
+        const serializedPreviousState = serializeModelsArray(previousState);
+
         set({
-          models: previousState,
+          models: serializedPreviousState,
           past: newPast,
           future: newFuture,
           historyVersion: historyVersion + 1, // Trigger component updates
@@ -105,8 +127,12 @@ export const useModelStore = create<ModelStore>()(
         const nextState = newFuture.shift()!;
         const newPast = [...past, cloneModelsArray(models)];
 
+        // CRITICAL: Serialize THREE.js objects to plain objects before setting to store
+        // This ensures proper localStorage serialization by Zustand persist middleware
+        const serializedNextState = serializeModelsArray(nextState);
+
         set({
-          models: nextState,
+          models: serializedNextState,
           past: newPast,
           future: newFuture,
           historyVersion: historyVersion + 1, // Trigger component updates
