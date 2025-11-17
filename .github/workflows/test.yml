@@ -40,10 +40,37 @@ jobs:
           cd frontend
           pnpm test -- --run
 
+      - name: Build Storybook
+        run: |
+          cd frontend
+          pnpm build-storybook
+
+      - name: Install Playwright browsers for accessibility tests
+        run: |
+          cd frontend
+          npx playwright install --with-deps chromium
+
+      - name: Run Storybook accessibility tests
+        run: |
+          cd frontend
+          npx http-server storybook-static --port 6006 --silent &
+          SERVER_PID=$!
+          npx wait-on http://localhost:6006
+          pnpm test-storybook --url http://localhost:6006
+          kill $SERVER_PID
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: frontend/coverage/
+          if-no-files-found: ignore
+
+      - name: Upload Storybook build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-build
+          path: frontend/storybook-static/
           if-no-files-found: ignore

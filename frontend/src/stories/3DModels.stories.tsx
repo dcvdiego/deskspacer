@@ -9,6 +9,10 @@ const meta: Meta = {
   title: '3D/Models',
   parameters: {
     layout: 'fullscreen',
+    // Disable a11y tests for 3D canvas stories as they cause browser crashes in headless mode
+    a11y: {
+      test: 'off',
+    },
   },
 };
 

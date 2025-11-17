@@ -24,6 +24,20 @@ const preview: Preview = {
         },
       ],
     },
+    a11y: {
+      // Axe configuration
+      config: {
+        rules: [
+          // Configure specific rules if needed
+        ],
+      },
+      // Axe options - run WCAG 2.0 and 2.1 Level A and AA rules
+      options: {
+        runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
+      },
+      // Fail tests on accessibility violations for CI
+      test: 'error',
+    },
   },
   decorators: [
     (Story) => (
