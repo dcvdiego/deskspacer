@@ -1,4 +1,4 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { darkTheme } from '../src/styles/theme.styles';
 import React from 'react';
@@ -12,17 +12,17 @@ const preview: Preview = {
       },
     },
     backgrounds: {
-      default: 'dark',
-      values: [
-        {
+      options: {
+        dark: {
           name: 'dark',
           value: '#121212',
         },
-        {
+
+        light: {
           name: 'light',
           value: '#ffffff',
-        },
-      ],
+        }
+      }
     },
     a11y: {
       // Axe configuration
@@ -39,6 +39,7 @@ const preview: Preview = {
       test: 'error',
     },
   },
+
   decorators: [
     (Story) => (
       <ThemeProvider theme={darkTheme}>
@@ -47,6 +48,12 @@ const preview: Preview = {
       </ThemeProvider>
     ),
   ],
+
+  initialGlobals: {
+    backgrounds: {
+      value: 'dark'
+    }
+  }
 };
 
 export default preview;

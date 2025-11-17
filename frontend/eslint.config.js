@@ -30,4 +30,4 @@ export default tseslint.config({ ignores: ['dist'] }, {
     ],
     '@typescript-eslint/no-explicit-any': ['off'],
   },
-}, storybook.configs["flat/recommended"]);
+}, storybook.configs["flat/recommended"], storybook.configs["flat/recommended"]);
