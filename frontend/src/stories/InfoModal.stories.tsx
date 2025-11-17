@@ -73,14 +73,7 @@ export const Settings: Story = {
   },
   parameters: {
     a11y: {
-      config: {
-        rules: [
-          {
-            id: 'color-contrast',
-            enabled: false, // Material UI theme default has insufficient contrast on Tabs
-          },
-        ],
-      },
+      disable: ['color-contrast'], // Material UI theme default has insufficient contrast on Tabs
     },
   },
 };
