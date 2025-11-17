@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useKeyboardShortcuts, KEYBOARD_SHORTCUTS } from './useKeyboardShortcuts';
 import { useModelStore } from '../utils/store';
 import * as THREE from 'three';
@@ -93,7 +93,9 @@ describe('useKeyboardShortcuts', () => {
       setupHook();
 
       const event = createKeyboardEvent('z', { ctrlKey: true });
-      window.dispatchEvent(event);
+      act(() => {
+        window.dispatchEvent(event);
+      });
 
       expect(useModelStore.getState().models).toHaveLength(1);
     });
@@ -117,7 +119,9 @@ describe('useKeyboardShortcuts', () => {
       setupHook();
 
       const event = createKeyboardEvent('y', { ctrlKey: true });
-      window.dispatchEvent(event);
+      act(() => {
+        window.dispatchEvent(event);
+      });
 
       expect(useModelStore.getState().models).toHaveLength(0);
     });
@@ -141,7 +145,9 @@ describe('useKeyboardShortcuts', () => {
       setupHook();
 
       const event = createKeyboardEvent('z', { ctrlKey: true, shiftKey: true });
-      window.dispatchEvent(event);
+      act(() => {
+        window.dispatchEvent(event);
+      });
 
       expect(useModelStore.getState().models).toHaveLength(0);
     });
