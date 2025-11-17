@@ -19,6 +19,13 @@ const meta: Meta<typeof Spacer> = {
       description: 'Final letter spacing in pixels',
     },
   },
+  decorators: [
+    (Story) => (
+      <main>
+        <Story />
+      </main>
+    ),
+  ],
 };
 
 export default meta;
