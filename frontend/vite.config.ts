@@ -33,16 +33,6 @@ export default defineConfig({
           enabled: true,
           headless: true,
           provider: 'playwright',
-          providerOptions: {
-            launch: {
-              args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu'
-              ]
-            }
-          },
           instances: [{
             browser: 'chromium'
           }]
