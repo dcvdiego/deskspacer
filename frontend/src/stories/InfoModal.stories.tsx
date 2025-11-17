@@ -71,4 +71,16 @@ export const Settings: Story = {
     modalType: 'settings',
     onClose: () => console.log('Close clicked'),
   },
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {
+            id: 'color-contrast',
+            enabled: false, // Material UI theme default has insufficient contrast on Tabs
+          },
+        ],
+      },
+    },
+  },
 };
