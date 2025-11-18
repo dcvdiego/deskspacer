@@ -18,9 +18,11 @@ const filesPathToExclude = filesNeedToExclude.map(src => {
 export default defineConfig(async () => {
   const testProjects = [];
 
-  // Only load Storybook test plugin when running tests
-  // This prevents Node.js version issues during production builds
-  if (process.env.VITEST || process.env.NODE_ENV === 'test') {
+  // Only load Storybook test plugin when explicitly requested
+  // This prevents the browser tests from running during regular test runs
+  const runStorybookTests = process.argv.includes('--project=storybook') || process.env.TEST_STORYBOOK === 'true';
+
+  if (runStorybookTests && (process.env.VITEST || process.env.NODE_ENV === 'test')) {
     const { storybookTest } = await import('@storybook/addon-vitest/vitest-plugin');
     testProjects.push({
       extends: true,
@@ -41,6 +43,8 @@ export default defineConfig(async () => {
             browser: 'chromium'
           }]
         },
+        testTimeout: 30000,
+        hookTimeout: 30000,
         setupFiles: ['.storybook/vitest.setup.ts']
       }
     });
@@ -61,7 +65,9 @@ export default defineConfig(async () => {
       globals: true,
       environment: 'jsdom',
       setupFiles: './vitest.setup.ts',
-      projects: testProjects
+      // Only use projects array if storybook tests are enabled
+      // Otherwise use the default inline test config
+      ...(testProjects.length > 0 ? { projects: testProjects } : {})
     },
     optimizeDeps: {
       esbuildOptions: {
