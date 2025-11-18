@@ -86,7 +86,16 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 		},
 	})
 
-	// SharedState type
+	// Build auth types
+	userType, authPayloadType, _, _ := BuildAuthTypes(uuidType, timeType)
+
+	// Build custom GLB type
+	customGLBType := BuildCustomGLBType(uuidType, timeType)
+
+	// Build checkout session type
+	checkoutSessionType := BuildCheckoutSessionType()
+
+	// SharedState type (kept for backward compatibility)
 	sharedStateType := graphql.NewObject(graphql.ObjectConfig{
 		Name:        "SharedState",
 		Description: "SharedState represents a saved desk setup state",
@@ -106,32 +115,101 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 		},
 	})
 
-	// Query type
-	queryType := graphql.NewObject(graphql.ObjectConfig{
-		Name: "Query",
+	// UserState type
+	userStateType := graphql.NewObject(graphql.ObjectConfig{
+		Name:        "UserState",
+		Description: "UserState represents a user's saved canvas state",
 		Fields: graphql.Fields{
-			"states": &graphql.Field{
-				Type:        graphql.NewNonNull(graphql.NewList(graphql.NewNonNull(sharedStateType))),
-				Description: "Get all non-expired shared states",
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					return resolver.States(p.Context)
-				},
+			"id": &graphql.Field{
+				Type:        graphql.NewNonNull(uuidType),
+				Description: "Unique identifier for the state",
 			},
-			"statesById": &graphql.Field{
-				Type:        graphql.NewNonNull(graphql.NewList(graphql.NewNonNull(sharedStateType))),
-				Description: "Get a specific shared state by ID",
-				Args: graphql.FieldConfigArgument{
-					"id": &graphql.ArgumentConfig{
-						Type:        graphql.NewNonNull(uuidType),
-						Description: "ID of the shared state to retrieve",
-					},
-				},
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					id := p.Args["id"].(uuid.UUID)
-					return resolver.StatesById(p.Context, id)
-				},
+			"name": &graphql.Field{
+				Type:        graphql.String,
+				Description: "User-friendly name for the state",
+			},
+			"stateData": &graphql.Field{
+				Type:        graphql.NewNonNull(graphql.String),
+				Description: "JSON-serialized canvas state data",
+			},
+			"isPublic": &graphql.Field{
+				Type:        graphql.NewNonNull(graphql.Boolean),
+				Description: "Whether this state is publicly accessible",
+			},
+			"publicToken": &graphql.Field{
+				Type:        uuidType,
+				Description: "Public sharing token (if public)",
+			},
+			"createdAt": &graphql.Field{
+				Type:        graphql.NewNonNull(timeType),
+				Description: "State creation timestamp",
+			},
+			"updatedAt": &graphql.Field{
+				Type:        graphql.NewNonNull(timeType),
+				Description: "Last update timestamp",
 			},
 		},
+	})
+
+	// Build auth queries and add to existing state queries
+	authQueries := BuildAuthQueries(resolver, uuidType, userType)
+	queryFields := graphql.Fields{
+		// Existing state queries (backward compatibility)
+		"states": &graphql.Field{
+			Type:        graphql.NewNonNull(graphql.NewList(graphql.NewNonNull(sharedStateType))),
+			Description: "Get all non-expired shared states",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				return resolver.States(p.Context)
+			},
+		},
+		"statesById": &graphql.Field{
+			Type:        graphql.NewNonNull(graphql.NewList(graphql.NewNonNull(sharedStateType))),
+			Description: "Get a specific shared state by ID",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(uuidType),
+					Description: "ID of the shared state to retrieve",
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				id := p.Args["id"].(uuid.UUID)
+				return resolver.StatesById(p.Context, id)
+			},
+		},
+		// User state queries
+		"myStates": &graphql.Field{
+			Type:        graphql.NewNonNull(graphql.NewList(graphql.NewNonNull(userStateType))),
+			Description: "Get all states owned by the authenticated user (requires authentication)",
+			Resolve:     resolver.MyStates,
+		},
+		"publicState": &graphql.Field{
+			Type:        userStateType,
+			Description: "Get a public state by its public token",
+			Args: graphql.FieldConfigArgument{
+				"token": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(uuidType),
+					Description: "Public token",
+				},
+			},
+			Resolve: resolver.PublicState,
+		},
+	}
+
+	// Merge auth queries into query fields
+	for key, field := range authQueries {
+		queryFields[key] = field
+	}
+
+	// Build and merge custom GLB queries
+	customGLBQueries := BuildCustomGLBQueries(resolver, uuidType, customGLBType)
+	for key, field := range customGLBQueries {
+		queryFields[key] = field
+	}
+
+	// Query type
+	queryType := graphql.NewObject(graphql.ObjectConfig{
+		Name:   "Query",
+		Fields: queryFields,
 	})
 
 	addStateInputType := graphql.NewInputObject(graphql.InputObjectConfig{
@@ -156,33 +234,111 @@ func NewSchema(resolver *Resolver) (graphql.Schema, error) {
 		},
 	})
 
-	// Mutation type
-	mutationType := graphql.NewObject(graphql.ObjectConfig{
-		Name: "Mutation",
-		Fields: graphql.Fields{
-			"addState": &graphql.Field{
-				Type:        graphql.NewNonNull(addStatePayloadType),
-				Description: "Create a new shared state with automatic expiration",
-				Args: graphql.FieldConfigArgument{
-					"input": &graphql.ArgumentConfig{
-						Type:        graphql.NewNonNull(addStateInputType),
-						Description: "Input containing the shared state data",
-					},
-				},
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					input := p.Args["input"].(map[string]interface{})
-					sharedState := input["sharedState"].(string)
-					state, err := resolver.AddState(p.Context, sharedState)
-					if err != nil {
-						return nil, err
-					}
-					// Wrap the result in the payload structure
-					return map[string]interface{}{
-						"sharedState": state,
-					}, nil
+	// Build auth mutations
+	authMutations := BuildAuthMutations(resolver, authPayloadType)
+
+	// Build mutation fields starting with existing mutations
+	mutationFields := graphql.Fields{
+		// Existing mutation (backward compatibility)
+		"addState": &graphql.Field{
+			Type:        graphql.NewNonNull(addStatePayloadType),
+			Description: "Create a new shared state with automatic expiration",
+			Args: graphql.FieldConfigArgument{
+				"input": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(addStateInputType),
+					Description: "Input containing the shared state data",
 				},
 			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				input := p.Args["input"].(map[string]interface{})
+				sharedState := input["sharedState"].(string)
+				state, err := resolver.AddState(p.Context, sharedState)
+				if err != nil {
+					return nil, err
+				}
+				// Wrap the result in the payload structure
+				return map[string]interface{}{
+					"sharedState": state,
+				}, nil
+			},
 		},
+		// User state mutations
+		"saveState": &graphql.Field{
+			Type:        graphql.NewNonNull(userStateType),
+			Description: "Save a new canvas state for the authenticated user (requires authentication)",
+			Args: graphql.FieldConfigArgument{
+				"name": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "Name for the state",
+				},
+				"stateData": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(graphql.String),
+					Description: "JSON-serialized canvas state data",
+				},
+				"isPublic": &graphql.ArgumentConfig{
+					Type:        graphql.Boolean,
+					Description: "Whether this state should be publicly accessible (default: false)",
+				},
+			},
+			Resolve: resolver.SaveState,
+		},
+		"updateState": &graphql.Field{
+			Type:        graphql.NewNonNull(userStateType),
+			Description: "Update an existing user state (requires authentication, must own the state)",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(uuidType),
+					Description: "State ID",
+				},
+				"name": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "New name for the state",
+				},
+				"stateData": &graphql.ArgumentConfig{
+					Type:        graphql.String,
+					Description: "New state data",
+				},
+				"isPublic": &graphql.ArgumentConfig{
+					Type:        graphql.Boolean,
+					Description: "New public status",
+				},
+			},
+			Resolve: resolver.UpdateState,
+		},
+		"deleteState": &graphql.Field{
+			Type:        graphql.NewNonNull(graphql.Boolean),
+			Description: "Delete a user state (requires authentication, must own the state)",
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type:        graphql.NewNonNull(uuidType),
+					Description: "State ID to delete",
+				},
+			},
+			Resolve: resolver.DeleteState,
+		},
+	}
+
+	// Merge auth mutations into mutation fields
+	for key, field := range authMutations {
+		mutationFields[key] = field
+	}
+
+	// Build and merge custom GLB mutations
+	customGLBMutations := BuildCustomGLBMutations(resolver, uuidType, customGLBType)
+	for key, field := range customGLBMutations {
+		mutationFields[key] = field
+	}
+
+	// Build and merge payment mutations
+	paymentMutations := BuildPaymentMutations(resolver, checkoutSessionType)
+	for key, field := range paymentMutations {
+		mutationFields[key] = field
+	}
+
+	// Mutation type
+	mutationType := graphql.NewObject(graphql.ObjectConfig{
+		Name:   "Mutation",
+		Fields: mutationFields,
 	})
 
 	// Create and return the schema

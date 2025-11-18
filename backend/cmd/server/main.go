@@ -60,11 +60,81 @@ func main() {
 	}
 	slog.Info("Database migrations completed")
 
-	// Initialize repository
+	// Initialize repositories
 	repo := repository.NewSharedStateRepository(db.Pool)
+	userRepo := repository.NewUserRepository(db.Pool)
+	authTokenRepo := repository.NewAuthTokenRepository(db.Pool)
+	userStateRepo := repository.NewUserStateRepository(db.Pool)
+	customGLBRepo := repository.NewCustomGLBRepository(db.Pool)
+
+	// Initialize AuthService
+	authService, err := service.NewAuthService(
+		userRepo,
+		authTokenRepo,
+		cfg.JWTSecret,
+		cfg.JWTAccessExpiration,
+		cfg.JWTRefreshExpiration,
+	)
+	if err != nil {
+		slog.Error("Failed to create auth service", "error", err)
+		os.Exit(1)
+	}
+	slog.Info("Auth service initialized")
+
+	// Initialize Email Service
+	var emailService service.EmailService
+	if cfg.ResendAPIKey != "" {
+		// Use real Resend email service
+		emailService = service.NewResendEmailService(cfg.ResendAPIKey, cfg.EmailFrom, cfg.FrontendURL)
+		slog.Info("Resend email service initialized", "from", cfg.EmailFrom)
+	} else {
+		// Use mock email service for development/testing
+		emailService = service.NewMockEmailService()
+		slog.Warn("Using mock email service (no RESEND_API_KEY configured)")
+	}
+
+	// Initialize Storage Service
+	var storageService service.StorageService
+	if cfg.R2AccessKeyID != "" && cfg.R2SecretAccessKey != "" && cfg.R2BucketName != "" {
+		// Use real Cloudflare R2 storage service
+		storageService, err = service.NewR2StorageService(
+			cfg.R2AccessKeyID,
+			cfg.R2SecretAccessKey,
+			cfg.R2Endpoint,
+			cfg.R2BucketName,
+			cfg.R2PublicURL,
+		)
+		if err != nil {
+			slog.Error("Failed to create R2 storage service", "error", err)
+			os.Exit(1)
+		}
+		slog.Info("R2 storage service initialized", "bucket", cfg.R2BucketName)
+	} else {
+		// Use mock storage service for development/testing
+		storageService = service.NewMockStorageService()
+		slog.Warn("Using mock storage service (no R2 credentials configured)")
+	}
+
+	// Initialize Stripe Service
+	var stripeService service.StripeService
+	if cfg.StripeSecretKey != "" && cfg.StripeWebhookSecret != "" && cfg.StripePriceID != "" {
+		// Use real Stripe service
+		stripeService = service.NewRealStripeService(
+			cfg.StripeSecretKey,
+			cfg.StripeWebhookSecret,
+			cfg.StripePriceID,
+			cfg.StripeSuccessURL,
+			cfg.StripeCancelURL,
+		)
+		slog.Info("Stripe service initialized", "price_id", cfg.StripePriceID)
+	} else {
+		// Use mock Stripe service for development/testing
+		stripeService = service.NewMockStripeService()
+		slog.Warn("Using mock Stripe service (no Stripe credentials configured)")
+	}
 
 	// Initialize GraphQL resolver and schema
-	resolver := graph.NewResolver(repo, cfg)
+	resolver := graph.NewResolver(repo, userRepo, authTokenRepo, userStateRepo, customGLBRepo, authService, emailService, storageService, stripeService, cfg)
 	schema, err := graph.NewSchema(resolver)
 	if err != nil {
 		slog.Error("Failed to create GraphQL schema", "error", err)
@@ -96,8 +166,12 @@ func main() {
 	// Health check endpoint
 	r.Get("/health", middleware.NewHealthHandler(db))
 
-	// GraphQL endpoint
-	r.Handle("/graphql", graphqlHandler)
+	// GraphQL endpoint with optional auth
+	r.With(middleware.OptionalAuth(authService)).Handle("/graphql", graphqlHandler)
+
+	// Stripe webhook endpoint (no auth, Stripe signature verification)
+	webhookHandler := middleware.NewStripeWebhookHandler(stripeService, userRepo)
+	r.Post("/webhooks/stripe", webhookHandler.HandleWebhook)
 
 	// Start background cleanup service
 	cleanupService := service.NewCleanupService(repo, cfg.CleanupIntervalHours)
