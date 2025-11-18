@@ -4,10 +4,15 @@ import {
   Button,
   TextField,
   IconButton,
+  CircularProgress,
+  Box,
+  Alert,
 } from '@mui/material';
-import { ContentCopy } from '@mui/icons-material';
+import { ContentCopy, CheckCircle } from '@mui/icons-material';
 import { Spacer } from '../Spacer';
 import { StyledModal } from '../../../styles/Modal.styles';
+import { useState } from 'react';
+import SettingsModal from './SettingsModal';
 
 interface InfoModalProps {
   modalType: 'tutorial' | 'share' | 'settings' | null;
@@ -25,13 +30,28 @@ const InfoModal: React.FC<InfoModalProps> = ({
   onClose,
   shareData,
 }) => {
+  const [copied, setCopied] = useState(false);
+
+  // Settings modal is now separate, handle it differently
+  if (modalType === 'settings') {
+    return <SettingsModal open={true} onClose={onClose} />;
+  }
+
   if (!modalType) return null;
+
+  const handleCopy = () => {
+    if (shareData?.url) {
+      navigator.clipboard.writeText(shareData.url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const renderContent = () => {
     switch (modalType) {
       case 'tutorial':
         return (
-          <>
+          <main>
             <div>
               Welcome to{' '}
               <Typography
@@ -57,58 +77,75 @@ const InfoModal: React.FC<InfoModalProps> = ({
               canvas.
             </div>
             <div>Have fun</div>
-            <Button onClick={onClose}>Continue</Button> {/* Use onClose prop */}
-          </>
+            <Button onClick={onClose}>Continue</Button>
+          </main>
         );
       case 'share': {
+        if (shareData?.loading) {
+          return (
+            <main>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, p: 3 }}>
+                <CircularProgress aria-label="Generating shareable link" />
+                <Typography>Generating shareable link...</Typography>
+              </Box>
+            </main>
+          );
+        }
+
+        if (shareData?.error) {
+          return (
+            <main>
+              <Alert severity="error">
+                Failed to generate shareable link. Please try again.
+              </Alert>
+              <Button onClick={onClose} variant="contained" sx={{ mt: 2 }}>
+                Close
+              </Button>
+            </main>
+          );
+        }
+
         return (
-          <>
-            <div>Here is the link, it expires in 15 days:</div>
-            <div>
+          <main>
+            <Typography variant="h2" sx={{ fontSize: '1rem', mb: 2 }}>
+              Here is the link, it expires in 15 days:
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 2 }}>
               <TextField
                 disabled
                 id="outlined-disabled"
-                value={
-                  shareData?.loading
-                    ? 'Loading'
-                    : shareData?.error
-                      ? 'An error has occurred'
-                      : shareData?.url ?? ''
-                }
+                label="Shareable link"
+                value={shareData?.url ?? ''}
                 slotProps={{
                   htmlInput: {
-                    size: shareData?.loading
-                      ? undefined
-                      : shareData?.url
-                        ? shareData?.url?.split('#')[1].length + 14
-                        : undefined,
+                    size: shareData?.url
+                      ? shareData.url.split('#')[1].length + 14
+                      : undefined,
                     readOnly: true,
                   },
                 }}
+                fullWidth
               />
               <IconButton
-                onClick={() =>
-                  shareData?.url &&
-                  navigator.clipboard.writeText(shareData?.url)
-                }
+                onClick={handleCopy}
+                color={copied ? 'success' : 'default'}
+                disabled={!shareData?.url}
+                aria-label="Copy link to clipboard"
               >
-                <ContentCopy />
+                {copied ? <CheckCircle /> : <ContentCopy />}
               </IconButton>
-            </div>
-            <Button onClick={onClose} sx={{ marginTop: 2 }}>
+            </Box>
+            {copied && (
+              <Alert severity="success">
+                Link copied to clipboard!
+              </Alert>
+            )}
+            <Button onClick={onClose} variant="contained" sx={{ marginTop: 2 }}>
               Close
             </Button>
-          </>
+          </main>
         );
       }
-      case 'settings':
-        return (
-          <>
-            <div>Settings</div>
-            <div>These are the settings</div>
-            <Button onClick={onClose}>Close</Button>
-          </>
-        );
       default:
         return null;
     }

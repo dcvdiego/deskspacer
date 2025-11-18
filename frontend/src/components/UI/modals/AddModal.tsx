@@ -5,14 +5,16 @@ import {
   Modal,
   TextField,
   ThemeProvider,
+  CircularProgress,
+  Box,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { StyledModal } from '../../../styles/Modal.styles';
 import { useModelStore } from '../../../utils/store';
 import { modelComponents } from '../../models/modelComponentsMapping';
 import { ModelInCanvas } from '../../../types/ModelTypes';
 
-import * as THREE from 'three';
+import { Vector3, Quaternion, Euler } from 'three';
 import { heightAdjustmentMap } from '../../../utils/constants';
 import { Canvas } from '@react-three/fiber';
 import { Bounds, Html } from '@react-three/drei';
@@ -97,14 +99,14 @@ const AddModal = ({
           modelComponents[model.name]?.category === 'desks'
       )?.position;
     // difference between starting position and existingDeskPosition
-    const offsetPosition = new THREE.Vector3();
-    const initRotation = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(0, modelComponents[modelName].initRotationY, 0)
+    const offsetPosition = new Vector3();
+    const initRotation = new Quaternion().setFromEuler(
+      new Euler(0, modelComponents[modelName].initRotationY, 0)
     );
     if (existingDeskName && existingDeskPosition)
       offsetPosition.subVectors(
         existingDeskPosition,
-        new THREE.Vector3().fromArray(
+        new Vector3().fromArray(
           modelComponents[existingDeskName].initPosition
         )
       );
@@ -117,7 +119,7 @@ const AddModal = ({
     addModel({
       name: modelName,
       id: newId,
-      position: new THREE.Vector3(
+      position: new Vector3(
         modelComponents[modelName].initPosition[0] +
           (existingDeskPosition ? offsetPosition.x : 0),
         modelComponents[modelName].initPosition[1] +
@@ -233,54 +235,71 @@ const AddModal = ({
             </Button>
           )
         )}
-        <Canvas
-          camera={{
-            position: [70, 35, 20],
-          }}
-          style={{ width: '500px', height: '500px' }}
+        <Suspense
+          fallback={
+            <Box
+              sx={{
+                width: '500px',
+                height: '500px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          }
         >
-          <ambientLight />
-          <Html
-            as="div"
-            style={{
-              display: 'flex',
-              left: '-14rem',
-              gap: '20rem',
+          <Canvas
+            camera={{
+              position: [70, 35, 20],
             }}
+            style={{ width: '500px', height: '500px' }}
           >
-            <ThemeProvider theme={darkTheme}>
-              {ModelPreview && (
-                <>
-                  <IconButton>
-                    <AddCircleIcon
-                      onClick={() =>
-                        selectedModel && handleAddModel(selectedModel)
-                      }
-                      fontSize="large"
-                    />
-                  </IconButton>
-                  {isSelected && (
+            <ambientLight />
+            <Html
+              as="div"
+              style={{
+                display: 'flex',
+                left: '-14rem',
+                gap: '20rem',
+              }}
+            >
+              <ThemeProvider theme={darkTheme}>
+                {ModelPreview && (
+                  <>
                     <IconButton>
-                      <SwapHoriz
+                      <AddCircleIcon
                         onClick={() =>
-                          selectedModel && handleSwapModel(selectedModel)
+                          selectedModel && handleAddModel(selectedModel)
                         }
                         fontSize="large"
                       />
                     </IconButton>
-                  )}
-                </>
-              )}
-            </ThemeProvider>
-          </Html>
-          {ModelPreview && (
-            <Bounds fit clip observe margin={2}>
-              <PreviewModel cacheKey={selectedModel}>
-                <ModelPreview />
-              </PreviewModel>
-            </Bounds>
-          )}
-        </Canvas>
+                    {isSelected && (
+                      <IconButton>
+                        <SwapHoriz
+                          onClick={() =>
+                            selectedModel && handleSwapModel(selectedModel)
+                          }
+                          fontSize="large"
+                        />
+                      </IconButton>
+                    )}
+                  </>
+                )}
+              </ThemeProvider>
+            </Html>
+            {ModelPreview && (
+              <Bounds fit clip observe margin={2}>
+                <PreviewModel cacheKey={selectedModel}>
+                  <ModelPreview />
+                </PreviewModel>
+              </Bounds>
+            )}
+          </Canvas>
+        </Suspense>
       </StyledModal>
     </Modal>
   );

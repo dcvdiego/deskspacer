@@ -2,11 +2,13 @@
 import { Canvas } from '@react-three/fiber';
 
 import DefaultRoom from './components/models/rooms/DefaultRoom';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import React from 'react';
 
 import { Container } from './styles/global.styles';
 import { ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { CircularProgress, Typography } from '@mui/material';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import {
@@ -19,7 +21,7 @@ import { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import { DrawerHeader, Header } from './components/UI/Header';
 import { modelComponents } from './components/models/modelComponentsMapping';
 import TransformModel from './components/models/TransformModel';
-import * as THREE from 'three';
+import { Box3, Mesh } from 'three';
 import * as streamsaver from 'streamsaver';
 import { useModelStore } from './utils/store';
 import { ModelInCanvas } from './types/ModelTypes';
@@ -31,19 +33,25 @@ import {
   // GLTFLoader,
   // DRACOLoader,
 } from 'three/examples/jsm/Addons.js';
-import { darkTheme } from './styles/theme.styles';
+import { createTheme } from '@mui/material/styles';
 import CollisionBounds from './components/models/utils/CollisionBounds';
-import InfoModal from './components/UI/modals/InfoModal';
-import AddModal from './components/UI/modals/AddModal';
-import HelpModal from './components/UI/modals/HelpModal';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 // import Logo from '../public/logo.svg?react';
+
+// Lazy load modals for better code splitting
+const InfoModal = lazy(() => import('./components/UI/modals/InfoModal'));
+const AddModal = lazy(() => import('./components/UI/modals/AddModal'));
+const HelpModal = lazy(() => import('./components/UI/modals/HelpModal'));
 
 function App() {
   const { deleteModel, setModels, clearHistory } = useModelStore();
 
   // Subscribe to models array to react to undo/redo changes
   const models = useModelStore((state) => state.models);
+
+  // Subscribe to settings
+  const settings = useModelStore((state) => state.settings);
+
   const [transformMode, setTransformMode] = useState('');
 
   const [isHovered, setIsHovered] = useState<string | null>(null);
@@ -56,7 +64,7 @@ function App() {
   >(null);
   const [manualRemove, setManualRemove] = useState<boolean>(false);
   const [disableCamera, setDisableCamera] = useState<boolean>(false);
-  const [dpr, setDpr] = useState(1.5);
+  const [dpr, setDpr] = useState(settings.performance.dpr);
   const [enableY, setEnableY] = useState<boolean>(false);
   const [lockedModels, setLockedModels] = useState<string[]>(
     models
@@ -92,11 +100,11 @@ function App() {
   ] = useMutation(ADD_STATE_QUERY);
   const orbitRef = useRef<OrbitControlsType>(null);
   const sceneRef = useRef(null);
-  const minBoundsZRef = useRef<THREE.Mesh>(null);
-  const maxBoundsZRef = useRef<THREE.Mesh>(null);
-  const minBoundsXRef = useRef<THREE.Mesh>(null);
-  const maxBoundsXRef = useRef<THREE.Mesh>(null);
-  const minBoundsYRef = useRef<THREE.Mesh>(null);
+  const minBoundsZRef = useRef<Mesh>(null);
+  const maxBoundsZRef = useRef<Mesh>(null);
+  const minBoundsXRef = useRef<Mesh>(null);
+  const maxBoundsXRef = useRef<Mesh>(null);
+  const minBoundsYRef = useRef<Mesh>(null);
 
   // Centralized keyboard shortcuts
   useKeyboardShortcuts({
@@ -235,11 +243,11 @@ function App() {
     setExportLoading(false);
   };
 
-  const minBoundsZ = new THREE.Box3();
-  const maxBoundsZ = new THREE.Box3();
-  const minBoundsX = new THREE.Box3();
-  const maxBoundsX = new THREE.Box3();
-  const minBoundsY = new THREE.Box3();
+  const minBoundsZ = new Box3();
+  const maxBoundsZ = new Box3();
+  const minBoundsX = new Box3();
+  const maxBoundsX = new Box3();
+  const minBoundsY = new Box3();
   if (minBoundsZRef.current) minBoundsZ.setFromObject(minBoundsZRef.current);
 
   if (minBoundsXRef.current) minBoundsX.setFromObject(minBoundsXRef.current);
@@ -261,8 +269,35 @@ function App() {
         }`
       : null,
   };
+
+  // Create dynamic theme based on settings
+  const appTheme = createTheme({
+    palette: {
+      mode: settings.theme.mode,
+      primary: {
+        main: settings.theme.primaryColor,
+      },
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            color: settings.theme.mode === 'dark' ? 'white' : 'inherit',
+          },
+        },
+      },
+    },
+  });
+
+  // Update DPR when settings change
+  React.useEffect(() => {
+    if (!settings.performance.autoAdjustPerformance) {
+      setDpr(settings.performance.dpr);
+    }
+  }, [settings.performance.dpr, settings.performance.autoAdjustPerformance]);
+
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={appTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex' }}>
         {!hideUI && (
@@ -288,22 +323,47 @@ function App() {
         )}
         <Box component="main" sx={{ flexGrow: 1, p: hideUI ? 0 : 3 }}>
           {!hideUI && <DrawerHeader />}
-          <AddModal
-            addCalled={addCalled}
-            addReset={addReset}
-            isAddObjectModalOpen={isAddObjectModalOpen}
-            setIsAddObjectModalOpen={setIsAddObjectModalOpen}
-            isSelected={isSelected}
-            setIsSelected={setIsSelected}
-          />
-          <InfoModal
-            modalType={contentModal}
-            onClose={() => setContentModal(null)}
-            shareData={infoModalShareData}
-          />
-          <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
+          <Suspense fallback={null}>
+            <AddModal
+              addCalled={addCalled}
+              addReset={addReset}
+              isAddObjectModalOpen={isAddObjectModalOpen}
+              setIsAddObjectModalOpen={setIsAddObjectModalOpen}
+              isSelected={isSelected}
+              setIsSelected={setIsSelected}
+            />
+          </Suspense>
+          <Suspense fallback={null}>
+            <InfoModal
+              modalType={contentModal}
+              onClose={() => setContentModal(null)}
+              shareData={infoModalShareData}
+            />
+          </Suspense>
+          <Suspense fallback={null}>
+            <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
+          </Suspense>
           <Container style={{ paddingTop: 0 }}>
-            <Suspense>
+            <Suspense
+              fallback={
+                <Box
+                  sx={{
+                    height: '100vh',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                  }}
+                >
+                  <CircularProgress size={60} />
+                  <Typography variant="h6" sx={{ mt: 2 }}>
+                    Loading 3D Environment...
+                  </Typography>
+                </Box>
+              }
+            >
               <Canvas
                 frameloop="demand"
                 camera={{
@@ -318,10 +378,20 @@ function App() {
                 dpr={dpr}
                 onClick={() => isSelected && !isHovered && setIsSelected(null)}
               >
-                <PerformanceMonitor
-                  onIncline={() => setDpr(2)}
-                  onDecline={() => setDpr(1)}
-                />
+                {settings.performance.autoAdjustPerformance && (
+                  <PerformanceMonitor
+                    onIncline={() => setDpr(2)}
+                    onDecline={() => setDpr(1)}
+                  />
+                )}
+                {settings.performance.shadowsEnabled && (
+                  <directionalLight
+                    position={[10, 10, 5]}
+                    castShadow
+                    shadow-mapSize-width={2048}
+                    shadow-mapSize-height={2048}
+                  />
+                )}
                 <ambientLight />
                 <CollisionBounds
                   minBoundsZRef={minBoundsZRef}
@@ -335,8 +405,8 @@ function App() {
                   <Selection>
                     <EffectComposer multisampling={0} autoClear={false}>
                       <Outline
-                        visibleEdgeColor={0xffffff}
-                        hiddenEdgeColor={0xffffff}
+                        visibleEdgeColor={settings.theme.outlineColor}
+                        hiddenEdgeColor={settings.theme.outlineColor}
                         blur
                         width={1000}
                         edgeStrength={100}
@@ -396,7 +466,10 @@ function App() {
                     ref={orbitRef}
                     // minPolarAngle={Math.PI / 8}
                     maxPolarAngle={Math.PI / 2}
-                    maxDistance={400}
+                    maxDistance={settings.camera.maxDistance}
+                    rotateSpeed={settings.camera.moveSpeed}
+                    panSpeed={settings.camera.moveSpeed}
+                    reverseOrbit={settings.camera.invertControls}
                   />
                 )}
               </Canvas>

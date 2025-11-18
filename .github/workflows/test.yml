@@ -35,15 +35,25 @@ jobs:
           cd frontend
           pnpm install --frozen-lockfile
 
+      - name: Install Playwright browsers for Storybook tests
+        run: |
+          cd frontend
+          pnpm exec playwright install --with-deps chromium
+
       - name: Run tests
         run: |
           cd frontend
           pnpm test -- --run
 
-      - name: Upload test results
+      - name: Run Storybook component and accessibility tests
+        run: |
+          cd frontend
+          pnpm test-storybook --run
+
+      - name: Upload test coverage
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-coverage
           path: frontend/coverage/
           if-no-files-found: ignore
