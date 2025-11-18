@@ -83,8 +83,8 @@ const InfoModal: React.FC<InfoModalProps> = ({
       case 'share': {
         if (shareData?.loading) {
           return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, p: 3 }}>
-              <CircularProgress />
+            <Box component="section" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, p: 3 }}>
+              <CircularProgress aria-label="Generating shareable link" />
               <Typography>Generating shareable link...</Typography>
             </Box>
           );
@@ -92,7 +92,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
 
         if (shareData?.error) {
           return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box component="section" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Alert severity="error">
                 Failed to generate shareable link. Please try again.
               </Alert>
@@ -104,14 +104,15 @@ const InfoModal: React.FC<InfoModalProps> = ({
         }
 
         return (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="body1">
+          <Box component="section" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Typography variant="body1" component="h2">
               Here is the link, it expires in 15 days:
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
               <TextField
                 disabled
                 id="outlined-disabled"
+                label="Shareable link"
                 value={shareData?.url ?? ''}
                 slotProps={{
                   htmlInput: {
