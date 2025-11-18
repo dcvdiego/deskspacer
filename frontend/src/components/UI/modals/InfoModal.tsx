@@ -83,32 +83,34 @@ const InfoModal: React.FC<InfoModalProps> = ({
       case 'share': {
         if (shareData?.loading) {
           return (
-            <Box component="section" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, p: 3 }}>
-              <CircularProgress aria-label="Generating shareable link" />
-              <Typography>Generating shareable link...</Typography>
-            </Box>
+            <main>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, p: 3 }}>
+                <CircularProgress aria-label="Generating shareable link" />
+                <Typography>Generating shareable link...</Typography>
+              </Box>
+            </main>
           );
         }
 
         if (shareData?.error) {
           return (
-            <Box component="section" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <main>
               <Alert severity="error">
                 Failed to generate shareable link. Please try again.
               </Alert>
-              <Button onClick={onClose} variant="contained">
+              <Button onClick={onClose} variant="contained" sx={{ mt: 2 }}>
                 Close
               </Button>
-            </Box>
+            </main>
           );
         }
 
         return (
-          <Box component="section" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="body1" component="h2">
+          <main>
+            <Typography variant="h2" sx={{ fontSize: '1rem', mb: 2 }}>
               Here is the link, it expires in 15 days:
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 2 }}>
               <TextField
                 disabled
                 id="outlined-disabled"
@@ -134,14 +136,14 @@ const InfoModal: React.FC<InfoModalProps> = ({
               </IconButton>
             </Box>
             {copied && (
-              <Alert severity="success" sx={{ mt: 1 }}>
+              <Alert severity="success">
                 Link copied to clipboard!
               </Alert>
             )}
-            <Button onClick={onClose} variant="contained" sx={{ marginTop: 1 }}>
+            <Button onClick={onClose} variant="contained" sx={{ marginTop: 2 }}>
               Close
             </Button>
-          </Box>
+          </main>
         );
       }
       default:
