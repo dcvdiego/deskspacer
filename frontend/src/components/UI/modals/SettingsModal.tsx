@@ -112,37 +112,34 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
       aria-describedby="settings-modal-description"
     >
       <StyledModal sx={{ minWidth: 500, maxWidth: 600 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h5" component="h2">
-            Settings
-          </Typography>
-          <Button
-            startIcon={<RestartAlt />}
-            onClick={handleReset}
-            size="small"
-            variant="outlined"
-          >
-            Reset to Defaults
-          </Button>
-        </Box>
+        <main>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h5" component="h2">
+              Settings
+            </Typography>
+            <Button
+              startIcon={<RestartAlt />}
+              onClick={handleReset}
+              size="small"
+              variant="outlined"
+            >
+              Reset to Defaults
+            </Button>
+          </Box>
 
-        <Tabs
-          value={currentTab}
-          onChange={handleTabChange}
-          aria-label="settings tabs"
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab label="Performance" />
-          <Tab label="Camera" />
-          <Tooltip title="Coming Soon" placement="top">
-            <span>
-              <Tab label="Grid & Snap" disabled />
-            </span>
-          </Tooltip>
-          <Tab label="Theme" />
-          <Tab label="Export" />
-        </Tabs>
+          <Tabs
+            value={currentTab}
+            onChange={handleTabChange}
+            aria-label="settings tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            <Tab label="Performance" />
+            <Tab label="Camera" />
+            <Tab label="Grid & Snap" disabled aria-label="Grid & Snap (Coming Soon)" />
+            <Tab label="Theme" />
+            <Tab label="Export" />
+          </Tabs>
 
         <Divider sx={{ mb: 2 }} />
 
@@ -173,6 +170,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
                   { value: 3, label: 'Ultra' },
                 ]}
                 valueLabelDisplay="auto"
+                aria-label="Device Pixel Ratio"
               />
             </Box>
 
@@ -241,6 +239,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
                   { value: 2, label: 'Fast' },
                 ]}
                 valueLabelDisplay="auto"
+                aria-label="Camera movement speed"
               />
             </Box>
 
@@ -263,6 +262,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
                 step={50}
                 marks
                 valueLabelDisplay="auto"
+                aria-label="Maximum camera distance"
               />
             </Box>
 
@@ -323,6 +323,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
                     step={10}
                     marks
                     valueLabelDisplay="auto"
+                    aria-label="Grid size"
                   />
                 </Box>
 
@@ -342,6 +343,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
                     step={5}
                     marks
                     valueLabelDisplay="auto"
+                    aria-label="Grid divisions"
                   />
                 </Box>
               </>
@@ -388,6 +390,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
                     { value: 20, label: '20m' },
                   ]}
                   valueLabelDisplay="auto"
+                  aria-label="Snap to grid size"
                 />
               </Box>
             )}
@@ -531,6 +534,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) => {
             Save
           </Button>
         </Box>
+        </main>
       </StyledModal>
     </Modal>
   );

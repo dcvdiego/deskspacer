@@ -37,7 +37,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
     switch (modalType) {
       case 'tutorial':
         return (
-          <>
+          <main>
             <div>
               Welcome to{' '}
               <Typography
@@ -64,16 +64,17 @@ const InfoModal: React.FC<InfoModalProps> = ({
             </div>
             <div>Have fun</div>
             <Button onClick={onClose}>Continue</Button> {/* Use onClose prop */}
-          </>
+          </main>
         );
       case 'share': {
         return (
-          <>
+          <main>
             <div>Here is the link, it expires in 15 days:</div>
             <div>
               <TextField
                 disabled
                 id="outlined-disabled"
+                label="Share link"
                 value={
                   shareData?.loading
                     ? 'Loading'
@@ -97,6 +98,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
                   shareData?.url &&
                   navigator.clipboard.writeText(shareData?.url)
                 }
+                aria-label="Copy link to clipboard"
               >
                 <ContentCopy />
               </IconButton>
@@ -104,7 +106,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
             <Button onClick={onClose} sx={{ marginTop: 2 }}>
               Close
             </Button>
-          </>
+          </main>
         );
       }
       default:

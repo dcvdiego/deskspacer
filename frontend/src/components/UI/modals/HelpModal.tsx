@@ -94,10 +94,10 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
           <Close />
         </IconButton>
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent dividers tabIndex={0}>
         {/* General Section */}
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Typography variant="subtitle1" component="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
             General
           </Typography>
           <Divider sx={{ mb: 2 }} />
@@ -112,7 +112,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
 
         {/* Editing Section */}
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Typography variant="subtitle1" component="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
             Editing
           </Typography>
           <Divider sx={{ mb: 2 }} />
@@ -128,7 +128,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
 
         {/* Transform Section */}
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Typography variant="subtitle1" component="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
             Transform (when model selected)
           </Typography>
           <Divider sx={{ mb: 2 }} />
@@ -143,7 +143,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ open, onClose }) => {
 
         {/* Camera Section */}
         <Box sx={{ mb: 1 }}>
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Typography variant="subtitle1" component="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
             Camera Controls
           </Typography>
           <Divider sx={{ mb: 2 }} />

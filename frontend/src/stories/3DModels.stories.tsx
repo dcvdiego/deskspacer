@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { withThreeJsCanvas } from '../../.storybook/decorators/ThreeJsDecorator';
 import MouseV3 from '../components/models/mice/MouseV3';
 import Keyboard60Grey from '../components/models/keyboards/60_keyboards/Keyboard60Grey';
@@ -7,6 +7,8 @@ import { useState } from 'react';
 
 const meta: Meta = {
   title: '3D/Models',
+  // Skip 3D stories from testing as WebGL causes browser crashes in headless mode
+  tags: ['!test'],
   parameters: {
     layout: 'fullscreen',
   },

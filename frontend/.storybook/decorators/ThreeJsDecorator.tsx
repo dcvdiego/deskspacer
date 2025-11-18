@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import type { DecoratorFunction } from '@storybook/types';
+import type { DecoratorFunction } from 'storybook/internal/types';
 
 interface CanvasWrapperProps {
   children: React.ReactNode;
