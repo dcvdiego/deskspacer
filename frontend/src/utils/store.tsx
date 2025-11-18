@@ -52,6 +52,77 @@ const cloneModelsArray = (models: ModelInCanvas[]): ModelInCanvas[] =>
 const serializeModelsArray = (models: ModelInCanvas[]): ModelInCanvas[] =>
   models.map(serializeModel);
 
+// Settings interface for app-wide configuration
+export interface AppSettings {
+  // Performance settings
+  performance: {
+    dpr: number; // Device pixel ratio (1 = low, 1.5 = medium, 2 = high)
+    shadowsEnabled: boolean;
+    autoAdjustPerformance: boolean; // Enable PerformanceMonitor
+  };
+
+  // Camera settings
+  camera: {
+    moveSpeed: number; // OrbitControls speed multiplier
+    invertControls: boolean;
+    maxDistance: number;
+  };
+
+  // Grid and snap settings
+  grid: {
+    enabled: boolean;
+    size: number;
+    divisions: number;
+    snapEnabled: boolean;
+    snapSize: number; // Size of snap grid
+  };
+
+  // Theme customization
+  theme: {
+    mode: 'dark' | 'light';
+    primaryColor: string;
+    outlineColor: string; // Color for selection outline
+  };
+
+  // Export settings
+  export: {
+    quality: 'low' | 'medium' | 'high';
+    format: 'glb' | 'gltf';
+    includeTextures: boolean;
+  };
+}
+
+// Default settings
+export const defaultSettings: AppSettings = {
+  performance: {
+    dpr: 1.5,
+    shadowsEnabled: true,
+    autoAdjustPerformance: true,
+  },
+  camera: {
+    moveSpeed: 1,
+    invertControls: false,
+    maxDistance: 400,
+  },
+  grid: {
+    enabled: false,
+    size: 100,
+    divisions: 20,
+    snapEnabled: false,
+    snapSize: 5,
+  },
+  theme: {
+    mode: 'dark',
+    primaryColor: '#9c27b0', // MUI purple[500]
+    outlineColor: '#ffffff',
+  },
+  export: {
+    quality: 'high',
+    format: 'glb',
+    includeTextures: true,
+  },
+};
+
 interface ModelStore {
   models: ModelInCanvas[];
   // History state
@@ -60,11 +131,18 @@ interface ModelStore {
   historyLimit: number;
   historyVersion: number; // Increments on undo/redo to trigger component updates
 
+  // Settings state
+  settings: AppSettings;
+
   // Core model actions
   setModels: (models: ModelInCanvas[], saveHistory?: boolean) => void;
   addModel: (model: ModelInCanvas) => void;
   updateModel: (id: string, model: Partial<ModelInCanvas>, saveHistory?: boolean) => void;
   deleteModel: (id: string) => void;
+
+  // Settings actions
+  updateSettings: (settings: Partial<AppSettings>) => void;
+  resetSettings: () => void;
 
   // History actions
   saveToHistory: () => void;
@@ -83,6 +161,7 @@ export const useModelStore = create<ModelStore>()(
       future: [],
       historyLimit: 50,
       historyVersion: 0,
+      settings: defaultSettings,
 
       // Save current state to history before making changes
       saveToHistory: () => {
@@ -230,11 +309,44 @@ export const useModelStore = create<ModelStore>()(
           ),
         }));
       },
+
+      // Update settings (deep merge with existing settings)
+      updateSettings: (newSettings: Partial<AppSettings>) => {
+        set((state: ModelStore) => ({
+          settings: {
+            performance: {
+              ...state.settings.performance,
+              ...(newSettings.performance || {}),
+            },
+            camera: {
+              ...state.settings.camera,
+              ...(newSettings.camera || {}),
+            },
+            grid: {
+              ...state.settings.grid,
+              ...(newSettings.grid || {}),
+            },
+            theme: {
+              ...state.settings.theme,
+              ...(newSettings.theme || {}),
+            },
+            export: {
+              ...state.settings.export,
+              ...(newSettings.export || {}),
+            },
+          },
+        }));
+      },
+
+      // Reset settings to defaults
+      resetSettings: () => {
+        set({ settings: defaultSettings });
+      },
     }),
     {
       name: 'model-storage',
-      // Don't persist history to avoid storage bloat
-      partialize: (state) => ({ models: state.models }),
+      // Persist both models and settings
+      partialize: (state) => ({ models: state.models, settings: state.settings }),
     }
   )
 );

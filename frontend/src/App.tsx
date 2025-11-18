@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber';
 
 import DefaultRoom from './components/models/rooms/DefaultRoom';
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import React from 'react';
 
 import { Container } from './styles/global.styles';
 import { ThemeProvider } from '@mui/material/styles';
@@ -32,7 +33,7 @@ import {
   // GLTFLoader,
   // DRACOLoader,
 } from 'three/examples/jsm/Addons.js';
-import { darkTheme } from './styles/theme.styles';
+import { createTheme } from '@mui/material/styles';
 import CollisionBounds from './components/models/utils/CollisionBounds';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 // import Logo from '../public/logo.svg?react';
@@ -47,6 +48,10 @@ function App() {
 
   // Subscribe to models array to react to undo/redo changes
   const models = useModelStore((state) => state.models);
+
+  // Subscribe to settings
+  const settings = useModelStore((state) => state.settings);
+
   const [transformMode, setTransformMode] = useState('');
 
   const [isHovered, setIsHovered] = useState<string | null>(null);
@@ -59,7 +64,7 @@ function App() {
   >(null);
   const [manualRemove, setManualRemove] = useState<boolean>(false);
   const [disableCamera, setDisableCamera] = useState<boolean>(false);
-  const [dpr, setDpr] = useState(1.5);
+  const [dpr, setDpr] = useState(settings.performance.dpr);
   const [enableY, setEnableY] = useState<boolean>(false);
   const [lockedModels, setLockedModels] = useState<string[]>(
     models
@@ -264,8 +269,35 @@ function App() {
         }`
       : null,
   };
+
+  // Create dynamic theme based on settings
+  const appTheme = createTheme({
+    palette: {
+      mode: settings.theme.mode,
+      primary: {
+        main: settings.theme.primaryColor,
+      },
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            color: settings.theme.mode === 'dark' ? 'white' : 'inherit',
+          },
+        },
+      },
+    },
+  });
+
+  // Update DPR when settings change
+  React.useEffect(() => {
+    if (!settings.performance.autoAdjustPerformance) {
+      setDpr(settings.performance.dpr);
+    }
+  }, [settings.performance.dpr, settings.performance.autoAdjustPerformance]);
+
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={appTheme}>
       <CssBaseline />
       <Box sx={{ display: 'flex' }}>
         {!hideUI && (
@@ -346,10 +378,20 @@ function App() {
                 dpr={dpr}
                 onClick={() => isSelected && !isHovered && setIsSelected(null)}
               >
-                <PerformanceMonitor
-                  onIncline={() => setDpr(2)}
-                  onDecline={() => setDpr(1)}
-                />
+                {settings.performance.autoAdjustPerformance && (
+                  <PerformanceMonitor
+                    onIncline={() => setDpr(2)}
+                    onDecline={() => setDpr(1)}
+                  />
+                )}
+                {settings.performance.shadowsEnabled && (
+                  <directionalLight
+                    position={[10, 10, 5]}
+                    castShadow
+                    shadow-mapSize-width={2048}
+                    shadow-mapSize-height={2048}
+                  />
+                )}
                 <ambientLight />
                 <CollisionBounds
                   minBoundsZRef={minBoundsZRef}
@@ -363,8 +405,8 @@ function App() {
                   <Selection>
                     <EffectComposer multisampling={0} autoClear={false}>
                       <Outline
-                        visibleEdgeColor={0xffffff}
-                        hiddenEdgeColor={0xffffff}
+                        visibleEdgeColor={settings.theme.outlineColor}
+                        hiddenEdgeColor={settings.theme.outlineColor}
                         blur
                         width={1000}
                         edgeStrength={100}
@@ -424,7 +466,10 @@ function App() {
                     ref={orbitRef}
                     // minPolarAngle={Math.PI / 8}
                     maxPolarAngle={Math.PI / 2}
-                    maxDistance={400}
+                    maxDistance={settings.camera.maxDistance}
+                    rotateSpeed={settings.camera.moveSpeed}
+                    panSpeed={settings.camera.moveSpeed}
+                    reverseOrbit={settings.camera.invertControls}
                   />
                 )}
               </Canvas>

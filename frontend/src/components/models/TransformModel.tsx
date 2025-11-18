@@ -82,6 +82,7 @@ const TransformModel = ({ ...props }) => {
   const [oldPosition, setOldPosition] = useState<any>();
   const ModelRef = useRef<THREE.Group<THREE.Object3DEventMap>>(null);
   const GroupRef = useRef<THREE.Group<THREE.Object3DEventMap>>(null);
+
   const updateModelPosition = () => {
     if (!ModelRef.current || !GroupRef.current) return;
 

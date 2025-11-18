@@ -12,6 +12,7 @@ import { ContentCopy, CheckCircle } from '@mui/icons-material';
 import { Spacer } from '../Spacer';
 import { StyledModal } from '../../../styles/Modal.styles';
 import { useState } from 'react';
+import SettingsModal from './SettingsModal';
 
 interface InfoModalProps {
   modalType: 'tutorial' | 'share' | 'settings' | null;
@@ -31,6 +32,11 @@ const InfoModal: React.FC<InfoModalProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
+  // Settings modal is now separate, handle it differently
+  if (modalType === 'settings') {
+    return <SettingsModal open={true} onClose={onClose} />;
+  }
+
   if (!modalType) return null;
 
   const handleCopy = () => {
@@ -45,7 +51,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
     switch (modalType) {
       case 'tutorial':
         return (
-          <>
+          <main>
             <div>
               Welcome to{' '}
               <Typography
@@ -71,8 +77,8 @@ const InfoModal: React.FC<InfoModalProps> = ({
               canvas.
             </div>
             <div>Have fun</div>
-            <Button onClick={onClose}>Continue</Button> {/* Use onClose prop */}
-          </>
+            <Button onClick={onClose}>Continue</Button>
+          </main>
         );
       case 'share': {
         if (shareData?.loading) {
@@ -121,6 +127,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
                 onClick={handleCopy}
                 color={copied ? 'success' : 'default'}
                 disabled={!shareData?.url}
+                aria-label="Copy link to clipboard"
               >
                 {copied ? <CheckCircle /> : <ContentCopy />}
               </IconButton>
@@ -136,14 +143,6 @@ const InfoModal: React.FC<InfoModalProps> = ({
           </Box>
         );
       }
-      case 'settings':
-        return (
-          <>
-            <div>Settings</div>
-            <div>These are the settings</div>
-            <Button onClick={onClose}>Close</Button>
-          </>
-        );
       default:
         return null;
     }
